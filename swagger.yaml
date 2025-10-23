@@ -1,0 +1,28 @@
+openapi: 3.0.0
+info:
+  title: API do Tribunal Eclesiástico
+  version: 1.0.0
+  description: Documentação da API de gerenciamento de processos eclesiásticos.
+servers:
+  - url: http://localhost:3002/api/v1
+    description: Servidor de Desenvolvimento
+paths:
+  /usuarios:
+    get:
+      tags:
+        - Usuários
+      summary: Lista todos os usuários
+      responses:
+        '200':
+          description: Lista de usuários obtida com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nome:
+                      type: string

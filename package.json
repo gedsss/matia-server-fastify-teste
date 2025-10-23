@@ -1,0 +1,27 @@
+{
+  "name": "matia-server-fastify",
+  "version": "1.0.0",
+  "main": "db.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fastify/swagger": "^9.5.2",
+    "@fastify/swagger-ui": "^5.2.3",
+    "bcrypt": "^6.0.0",
+    "cpf-cnpj-validator": "^1.0.3",
+    "fastify-type-provider-zod": "^6.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.3"
+  }
+}
