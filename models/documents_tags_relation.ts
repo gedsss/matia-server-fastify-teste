@@ -1,7 +1,23 @@
 import sequelize from '../db.js';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 
-const documentsTagsRelation = sequelize.define('documentsTagRelation', {
+export interface DocumentsTagsRelationsAttributes {
+    id: string,
+    document_id: string,
+    tag_id: string,
+    created_at: Date 
+}
+
+export interface DocumentsTagsRelationsCreationAttributes extends Optional<DocumentsTagsRelationsAttributes, 'id' | 'created_at'> {}
+
+class DocumentsTagsRelation extends Model<DocumentsTagsRelationsAttributes, DocumentsTagsRelationsCreationAttributes> implements DocumentsTagsRelationsAttributes {
+    public id!: string;
+    public document_id!: string;
+    public tag_id!: string;
+    public created_at!: Date;
+}
+
+DocumentsTagsRelation.init ({
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -33,10 +49,11 @@ const documentsTagsRelation = sequelize.define('documentsTagRelation', {
     }
 },
 {
+    sequelize,
     tableName: 'document_tag_association',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: false
 });
 
-export default documentsTagsRelation;
+export default DocumentsTagsRelation;

@@ -17,11 +17,19 @@ const activityLogs = sequelize.define('activityLogs', {
         }
     },
     action: {
-        type: DataTypes.TEXT,
+        type: DataTypes.ENUM(
+            'login',
+            'upload_document',
+            'delete_user'
+        ),
         allowNull: false
     },
     entity_type: {
-        type: DataTypes.TEXT,
+        type: DataTypes.ENUM(
+            'document',
+            'user',
+            'conversation'
+        ),
         allowNull: true
     },
     entity_id: {

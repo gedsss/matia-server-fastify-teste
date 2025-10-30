@@ -3,14 +3,24 @@ export const createActivityLogsSchema = {
   required: ['action'],
   properties: {
     action: { 
-        type: 'string'
+        type: 'string',
+        enum: [
+          'pendente',
+          'em_progresso',
+          'concluido'
+        ]
     },
     user_id: { 
         type: 'string', 
         format: 'uuid'
     },
     entity_type: { 
-        type: 'string'
+        type: 'string',
+        enum: [
+          'document',
+          'user',
+          'conversation'
+        ]
     },
     entity_id: { 
         type: 'string', 

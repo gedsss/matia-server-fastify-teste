@@ -11,6 +11,7 @@ import documentsAnalysesRoutes from './routes/documents_analysisRoutes.js'
 import conversationsRoutes from './routes/conversationRoutes.js'
 import conversationDocumentsRoutes from './routes/conversation_documentsRoutes.js'
 import activityLogsRoutes from './routes/activity_logsRoutes.js'
+import userActivityLogsRoutes from './routes/user_activity_logRoutes.js'
 import cors from '@fastify/cors'
 import sequelize from './db.js' // Certifique-se de que o caminho está correto
 
@@ -31,6 +32,7 @@ await fastify.register(documentsAnalysesRoutes, { prefix: '/api/documents_analys
 await fastify.register(conversationsRoutes, { prefix: '/api/conversations' })
 await fastify.register(conversationDocumentsRoutes, { prefix: '/api/conversation_documents' })
 await fastify.register(activityLogsRoutes, { prefix: '/api/activity_logs' })
+await fastify.register(userActivityLogsRoutes, { prefix: '/api/user_activty_log' })
 
 // 2.1. Configuração do SWAGGER (Especificação OpenAPI)
 await fastify.register(swagger, {
@@ -54,7 +56,8 @@ await fastify.register(swagger, {
             { name: 'DocumentsAnalyses', description: 'Log de Analises de Documentos' },
             { name: 'Conversations', description: 'Log de Conversações' },
             { name: 'ConversationDocuments', description: 'Log de Documentos de Conversação' },
-            { name: 'ActivityLogs', description: 'Log de Atividades' } 
+            { name: 'ActivityLogs', description: 'Log de Atividades de Administrador' },
+            { name: 'UserActivityLog', description: 'Log de Atividades de Usuários' } 
         ]
     }
 });

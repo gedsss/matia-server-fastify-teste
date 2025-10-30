@@ -1,7 +1,27 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../db.js";
 
-const messages = sequelize.define('messages', {
+export interface MessagesAttributes {
+    id: string,
+    conversations_id: string,
+    content: string,
+    role: 'user' | 'assistant' | 'system',
+    metadata: object | null,
+    created_at: Date
+}
+
+export interface MessagesCreationAttributes extends Optional<MessagesAttributes, 'metadata' | 'id' | 'created_at'> {}
+
+class Messages extends Model<MessagesAttributes, MessagesCreationAttributes> implements MessagesAttributes {
+    public id!: string;
+    public conversations_id!: string;
+    public content!: string;
+    public role!: "user" | "assistant" | "system";
+    public metadata!: object | null;
+    public created_at!: Date;
+}
+
+Messages.init ({
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -42,6 +62,7 @@ const messages = sequelize.define('messages', {
     }
 },
 {
+    sequelize,
     tableName: 'messages',
     timestamps: true,
     createdAt: 'created_at',
@@ -50,4 +71,4 @@ const messages = sequelize.define('messages', {
 
 )
 
-export default messages
+export default Messages

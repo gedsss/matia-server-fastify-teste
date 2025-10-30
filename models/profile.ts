@@ -1,7 +1,35 @@
 import sequelize from '../db.js';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 
-const profile = sequelize.define('profile', {
+export interface ProfileAttributes {
+    id: string,
+    creation_time: Date,
+    updated_at: Date | null,
+    profile_password: string,
+    cpf: string,
+    telefone: string,
+    data_nascimento: Date,
+    avatar_url: string | null,
+    nome: string,
+    email: string
+}
+
+export interface ProfileCreationAttributes extends Optional<ProfileAttributes, 'updated_at' | 'avatar_url' | 'id' | 'creation_time' > {}
+
+class Profile extends Model<ProfileAttributes, ProfileCreationAttributes> implements ProfileAttributes {
+    public id!: string;
+    public creation_time!: Date;
+    public updated_at!: null | Date;
+    public profile_password!: string;
+    public cpf!: string;
+    public telefone!: string;
+    public data_nascimento!: Date;
+    public avatar_url!: string | null;
+    public nome!: string;
+    public email!: string;
+}
+
+Profile.init ({
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -37,7 +65,7 @@ const profile = sequelize.define('profile', {
         allowNull: false
     },
     avatar_url: {
-        type: DataTypes.TEXT(255),
+        type: DataTypes.TEXT,
         allowNull: true,
     },
     nome: {
@@ -51,10 +79,11 @@ const profile = sequelize.define('profile', {
     }
 },
 {
+    sequelize,
     tableName: 'profile',
     createdAt: 'creation_time',
     updatedAt: 'updated_at',
     timestamps: true
 });
 
-export default profile;
+export default Profile;

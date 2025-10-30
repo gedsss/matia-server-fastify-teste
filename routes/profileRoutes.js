@@ -4,8 +4,8 @@ import { createProfileSchema, profileParamsSchema } from '../schemas/profileSche
 
 const profileRoutes = async (fastify, options) => {
     
-    // ROTA POST /profile (Criação)
-    fastify.post('/profile', { 
+    // ROTA POST / (Criação)
+    fastify.post('/', { 
         schema: { 
             tags: ['Profile'], 
             summary: 'Cria um novo usuário no sistema', 
@@ -13,8 +13,8 @@ const profileRoutes = async (fastify, options) => {
         } 
     }, profileController.createProfile)
 
-    // ROTA GET /profile/:id (Busca)
-    fastify.get('/profile/:id', { 
+    // ROTA GET /:id (Busca)
+    fastify.get('/:id', { 
         schema: { 
             tags: ['Profile'], 
             summary: 'Busca um usuário pelo seu ID',
@@ -22,8 +22,8 @@ const profileRoutes = async (fastify, options) => {
         } 
     }, profileController.getProfileById)
 
-    // ROTA PUT /profile/:id (Atualização)
-    fastify.put('/profile/:id', { 
+    // ROTA PUT /:id (Atualização)
+    fastify.put('/:id', { 
         schema: { 
             tags: ['Profile'], 
             summary: 'Atualiza informações de um usuário existente', 
@@ -32,8 +32,8 @@ const profileRoutes = async (fastify, options) => {
         } 
     }, profileController.updateProfile)
     
-    // ROTA DELETE /profile/:id (Deleção)
-    fastify.delete('/profile/:id', { 
+    // ROTA DELETE /:id (Deleção)
+    fastify.delete('/:id', { 
         schema: { 
             tags: ['Profile'], 
             summary: 'Deleta um usuário pelo ID', 
