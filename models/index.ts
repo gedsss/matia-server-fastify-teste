@@ -1,0 +1,72 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import { Sequelize, DataTypes, Model, ModelStatic, Dialect } from 'sequelize';
+import process from 'process';
+
+interface DbConfig {
+  username?: string;
+  password?: string;
+  database?: string;
+  host?: string;
+  dialect?: Dialect;
+  use_env_variable?: string;
+}
+
+interface ModelWithAssociate extends ModelStatic<Model> {
+  associate?(models: Db): void;
+}
+
+interface Db {
+  sequelize: Sequelize;
+  Sequelize: typeof Sequelize;
+  [key: string]: ModelWithAssociate | Sequelize | typeof Sequelize;
+}
+
+const basename: string = path.basename(__filename);
+const env: string = process.env.NODE_ENV || 'development';
+
+const config = require(path.join(__dirname, '/../config/config.json'))[env] as DbConfig;
+const db: Partial<Db> = {};
+
+let sequelize: Sequelize;
+
+if (config.use_env_variable && process.env[config.use_env_variable]) {
+  sequelize = new Sequelize(process.env[config.use_env_variable] as string, config);
+} else if (config.database && config.username) {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+} else {
+    throw new Error(`Sequelize configuration for environment '${env}' is incomplete.`);
+}
+
+fs
+  .readdirSync(__dirname)
+  .filter((file: string) => {
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.ts' && 
+      file.indexOf('.test.ts') === -1
+    );
+  })
+  .forEach((file: string) => {
+    const modelDefinition = require(path.join(__dirname, file));
+    
+    const model = (modelDefinition.default || modelDefinition)(sequelize, DataTypes);
+    
+    if (model && model.name) {
+        (db as Db)[model.name] = model;
+    }
+  });
+
+Object.keys(db).forEach((modelName: string) => {
+  const model = (db as Db)[modelName] as ModelWithAssociate | undefined;
+
+  if (model && 'associate' in model && typeof model.associate === 'function') {
+    model.associate(db as Db);
+  }
+});
+
+(db as Db).sequelize = sequelize;
+(db as Db).Sequelize = Sequelize;
+
+export default db as Db;

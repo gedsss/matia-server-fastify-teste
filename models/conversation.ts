@@ -1,7 +1,30 @@
+import { Model, Optional } from 'sequelize';
 import sequelize from '../db.js';
 import { DataTypes } from 'sequelize';
 
-const conversation = sequelize.define('conversation', {
+export interface ConversationAttributes {
+    id: string,
+    user_id: string,
+    title: string,
+    is_favorite: Boolean,
+    last_message_at: Date | null,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface ConversationCreationAttributes extends Optional<ConversationAttributes, 'id' | 'created_at' | 'updated_at' | 'last_message_at'> {}
+
+class Conversation extends Model<ConversationAttributes, ConversationCreationAttributes> implements ConversationAttributes {
+    public id!: string;
+    public user_id!: string;
+    public title!: string;
+    public is_favorite!: Boolean;
+    public last_message_at!: Date | null;
+    public created_at!: Date;
+    public updated_at!: Date;
+}
+
+Conversation.init({
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -41,10 +64,11 @@ const conversation = sequelize.define('conversation', {
     }
 },
 {
+    sequelize,
     tableName: 'conversation',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 });
 
-export default conversation;
+export default Conversation;

@@ -1,7 +1,23 @@
 import sequelize from '../db.js';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 
-const conversationDocuments = sequelize.define('conversation_documents', {
+export interface ConversationDocumentsAttributes {
+    id: string,
+    conversation_id: string,
+    document_id: string,
+    linked_at: Date
+}
+
+export interface ConversationDocumentsCreationAttributes extends Optional<ConversationDocumentsAttributes, 'id' | 'linked_at'> {}
+
+class ConversationDocuments extends Model<ConversationDocumentsAttributes, ConversationDocumentsCreationAttributes> implements ConversationDocumentsAttributes {
+    public id!: string;
+    public conversation_id!: string;
+    public document_id!: string;
+    public linked_at!: Date;
+}
+
+ConversationDocuments.init ({
     id: {
         type: DataTypes.UUID,
         primaryKey: true,
@@ -33,10 +49,11 @@ const conversationDocuments = sequelize.define('conversation_documents', {
     }
 },
 {
+    sequelize,
     tableName: 'conversation_document',
     timestamps: true,
     createdAt: 'linked_at',
     updatedAt: false,
 });
 
-export default conversationDocuments;
+export default ConversationDocuments;
