@@ -3,7 +3,7 @@ import { ValidationErrorItem } from 'sequelize'
 import userRole, { UserRoleAttributes } from '../models/user_roles.js'
 import { success, fail } from '../utils/response.js'
 
-interface CreateBody extends Omit<UserRoleAttributes, 'id' | 'created_at' | 'updated_at'> {}
+interface CreateBody extends Omit<UserRoleAttributes, 'id' | 'created_at'> {}
 
 interface UpdateBody extends Partial<CreateBody> {}
 

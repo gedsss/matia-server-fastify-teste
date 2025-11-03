@@ -10,7 +10,7 @@ export interface UserRoleAttributes {
     created_at: Date
 } 
 
-export interface UserRoleCreationAttributes extends Optional<UserRoleAttributes, 'id' | 'created_at' | 'updated_at'> {}
+export interface UserRoleCreationAttributes extends Optional<UserRoleAttributes, 'id' | 'created_at'> {}
 
 class UserRole extends Model<UserRoleAttributes, UserRoleCreationAttributes> implements UserRoleAttributes {
     public id!: string;

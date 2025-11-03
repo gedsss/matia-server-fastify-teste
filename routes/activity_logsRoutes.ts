@@ -1,0 +1,41 @@
+import { FastifyInstance, RouteOptions } from 'fastify'
+import * as activityLogsController from '../controllers/activity_logsController.js'
+import { createActivityLogsSchema, activityLogsParamsSchema} from '../schemas/activity_logsSchema.js'
+
+const activityLogsRoutes = async (fastify:FastifyInstance, options: RouteOptions) => {
+    
+    fastify.post('/activity-logs', { 
+        schema: { 
+            tags: ['ActivityLogs'], 
+            summary: 'Cria um novo registro de log de atividade', 
+            body: createActivityLogsSchema.body, 
+        } 
+    }, activityLogsController.createActivityLogs)
+
+    fastify.get('/activity-logs/:id', { 
+        schema: { 
+            tags: ['ActivityLogs'], 
+            summary: 'Busca um registro de log de atividade pelo ID',
+            params: activityLogsParamsSchema.params,
+        } 
+    }, activityLogsController.getActivityLogsById)
+
+    fastify.put('/activity-logs/:id', { 
+        schema: { 
+            tags: ['ActivityLogs'], 
+            summary: 'Atualiza um registro de log de atividade existente', 
+            params: activityLogsParamsSchema.params, 
+            body: createActivityLogsSchema.body,
+        } 
+    }, activityLogsController.updateActivityLogs)
+    
+    fastify.delete('/activity-logs/:id', { 
+        schema: { 
+            tags: ['ActivityLogs'], 
+            summary: 'Deleta um registro de log de atividade pelo ID', 
+            params: activityLogsParamsSchema.params,
+        } 
+    }, activityLogsController.deleteActivityLogs)
+}
+
+export default activityLogsRoutes

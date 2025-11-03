@@ -3,7 +3,8 @@ import { ValidationErrorItem } from 'sequelize'
 import UserActivityLog, { UserActivityLogAttributes } from '../models/user_activity_log.js'
 import { success, fail } from '../utils/response.js'
 
-interface CreateBody extends Omit<UserActivityLogAttributes, 'id' | 'created_at' | 'updated_at' > {}
+// Model `user_activity_logs` disables updatedAt, so remove it here.
+interface CreateBody extends Omit<UserActivityLogAttributes, 'id' | 'created_at'> {}
 
 interface UpdateBody extends Partial<CreateBody> {}
 
