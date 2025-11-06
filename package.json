@@ -4,8 +4,11 @@
   "main": "db.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "migrate": "tsx scripts/runMigrations.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "node --loader ts-node/esm server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +20,19 @@
     "bcrypt": "^6.0.0",
     "cpf-cnpj-validator": "^1.0.3",
     "fastify-type-provider-zod": "^6.0.0",
-    "swagger-ui-express": "^5.0.1",
+    "sequelize": "^6.37.7",
+    "swagger-ui-express": "^5.0.1a",
+    "umzug": "^3.8.2",
     "yamljs": "^0.3.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "sequelize-cli": "^6.6.3"
+    "@types/node": "^20.19.24",
+    "sequelize-cli": "^6.6.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   }
 }

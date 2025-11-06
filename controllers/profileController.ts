@@ -13,7 +13,7 @@ interface CustomErrorDetail {
 
 // Create body: omit DB-only fields and map `password` -> `profile_password`
 interface CreateBody extends Omit<ProfileAttributes, 'id' | 'creation_time' | 'updated_at' | 'profile_password'> {
-  password?: string;
+  profile_password?: string;
 }
 
 interface UpdateBody extends Partial<CreateBody> {}
@@ -38,7 +38,7 @@ export const createProfile = async (
     if (!payload.nome) return fail(reply, 400, 'Nome obrigatório')
     if (!payload.telefone) return fail(reply, 400, 'Telefone obrigatório')
     if (!payload.data_nascimento) return fail(reply, 400, 'Data de nascimento obrigatória')
-    if (!payload.password) return fail(reply, 400, 'Senha obrigatória')
+    if (!payload.profile_password) return fail(reply, 400, 'Senha obrigatória')
 
     const cleanedCpf = String(payload.cpf).replace(/\D/g, '')
     if (!cpf.isValid(cleanedCpf)) {
@@ -55,7 +55,7 @@ export const createProfile = async (
     const existingPhone = await profile.findOne({ where: { telefone: payload.telefone }, attributes: ['id'] })
     if (existingPhone) return fail(reply, 409, 'Erro de integridade de dados', [{ message: 'Este telefone já está cadastrado no sistema.', path: ['telefone'] } as CustomErrorDetail])
 
-    const hashedPassword = await bcrypt.hash(payload.password as string, 10)
+    const hashedPassword = await bcrypt.hash(payload.profile_password as string, 10)
 
     const createPayload: any = {
       cpf: cleanedCpf,
