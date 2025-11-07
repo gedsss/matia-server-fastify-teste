@@ -1,4 +1,4 @@
-import { FastifySchema } from "fastify"
+import type { FastifySchema } from 'fastify'
 
 export const createDocumentsTagsSchema: FastifySchema = {
   body: {
@@ -6,10 +6,10 @@ export const createDocumentsTagsSchema: FastifySchema = {
     required: ['name'],
     properties: {
       name: { type: 'string' },
-      color: { type: 'string' }
+      color: { type: 'string' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }
 
 export const documentsTagsParamsSchema: FastifySchema = {
@@ -17,8 +17,8 @@ export const documentsTagsParamsSchema: FastifySchema = {
     type: 'object',
     required: ['id'],
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'UUID do Registro'}
+      id: { type: 'string', format: 'uuid', description: 'UUID do Registro' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }

@@ -1,6 +1,6 @@
-import { Model, Optional } from 'sequelize';
+import type { Optional } from 'sequelize';
 import sequelize from '../db.js';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 
 export interface ActivityLogsAttributes {
     id: String,

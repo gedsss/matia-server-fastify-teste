@@ -1,15 +1,15 @@
-import { FastifySchema } from 'fastify' 
- 
+import type { FastifySchema } from 'fastify'
+
 export const createUserRoleSchema: FastifySchema = {
   body: {
-      type: 'object',
-      required: ['user_id', 'role'],
-      properties: {
+    type: 'object',
+    required: ['user_id', 'role'],
+    properties: {
       user_id: { type: 'string', format: 'uuid' },
       role: { type: 'string', enum: ['admin', 'publico'] },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }
 
 export const userRoleParamsSchema: FastifySchema = {
@@ -17,8 +17,8 @@ export const userRoleParamsSchema: FastifySchema = {
     type: 'object',
     required: ['id'],
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'UUID do registro'}
+      id: { type: 'string', format: 'uuid', description: 'UUID do registro' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }

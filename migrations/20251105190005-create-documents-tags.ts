@@ -1,4 +1,5 @@
-import { QueryInterface, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize'
+import type { QueryInterface } from 'sequelize'
 
 export async function up(queryInterface: QueryInterface): Promise<void> {
   await queryInterface.createTable('documents_tag', {
@@ -6,25 +7,25 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       type: DataTypes.TEXT,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     color: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
-    }
-  });
+      defaultValue: DataTypes.NOW,
+    },
+  })
 }
 
 export async function down(queryInterface: QueryInterface): Promise<void> {
-  await queryInterface.dropTable('documents_tag');
+  await queryInterface.dropTable('documents_tag')
 }

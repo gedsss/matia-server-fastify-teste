@@ -1,4 +1,5 @@
-import { QueryInterface, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize'
+import type { QueryInterface } from 'sequelize'
 
 export async function up(queryInterface: QueryInterface): Promise<void> {
   await queryInterface.createTable('activity_logs', {
@@ -6,49 +7,53 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
     },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'profile',
-        key: 'id'
+        key: 'id',
       },
       onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
     },
     action: {
       type: DataTypes.ENUM('login', 'upload_document', 'delete_user'),
-      allowNull: false
+      allowNull: false,
     },
     entity_type: {
       type: DataTypes.ENUM('document', 'user', 'conversation'),
-      allowNull: true
+      allowNull: true,
     },
     entity_id: {
       type: DataTypes.UUID,
-      allowNull: true
+      allowNull: true,
     },
     metadata: {
       type: DataTypes.JSONB,
       allowNull: true,
-      defaultValue: {}
+      defaultValue: {},
     },
     ip_address: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
-    }
-  });
+      defaultValue: DataTypes.NOW,
+    },
+  })
 }
 
 export async function down(queryInterface: QueryInterface): Promise<void> {
-  await queryInterface.dropTable('activity_logs');
-  await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_activity_logs_action";');
-  await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_activity_logs_entity_type";');
+  await queryInterface.dropTable('activity_logs')
+  await queryInterface.sequelize.query(
+    'DROP TYPE IF EXISTS "enum_activity_logs_action";'
+  )
+  await queryInterface.sequelize.query(
+    'DROP TYPE IF EXISTS "enum_activity_logs_entity_type";'
+  )
 }

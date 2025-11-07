@@ -1,4 +1,5 @@
-import { QueryInterface, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize'
+import type { QueryInterface } from 'sequelize'
 
 export async function up(queryInterface: QueryInterface): Promise<void> {
   await queryInterface.createTable('conversation', {
@@ -6,44 +7,44 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
     },
     user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: 'profile',
-        key: 'id'
+        key: 'id',
       },
       onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
     },
     title: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
     },
     is_favorite: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false
+      defaultValue: false,
     },
     last_message_at: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
+      defaultValue: DataTypes.NOW,
     },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
-    }
-  });
+      defaultValue: DataTypes.NOW,
+    },
+  })
 }
 
 export async function down(queryInterface: QueryInterface): Promise<void> {
-  await queryInterface.dropTable('conversation');
+  await queryInterface.dropTable('conversation')
 }

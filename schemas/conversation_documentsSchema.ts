@@ -1,4 +1,4 @@
-import { FastifySchema } from "fastify"
+import type { FastifySchema } from 'fastify'
 
 export const createConversationDocumentsSchema: FastifySchema = {
   body: {
@@ -8,8 +8,8 @@ export const createConversationDocumentsSchema: FastifySchema = {
       document_id: { type: 'string', format: 'uuid' },
       conversation_id: { type: 'string', format: 'uuid' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }
 
 export const conversationDocumentsParamsSchema: FastifySchema = {
@@ -17,8 +17,8 @@ export const conversationDocumentsParamsSchema: FastifySchema = {
     type: 'object',
     required: ['id'],
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'UUID do Registro'}
+      id: { type: 'string', format: 'uuid', description: 'UUID do Registro' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }

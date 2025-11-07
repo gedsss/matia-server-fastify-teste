@@ -1,9 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { ValidationErrorItem } from 'sequelize'
-import documentsTag, { DocumentsTagsAttributes } from '../models/documents_tags.js'
+import type { ValidationErrorItem } from 'sequelize'
+import type { DocumentsTagsAttributes } from '../models/documents_tags.js'
+import documentsTag from '../models/documents_tags.js'
 import { success, fail } from '../utils/response.js'
 
-interface CreateBody extends Omit<DocumentsTagsAttributes, 'id' | 'created_at' | 'updated_at'> {}
+interface CreateBody
+  extends Omit<DocumentsTagsAttributes, 'id' | 'created_at' | 'updated_at'> {}
 
 interface UpdateBody extends Partial<CreateBody> {}
 
@@ -11,23 +13,37 @@ interface Params {
   id: string
 }
 
-export const createDocumentsTags = async (request: FastifyRequest<{ Body: CreateBody }>, reply: FastifyReply) => {
+export const createDocumentsTags = async (
+  request: FastifyRequest<{ Body: CreateBody }>,
+  reply: FastifyReply
+) => {
   try {
     const payload = request.body
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
     const created = await documentsTag.create(payload as any)
-    return success(reply, 201, { data: created.toJSON(), message: 'tag criado com sucesso' })
+    return success(reply, 201, {
+      data: created.toJSON(),
+      message: 'tag criado com sucesso',
+    })
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(reply, 400, 'Dados inválidos', (err as any).errors as ValidationErrorItem[])
+      return fail(
+        reply,
+        400,
+        'Dados inválidos',
+        (err as any).errors as ValidationErrorItem[]
+      )
     }
     return fail(reply, 500, 'Erro ao criar tag', err.message)
   }
 }
 
-export const getDocumentsTagsById = async (request: FastifyRequest<{ Params: Params }>, reply: FastifyReply) => {
+export const getDocumentsTagsById = async (
+  request: FastifyRequest<{ Params: Params }>,
+  reply: FastifyReply
+) => {
   try {
     const { id } = request.params
     const item = await documentsTag.findByPk(id)
@@ -38,22 +54,38 @@ export const getDocumentsTagsById = async (request: FastifyRequest<{ Params: Par
   }
 }
 
-export const updateDocumentsTags = async (request: FastifyRequest<{ Body: UpdateBody, Params: Params }>, reply: FastifyReply) => {
+export const updateDocumentsTags = async (
+  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  reply: FastifyReply
+) => {
   try {
     const { id } = request.params
-    const [updatedRows] = await documentsTag.update(request.body, { where: { id } })
+    const [updatedRows] = await documentsTag.update(request.body, {
+      where: { id },
+    })
     if (updatedRows === 0) return fail(reply, 404, 'tag não encontrado')
     const updated = await documentsTag.findByPk(id)
-    return success(reply, 200, { data: updated?.toJSON(), message: 'tag atualizado' })
+    return success(reply, 200, {
+      data: updated?.toJSON(),
+      message: 'tag atualizado',
+    })
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(reply, 400, 'Dados inválidos', (err as any).errors as ValidationErrorItem[])
+      return fail(
+        reply,
+        400,
+        'Dados inválidos',
+        (err as any).errors as ValidationErrorItem[]
+      )
     }
     return fail(reply, 500, 'Erro ao atualizar tag', err.message)
   }
 }
 
-export const deleteDocumentsTags = async (request: FastifyRequest<{ Params: Params }>, reply: FastifyReply) => {
+export const deleteDocumentsTags = async (
+  request: FastifyRequest<{ Params: Params }>,
+  reply: FastifyReply
+) => {
   try {
     const { id } = request.params
     const deleted = await documentsTag.destroy({ where: { id } })
@@ -68,5 +100,5 @@ export default {
   createDocumentsTags,
   getDocumentsTagsById,
   updateDocumentsTags,
-  deleteDocumentsTags
+  deleteDocumentsTags,
 }

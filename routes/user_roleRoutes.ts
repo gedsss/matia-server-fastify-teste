@@ -1,42 +1,60 @@
-import { FastifyInstance, RouteOptions } from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import * as userRoleController from '../controllers/user_roleController.js'
 
-import { createUserRoleSchema, userRoleParamsSchema } from '../schemas/user_rolesSchema.js'
+import {
+  createUserRoleSchema,
+  userRoleParamsSchema,
+} from '../schemas/user_rolesSchema.js'
 
-const userRoleRoutes = async (fastify: FastifyInstance, options: RouteOptions) => {
-    
-    fastify.post('/user-role', { 
-        schema: { 
-            tags: ['UserRole'], 
-            summary: 'Associa uma nova função (role) a um usuário', 
-            body: createUserRoleSchema.body, 
-        } 
-    }, userRoleController.createUserRole)
+const userRoleRoutes = async (fastify: FastifyInstance) => {
+  fastify.post(
+    '/user-role',
+    {
+      schema: {
+        tags: ['UserRole'],
+        summary: 'Associa uma nova função (role) a um usuário',
+        body: createUserRoleSchema.body,
+      },
+    },
+    userRoleController.createUserRole
+  )
 
-    fastify.get('/user-role/:id', { 
-        schema: { 
-            tags: ['UserRole'], 
-            summary: 'Busca a associação usuário/função pelo ID',
-            params: userRoleParamsSchema.params,
-        } 
-    }, userRoleController.getUserRoleById)
+  fastify.get(
+    '/user-role/:id',
+    {
+      schema: {
+        tags: ['UserRole'],
+        summary: 'Busca a associação usuário/função pelo ID',
+        params: userRoleParamsSchema.params,
+      },
+    },
+    userRoleController.getUserRoleById
+  )
 
-    fastify.put('/user-role/:id', { 
-        schema: { 
-            tags: ['UserRole'], 
-            summary: 'Atualiza a associação de função de um usuário existente', 
-            params: userRoleParamsSchema.params, 
-            body: createUserRoleSchema.body,
-        } 
-    }, userRoleController.updateUserRole)
-    
-    fastify.delete('/user-role/:id', { 
-        schema: { 
-            tags: ['UserRole'], 
-            summary: 'Remove a função de um usuário pelo ID da associação', 
-            params: userRoleParamsSchema.params,
-        } 
-    }, userRoleController.deleteUserRole)
+  fastify.put(
+    '/user-role/:id',
+    {
+      schema: {
+        tags: ['UserRole'],
+        summary: 'Atualiza a associação de função de um usuário existente',
+        params: userRoleParamsSchema.params,
+        body: createUserRoleSchema.body,
+      },
+    },
+    userRoleController.updateUserRole
+  )
+
+  fastify.delete(
+    '/user-role/:id',
+    {
+      schema: {
+        tags: ['UserRole'],
+        summary: 'Remove a função de um usuário pelo ID da associação',
+        params: userRoleParamsSchema.params,
+      },
+    },
+    userRoleController.deleteUserRole
+  )
 }
 
 export default userRoleRoutes

@@ -1,7 +1,6 @@
-import { FastifySchema } from "fastify";
+import type { FastifySchema } from 'fastify'
 
 export const createUserActivityLogSchema: FastifySchema = {
-
   body: {
     type: 'object',
     required: ['user_id', 'action_type'],
@@ -28,17 +27,21 @@ export const createUserActivityLogSchema: FastifySchema = {
       ip_address: { type: 'string', maxLength: 45, nullable: true },
       user_agent: { type: 'string', nullable: true },
     } as const,
-    additionalProperties: false
-  }
-};
+    additionalProperties: false,
+  },
+}
 
 export const userActivityLogParamsSchema: FastifySchema = {
-  params:{
+  params: {
     type: 'object',
     required: ['id'],
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'UUID do registro de log'}
-  } as const,
-  additionalProperties: false
+      id: {
+        type: 'string',
+        format: 'uuid',
+        description: 'UUID do registro de log',
+      },
+    } as const,
+    additionalProperties: false,
+  },
 }
-};

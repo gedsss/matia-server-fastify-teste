@@ -1,9 +1,14 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { ValidationErrorItem } from 'sequelize'
-import documentsAnalysis, { DocumentsAnalysisAttributes } from '../models/documents_analysis.js'
+import type { ValidationErrorItem } from 'sequelize'
+import type { DocumentsAnalysisAttributes } from '../models/documents_analysis.js'
+import documentsAnalysis from '../models/documents_analysis.js'
 import { success, fail } from '../utils/response.js'
 
-interface CreateBody extends Omit<DocumentsAnalysisAttributes, 'id' | 'created_at' | 'updated_at'> {}
+interface CreateBody
+  extends Omit<
+    DocumentsAnalysisAttributes,
+    'id' | 'created_at' | 'updated_at'
+  > {}
 
 interface UpdateBody extends Partial<CreateBody> {}
 
@@ -11,23 +16,37 @@ interface Params {
   id: string
 }
 
-export const createDocumentsAnalisys = async (request: FastifyRequest<{ Body: CreateBody }>, reply: FastifyReply) => {
+export const createDocumentsAnalisys = async (
+  request: FastifyRequest<{ Body: CreateBody }>,
+  reply: FastifyReply
+) => {
   try {
     const payload = request.body
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
     const created = await documentsAnalysis.create(payload as any)
-    return success(reply, 201, { data: created.toJSON(), message: 'analise criada com sucesso' })
+    return success(reply, 201, {
+      data: created.toJSON(),
+      message: 'analise criada com sucesso',
+    })
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(reply, 400, 'Dados inválidos', (err as any).errors as ValidationErrorItem[])
+      return fail(
+        reply,
+        400,
+        'Dados inválidos',
+        (err as any).errors as ValidationErrorItem[]
+      )
     }
     return fail(reply, 500, 'Erro ao criar analise', err.message)
   }
 }
 
-export const getDocumentsAnalisysById = async (request: FastifyRequest<{ Params: Params }>, reply: FastifyReply) => {
+export const getDocumentsAnalisysById = async (
+  request: FastifyRequest<{ Params: Params }>,
+  reply: FastifyReply
+) => {
   try {
     const { id } = request.params
     const item = await documentsAnalysis.findByPk(id)
@@ -38,22 +57,38 @@ export const getDocumentsAnalisysById = async (request: FastifyRequest<{ Params:
   }
 }
 
-export const updateDocumentsAnalisys = async (request: FastifyRequest<{ Body: UpdateBody, Params: Params }>, reply: FastifyReply) => {
+export const updateDocumentsAnalisys = async (
+  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  reply: FastifyReply
+) => {
   try {
     const { id } = request.params
-    const [updatedRows] = await documentsAnalysis.update(request.body, { where: { id } })
+    const [updatedRows] = await documentsAnalysis.update(request.body, {
+      where: { id },
+    })
     if (updatedRows === 0) return fail(reply, 404, 'analise não encontrada')
     const updated = await documentsAnalysis.findByPk(id)
-    return success(reply, 200, { data: updated?.toJSON, message: 'analise atualizada' })
+    return success(reply, 200, {
+      data: updated?.toJSON,
+      message: 'analise atualizada',
+    })
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(reply, 400, 'Dados inválidos', (err as any).errors as ValidationErrorItem[])
+      return fail(
+        reply,
+        400,
+        'Dados inválidos',
+        (err as any).errors as ValidationErrorItem[]
+      )
     }
     return fail(reply, 500, 'Erro ao atualizar analise', err.message)
   }
 }
 
-export const deleteDocumentsAnalisys = async (request: FastifyRequest<{ Params: Params }>, reply: FastifyReply) => {
+export const deleteDocumentsAnalisys = async (
+  request: FastifyRequest<{ Params: Params }>,
+  reply: FastifyReply
+) => {
   try {
     const { id } = request.params
     const deleted = await documentsAnalysis.destroy({ where: { id } })
@@ -68,5 +103,5 @@ export default {
   createDocumentsAnalisys,
   getDocumentsAnalisysById,
   updateDocumentsAnalisys,
-  deleteDocumentsAnalisys
+  deleteDocumentsAnalisys,
 }

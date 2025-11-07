@@ -1,4 +1,5 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
+import type { Optional } from 'sequelize';
 import sequelize from '../db.js';
 
 const AppRoleEnum = DataTypes.ENUM('admin', 'publico');

@@ -1,0 +1,24 @@
+# Dependências e builds
+node_modules
+dist
+build
+coverage
+
+# Configurações e cache
+.env
+*.log
+*.lock
+.cache
+.vscode
+
+# Testes e relatórios
+*.test.ts
+*.spec.ts
+jest.config.js
+test-results/
+
+# Arquivos temporários
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db

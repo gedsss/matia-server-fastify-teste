@@ -1,33 +1,66 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../db.js";
+import { DataTypes, Model } from 'sequelize'
+import type { Optional } from 'sequelize'
+import sequelize from '../db.js'
 
 export interface UserActivityLogAttributes {
-  id: string,
-  user_id: string,
-  action_type: 'login' | 'logout' | 'conversation_created' | 'message_sent' | 'document_uploaded' | 'document_viewed' | 'document_deleted' | 'profile_updated' | 'password_changed',
-  resource_type: string | null,
-  resource_id: string | null,
-  details: object | null,
-  ip_address: string | null,
-  user_agent: string | null,
+  id: string
+  user_id: string
+  action_type:
+    | 'login'
+    | 'logout'
+    | 'conversation_created'
+    | 'message_sent'
+    | 'document_uploaded'
+    | 'document_viewed'
+    | 'document_deleted'
+    | 'profile_updated'
+    | 'password_changed'
+  resource_type: string | null
+  resource_id: string | null
+  details: object | null
+  ip_address: string | null
+  user_agent: string | null
   created_at: Date
 }
 
-export interface UserActivityLogCreationAttributes extends Optional<UserActivityLogAttributes, 'id' | 'created_at' | 'resource_type' | 'resource_id' | 'details' | 'ip_address' | 'user_agent'> {}
+export interface UserActivityLogCreationAttributes
+  extends Optional<
+    UserActivityLogAttributes,
+    | 'id'
+    | 'created_at'
+    | 'resource_type'
+    | 'resource_id'
+    | 'details'
+    | 'ip_address'
+    | 'user_agent'
+  > {}
 
-class UserActivityLog extends Model<UserActivityLogAttributes, UserActivityLogCreationAttributes> implements UserActivityLogAttributes {
-  public id!: string;
-  public user_id!: string;
-  public action_type!: "login" | "logout" | "conversation_created" | "message_sent" | "document_uploaded" | "document_viewed" | "document_deleted" | "profile_updated" | "password_changed";
-  public resource_type!: string | null;
-  public resource_id!: string | null;
-  public details!: object | null;
-  public ip_address!: string | null;
-  public user_agent!: string | null;
-  public created_at!: Date;
+class UserActivityLog
+  extends Model<UserActivityLogAttributes, UserActivityLogCreationAttributes>
+  implements UserActivityLogAttributes
+{
+  public id!: string
+  public user_id!: string
+  public action_type!:
+    | 'login'
+    | 'logout'
+    | 'conversation_created'
+    | 'message_sent'
+    | 'document_uploaded'
+    | 'document_viewed'
+    | 'document_deleted'
+    | 'profile_updated'
+    | 'password_changed'
+  public resource_type!: string | null
+  public resource_id!: string | null
+  public details!: object | null
+  public ip_address!: string | null
+  public user_agent!: string | null
+  public created_at!: Date
 }
 
-UserActivityLog.init ({
+UserActivityLog.init(
+  {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -48,7 +81,7 @@ UserActivityLog.init ({
         'document_viewed',
         'document_deleted',
         'profile_updated',
-        'password_changed',
+        'password_changed'
       ),
       allowNull: false,
     },
@@ -87,13 +120,13 @@ UserActivityLog.init ({
     sequelize,
     tableName: 'user_activity_logs',
     timestamps: true,
-    createdAt: 'created_at', 
-    updatedAt: false,        
-  
-    defaultScope: {
-      attributes: { exclude: [] }
-    },
+    createdAt: 'created_at',
+    updatedAt: false,
 
-  });
+    defaultScope: {
+      attributes: { exclude: [] },
+    },
+  }
+)
 
 export default UserActivityLog

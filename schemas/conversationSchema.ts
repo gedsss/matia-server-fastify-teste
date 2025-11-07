@@ -1,4 +1,4 @@
-import { FastifySchema } from "fastify"
+import type { FastifySchema } from 'fastify'
 
 export const createConversationsSchema: FastifySchema = {
   body: {
@@ -9,8 +9,8 @@ export const createConversationsSchema: FastifySchema = {
       title: { type: 'string' },
       is_favorite: { type: 'boolean' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }
 
 export const conversationsParamsSchema: FastifySchema = {
@@ -18,8 +18,8 @@ export const conversationsParamsSchema: FastifySchema = {
     type: 'object',
     required: ['id'],
     properties: {
-      id: { type: 'string', format: 'uuid', description: 'UUID do Registro'}
+      id: { type: 'string', format: 'uuid', description: 'UUID do Registro' },
     } as const,
-    additionalProperties: false
-  }
+    additionalProperties: false,
+  },
 }
