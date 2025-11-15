@@ -24,6 +24,23 @@ export const createProfileSchema: FastifySchema = {
   },
 }
 
+export const updateProfileSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      email: { type: 'string', format: 'email' },
+      profile_password: { type: 'string', minLength: 6 },
+      cpf: { type: 'string' },
+      telefone: { type: 'string' },
+      data_nascimento: { type: 'string', format: 'date' },
+      nome: { type: 'string' },
+      avatar_url: { type: 'string', format: 'url' },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const profileParamsSchema: FastifySchema = {
   params: {
     type: 'object',

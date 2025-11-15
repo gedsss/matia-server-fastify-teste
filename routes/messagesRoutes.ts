@@ -4,6 +4,7 @@ import * as messagesController from '../controllers/messagesController.js'
 import {
   createMessagesSchema,
   messagesParamsSchema,
+  updateMessagesSchema,
 } from '../schemas/messagesSchema.js'
 
 const messagesRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const messagesRoutes = async (fastify: FastifyInstance) => {
         tags: ['Messages'],
         summary: 'Atualiza o conteúdo de uma mensagem existente',
         params: messagesParamsSchema.params,
-        body: createMessagesSchema.body,
+        body: updateMessagesSchema.body,
       },
     },
     messagesController.updateMessages

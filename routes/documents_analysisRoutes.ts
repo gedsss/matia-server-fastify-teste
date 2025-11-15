@@ -4,6 +4,7 @@ import * as documentsAnalysisController from '../controllers/documents_analysisC
 import {
   createDocumentsAnalysisSchema,
   documentsAnalysisParamsSchema,
+  updateDocumentsAnalysisSchema,
 } from '../schemas/documents_analysisSchema.js'
 
 const documentsAnalysesRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const documentsAnalysesRoutes = async (fastify: FastifyInstance) => {
         tags: ['DocumentsAnalyses'],
         summary: 'Atualiza um registro de análise de documento existente',
         params: documentsAnalysisParamsSchema.params,
-        body: createDocumentsAnalysisSchema.body,
+        body: updateDocumentsAnalysisSchema.body,
       },
     },
     documentsAnalysisController.updateDocumentsAnalisys

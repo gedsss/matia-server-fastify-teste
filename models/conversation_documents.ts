@@ -1,6 +1,6 @@
-import sequelize from '../db.js'
-import { DataTypes, Model } from 'sequelize'
 import type { Optional } from 'sequelize'
+import { DataTypes, Model } from 'sequelize'
+import sequelize from '../db.js'
 
 export interface ConversationDocumentsAttributes {
   id: string

@@ -4,6 +4,7 @@ import * as conversationsController from '../controllers/conversationController.
 import {
   conversationsParamsSchema,
   createConversationsSchema,
+  updateConversationsSchema,
 } from '../schemas/conversationSchema.js'
 
 const conversationsRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const conversationsRoutes = async (fastify: FastifyInstance) => {
         tags: ['Conversations'],
         summary: 'Atualiza uma conversa existente (metadados)',
         params: conversationsParamsSchema.params,
-        body: createConversationsSchema.body,
+        body: updateConversationsSchema.body,
       },
     },
     conversationsController.updateConversation

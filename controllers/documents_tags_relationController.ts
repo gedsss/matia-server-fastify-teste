@@ -1,8 +1,8 @@
-import { FastifyRequest, FastifyReply } from 'fastify'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { ValidationErrorItem } from 'sequelize'
 import type { DocumentsTagsRelationsAttributes } from '../models/documents_tags_relation.js'
 import documentsTagRelation from '../models/documents_tags_relation.js'
-import { success, fail } from '../utils/response.js'
+import { fail, success } from '../utils/response.js'
 
 interface CreateBody
   extends Omit<

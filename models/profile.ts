@@ -1,6 +1,6 @@
-import sequelize from '../db.js'
-import { DataTypes, Model } from 'sequelize'
 import type { Optional } from 'sequelize'
+import { DataTypes, Model } from 'sequelize'
+import sequelize from '../db.js'
 
 export interface ProfileAttributes {
   id: string
@@ -93,6 +93,11 @@ Profile.init(
     createdAt: 'creation_time',
     updatedAt: 'updated_at',
     timestamps: true,
+    defaultScope: {
+      attributes: {
+        exclude: ['profile_password'],
+      },
+    },
   }
 )
 

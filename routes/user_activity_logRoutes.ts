@@ -3,11 +3,12 @@ import * as userActivityController from '../controllers/user_activity_logControl
 import {
   createUserActivityLogSchema,
   userActivityLogParamsSchema,
+  updateUserActivityLogSchema,
 } from '../schemas/user_activity_logSchema.js'
 
 const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   fastify.post(
-    '/user_activity_log',
+    '/user-activity-log',
     {
       schema: {
         tags: ['ActivityLogs'],
@@ -19,7 +20,7 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/user_activity_log/:id',
+    '/user-activity-log/:id',
     {
       schema: {
         tags: ['ActivityLogs'],
@@ -31,21 +32,21 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.put(
-    '/user_activity_log/:id',
+    '/user-activity-log/:id',
     {
       schema: {
         tags: ['ActivityLogs'],
         summary:
           'Atualiza um registro de log de atividade de um usuário existente',
         params: userActivityLogParamsSchema.params,
-        body: createUserActivityLogSchema.body,
+        body: updateUserActivityLogSchema.body,
       },
     },
     userActivityController.updateUserActivityLog
   )
 
   fastify.delete(
-    '/user_activity_log/:id',
+    '/user-activity-log/:id',
     {
       schema: {
         tags: ['ActivityLogs'],

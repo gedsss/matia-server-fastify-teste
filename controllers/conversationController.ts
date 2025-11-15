@@ -1,8 +1,8 @@
-import { FastifyRequest, FastifyReply } from 'fastify'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { ValidationErrorItem } from 'sequelize'
 import type { ConversationAttributes } from '../models/conversation.js'
 import conversation from '../models/conversation.js'
-import { success, fail } from '../utils/response.js'
+import { fail, success } from '../utils/response.js'
 
 interface CreateBody
   extends Omit<ConversationAttributes, 'id' | 'created_at' | 'updated_at'> {}

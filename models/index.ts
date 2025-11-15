@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import type { Model, ModelStatic, Dialect } from 'sequelize'
-import { Sequelize, DataTypes } from 'sequelize'
 import process from 'process'
+import type { Dialect, Model, ModelStatic } from 'sequelize'
+import { DataTypes, Sequelize } from 'sequelize'
 
 interface DbConfig {
   username?: string

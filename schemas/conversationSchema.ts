@@ -13,6 +13,19 @@ export const createConversationsSchema: FastifySchema = {
   },
 }
 
+export const updateConversationsSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      user_id: { type: 'string', format: 'uuid' },
+      title: { type: 'string' },
+      is_favorite: { type: 'boolean' },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const conversationsParamsSchema: FastifySchema = {
   params: {
     type: 'object',

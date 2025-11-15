@@ -3,6 +3,7 @@ import * as documentsTagsRelationsController from '../controllers/documents_tags
 import {
   createDocumentsTagsRelationSchema,
   documentsTagsRelationParamsSchema,
+  updateDocumentsTagsRelationSchema,
 } from '../schemas/documents_tags_relationSchema.js'
 
 const documentsTagsRelationsRoutes = async (fastify: FastifyInstance) => {
@@ -37,7 +38,7 @@ const documentsTagsRelationsRoutes = async (fastify: FastifyInstance) => {
         tags: ['DocumentsTagsRelations'],
         summary: 'Atualiza associações documento/tag existentes',
         params: documentsTagsRelationParamsSchema.params,
-        body: createDocumentsTagsRelationSchema.body,
+        body: updateDocumentsTagsRelationSchema.body,
       },
     },
     documentsTagsRelationsController.updateDocumentsTagsRelation

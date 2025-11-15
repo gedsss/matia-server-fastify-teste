@@ -12,6 +12,18 @@ export const createDocumentsTagsSchema: FastifySchema = {
   },
 }
 
+export const updateDocumentsTagsSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      name: { type: 'string' },
+      color: { type: 'string' },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const documentsTagsParamsSchema: FastifySchema = {
   params: {
     type: 'object',

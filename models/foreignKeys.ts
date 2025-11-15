@@ -1,13 +1,13 @@
-import profile from './profile.js'
-import userRole from './user_roles.js'
+import activityLogs from './activity_logs.js'
 import conversation from './conversation.js'
-import messages from './messages.js'
+import conversationDocuments from './conversation_documents.js'
 import documents from './documents.js'
 import documentsAnalysis from './documents_analysis.js'
-import conversationDocuments from './conversation_documents.js'
 import documentsTag from './documents_tags.js'
 import documentsTagsRelation from './documents_tags_relation.js'
-import activityLogs from './activity_logs.js'
+import messages from './messages.js'
+import profile from './profile.js'
+import userRole from './user_roles.js'
 
 profile.hasMany(userRole, { foreignKey: 'user_id' })
 userRole.belongsTo(profile, { foreignKey: 'user_id' })

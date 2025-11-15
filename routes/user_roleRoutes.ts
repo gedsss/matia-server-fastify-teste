@@ -4,6 +4,7 @@ import * as userRoleController from '../controllers/user_roleController.js'
 import {
   createUserRoleSchema,
   userRoleParamsSchema,
+  updateUserRoleSchema,
 } from '../schemas/user_rolesSchema.js'
 
 const userRoleRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const userRoleRoutes = async (fastify: FastifyInstance) => {
         tags: ['UserRole'],
         summary: 'Atualiza a associação de função de um usuário existente',
         params: userRoleParamsSchema.params,
-        body: createUserRoleSchema.body,
+        body: updateUserRoleSchema.body,
       },
     },
     userRoleController.updateUserRole

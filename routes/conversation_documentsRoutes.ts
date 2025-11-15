@@ -4,6 +4,7 @@ import * as conversationDocumentsController from '../controllers/conversation_do
 import {
   conversationDocumentsParamsSchema,
   createConversationDocumentsSchema,
+  updateConversationsDocumentsSchema,
 } from '../schemas/conversation_documentsSchema.js'
 
 const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
         tags: ['ConversationDocuments'],
         summary: 'Atualiza uma associação conversa/documento existente',
         params: conversationDocumentsParamsSchema.params,
-        body: createConversationDocumentsSchema.body,
+        body: updateConversationsDocumentsSchema.body,
       },
     },
     conversationDocumentsController.updateConversationDocuments

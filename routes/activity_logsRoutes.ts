@@ -3,6 +3,7 @@ import * as activityLogsController from '../controllers/activity_logsController.
 import {
   createActivityLogsSchema,
   activityLogsParamsSchema,
+  updateActivityLogsSchema,
 } from '../schemas/activity_logsSchema.js'
 
 const activityLogsRoutes = async (fastify: FastifyInstance) => {
@@ -37,7 +38,7 @@ const activityLogsRoutes = async (fastify: FastifyInstance) => {
         tags: ['ActivityLogs'],
         summary: 'Atualiza um registro de log de atividade existente',
         params: activityLogsParamsSchema.params,
-        body: createActivityLogsSchema.body,
+        body: updateActivityLogsSchema.body,
       },
     },
     activityLogsController.updateActivityLogs

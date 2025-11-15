@@ -14,6 +14,20 @@ export const createMessagesSchema: FastifySchema = {
   },
 }
 
+export const updateMessagesSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      conversations_id: { type: 'string', format: 'uuid' },
+      content: { type: 'string' },
+      role: { type: 'string', enum: ['user', 'assistant', 'system'] },
+      metadata: { type: 'object' },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const messagesParamsSchema: FastifySchema = {
   params: {
     type: 'object',

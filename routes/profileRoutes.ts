@@ -4,12 +4,13 @@ import * as profileController from '../controllers/profileController.js'
 import {
   createProfileSchema,
   profileParamsSchema,
+  updateProfileSchema,
 } from '../schemas/profileSchema.js'
 
 const profileRoutes = async (fastify: FastifyInstance) => {
   // ROTA POST / (Criação)
   fastify.post(
-    '/',
+    '/profile',
     {
       schema: {
         tags: ['Profile'],
@@ -22,7 +23,7 @@ const profileRoutes = async (fastify: FastifyInstance) => {
 
   // ROTA GET /:id (Busca)
   fastify.get(
-    '/:id',
+    '/profile/:id',
     {
       schema: {
         tags: ['Profile'],
@@ -35,13 +36,13 @@ const profileRoutes = async (fastify: FastifyInstance) => {
 
   // ROTA PUT /:id (Atualização)
   fastify.put(
-    '/:id',
+    '/profile/:id',
     {
       schema: {
         tags: ['Profile'],
         summary: 'Atualiza informações de um usuário existente',
         params: profileParamsSchema.params,
-        body: createProfileSchema.body,
+        body: updateProfileSchema.body,
       },
     },
     profileController.updateProfile
@@ -49,7 +50,7 @@ const profileRoutes = async (fastify: FastifyInstance) => {
 
   // ROTA DELETE /:id (Deleção)
   fastify.delete(
-    '/:id',
+    '/profile/:id',
     {
       schema: {
         tags: ['Profile'],

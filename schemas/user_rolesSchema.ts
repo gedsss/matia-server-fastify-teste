@@ -12,6 +12,18 @@ export const createUserRoleSchema: FastifySchema = {
   },
 }
 
+export const updateUserRoleSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      user_id: { type: 'string', format: 'uuid' },
+      role: { type: 'string', enum: ['admin', 'publico'] },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const userRoleParamsSchema: FastifySchema = {
   params: {
     type: 'object',

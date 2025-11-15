@@ -12,6 +12,18 @@ export const createDocumentsTagsRelationSchema: FastifySchema = {
   },
 }
 
+export const updateDocumentsTagsRelationSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      document_id: { type: 'string', format: 'uuid' },
+      tag_id: { type: 'string', format: 'uuid' },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const documentsTagsRelationParamsSchema: FastifySchema = {
   params: {
     type: 'object',

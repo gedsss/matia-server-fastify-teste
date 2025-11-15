@@ -4,6 +4,7 @@ import * as documentsController from '../controllers/documentsController.js'
 import {
   createDocumentsSchema,
   documentsParamsSchema,
+  updateDocumentsSchema,
 } from '../schemas/documentsSchema.js'
 
 const documentsRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
         tags: ['Documents'],
         summary: 'Atualiza metadados ou informações de um documento existente',
         params: documentsParamsSchema.params,
-        body: createDocumentsSchema.body,
+        body: updateDocumentsSchema.body,
       },
     },
     documentsController.updateDocuments

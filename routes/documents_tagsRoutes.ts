@@ -4,6 +4,7 @@ import * as documentsTagsController from '../controllers/documents_tagsControlle
 import {
   createDocumentsTagsSchema,
   documentsTagsParamsSchema,
+  updateDocumentsTagsSchema,
 } from '../schemas/documents_tagsSchema.js'
 
 const documentsTagsRoutes = async (fastify: FastifyInstance) => {
@@ -38,7 +39,7 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) => {
         tags: ['DocumentsTags'],
         summary: 'Atualiza uma tag de documento existente',
         params: documentsTagsParamsSchema.params,
-        body: createDocumentsTagsSchema.body,
+        body: updateDocumentsTagsSchema.body,
       },
     },
     documentsTagsController.updateDocumentsTags

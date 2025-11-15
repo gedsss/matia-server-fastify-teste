@@ -12,6 +12,18 @@ export const createConversationDocumentsSchema: FastifySchema = {
   },
 }
 
+export const updateConversationsDocumentsSchema: FastifySchema = {
+  body: {
+    type: 'object',
+    required: [],
+    properties: {
+      document_id: { type: 'string', format: 'uuid' },
+      conversation_id: { type: 'string', format: 'uuid' },
+    } as const,
+    additionalProperties: false,
+  },
+}
+
 export const conversationDocumentsParamsSchema: FastifySchema = {
   params: {
     type: 'object',
