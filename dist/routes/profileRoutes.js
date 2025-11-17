@@ -17,6 +17,7 @@ const profileRoutes = async (fastify) => {
             summary: 'Busca um usuário pelo seu ID',
             params: profileParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, profileController.getProfileById);
     // ROTA PUT /:id (Atualização)
     fastify.put('/profile/:id', {
@@ -26,6 +27,7 @@ const profileRoutes = async (fastify) => {
             params: profileParamsSchema.params,
             body: updateProfileSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, profileController.updateProfile);
     // ROTA DELETE /:id (Deleção)
     fastify.delete('/profile/:id', {
@@ -34,6 +36,7 @@ const profileRoutes = async (fastify) => {
             summary: 'Deleta um usuário pelo ID',
             params: profileParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, profileController.deleteProfile);
 };
 export default profileRoutes;

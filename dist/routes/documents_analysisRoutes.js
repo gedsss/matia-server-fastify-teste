@@ -7,6 +7,7 @@ const documentsAnalysesRoutes = async (fastify) => {
             summary: 'Cria um novo registro de análise de documento',
             body: createDocumentsAnalysisSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsAnalysisController.createDocumentsAnalisys);
     fastify.get('/documents-analyses/:id', {
         schema: {
@@ -14,6 +15,7 @@ const documentsAnalysesRoutes = async (fastify) => {
             summary: 'Busca um registro de análise de documento pelo ID',
             params: documentsAnalysisParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsAnalysisController.getDocumentsAnalisysById);
     fastify.put('/documents-analyses/:id', {
         schema: {
@@ -22,6 +24,7 @@ const documentsAnalysesRoutes = async (fastify) => {
             params: documentsAnalysisParamsSchema.params,
             body: updateDocumentsAnalysisSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsAnalysisController.updateDocumentsAnalisys);
     fastify.delete('/documents-analyses/:id', {
         schema: {
@@ -29,6 +32,7 @@ const documentsAnalysesRoutes = async (fastify) => {
             summary: 'Deleta um registro de análise de documento pelo ID',
             params: documentsAnalysisParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsAnalysisController.deleteDocumentsAnalisys);
 };
 export default documentsAnalysesRoutes;

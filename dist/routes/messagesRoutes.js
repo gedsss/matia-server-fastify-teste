@@ -7,6 +7,7 @@ const messagesRoutes = async (fastify) => {
             summary: 'Cria uma nova mensagem',
             body: createMessagesSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, messagesController.createMessages);
     fastify.get('/messages/:id', {
         schema: {
@@ -14,6 +15,7 @@ const messagesRoutes = async (fastify) => {
             summary: 'Busca uma mensagem pelo seu ID',
             params: messagesParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, messagesController.getMessagesById);
     fastify.put('/messages/:id', {
         schema: {
@@ -22,6 +24,7 @@ const messagesRoutes = async (fastify) => {
             params: messagesParamsSchema.params,
             body: updateMessagesSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, messagesController.updateMessages);
     fastify.delete('/messages/:id', {
         schema: {
@@ -29,6 +32,7 @@ const messagesRoutes = async (fastify) => {
             summary: 'Deleta uma mensagem pelo ID',
             params: messagesParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, messagesController.deleteMessages);
 };
 export default messagesRoutes;

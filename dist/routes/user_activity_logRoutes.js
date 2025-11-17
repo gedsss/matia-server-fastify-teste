@@ -7,6 +7,7 @@ const userActivityLogsRoutes = async (fastify) => {
             summary: 'Cria um novo registro de log de atividade de um usuário',
             body: createUserActivityLogSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, userActivityController.createUserActivityLog);
     fastify.get('/user-activity-log/:id', {
         schema: {
@@ -14,6 +15,7 @@ const userActivityLogsRoutes = async (fastify) => {
             summary: 'Busca um registro de log de atividade de um usuário pelo ID',
             params: userActivityLogParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, userActivityController.getUserActivityLogById);
     fastify.put('/user-activity-log/:id', {
         schema: {
@@ -22,6 +24,7 @@ const userActivityLogsRoutes = async (fastify) => {
             params: userActivityLogParamsSchema.params,
             body: updateUserActivityLogSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, userActivityController.updateUserActivityLog);
     fastify.delete('/user-activity-log/:id', {
         schema: {
@@ -29,6 +32,7 @@ const userActivityLogsRoutes = async (fastify) => {
             summary: 'Deleta um registro de log de atividade de um usuário pelo ID',
             params: userActivityLogParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, userActivityController.deleteUserActivityLog);
 };
 export default userActivityLogsRoutes;

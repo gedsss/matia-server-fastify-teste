@@ -1,9 +1,9 @@
 import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
-import swaggerUi from '@fastify/swagger-ui';
-import Fastify from 'fastify';
 import fastifyEnv from '@fastify/env';
 import authenticate from './authPlugin.js';
+import swaggerUi from '@fastify/swagger-ui';
+import Fastify from 'fastify';
 // Importação da instância do Sequelize (já tipada)
 import sequelize from './db.js';
 import activityLogsRoutes from './routes/activity_logsRoutes.js';

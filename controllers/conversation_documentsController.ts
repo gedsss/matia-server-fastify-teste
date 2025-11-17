@@ -89,11 +89,11 @@ export const updateConversationDocuments = async (
 }
 
 export const deleteConversationDocuments = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const deleted = await conversationDocuments.destroy({ where: { id } })
     if (deleted === 0) return fail(reply, 404, 'documento não encontrado')
     return success(reply, 200, { message: 'documento deletado com sucesso' })

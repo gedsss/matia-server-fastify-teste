@@ -7,6 +7,7 @@ const conversationsRoutes = async (fastify) => {
             summary: 'Inicia uma nova conversa',
             body: createConversationsSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, conversationsController.createConversation);
     fastify.get('/conversations/:id', {
         schema: {
@@ -14,6 +15,7 @@ const conversationsRoutes = async (fastify) => {
             summary: 'Busca uma conversa pelo seu ID',
             params: conversationsParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, conversationsController.getConversationById);
     fastify.put('/conversations/:id', {
         schema: {
@@ -22,6 +24,7 @@ const conversationsRoutes = async (fastify) => {
             params: conversationsParamsSchema.params,
             body: updateConversationsSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, conversationsController.updateConversation);
     fastify.delete('/conversations/:id', {
         schema: {
@@ -29,6 +32,7 @@ const conversationsRoutes = async (fastify) => {
             summary: 'Deleta uma conversa pelo ID',
             params: conversationsParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, conversationsController.deleteConversation);
 };
 export default conversationsRoutes;

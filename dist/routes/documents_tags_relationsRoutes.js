@@ -7,6 +7,7 @@ const documentsTagsRelationsRoutes = async (fastify) => {
             summary: 'Associa tags a documentos',
             body: createDocumentsTagsRelationSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsRelationsController.createDocumentsTagsRelation);
     fastify.get('/documents-tags-relations/:id', {
         schema: {
@@ -14,6 +15,7 @@ const documentsTagsRelationsRoutes = async (fastify) => {
             summary: 'Busca associações documento/tag pelo ID',
             params: documentsTagsRelationParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsRelationsController.getDocumentsTagsRelationById);
     fastify.put('/documents-tags-relations/:id', {
         schema: {
@@ -22,6 +24,7 @@ const documentsTagsRelationsRoutes = async (fastify) => {
             params: documentsTagsRelationParamsSchema.params,
             body: updateDocumentsTagsRelationSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsRelationsController.updateDocumentsTagsRelation);
     fastify.delete('/documents-tags-relations/:id', {
         schema: {
@@ -29,6 +32,7 @@ const documentsTagsRelationsRoutes = async (fastify) => {
             summary: 'Remove associações de tags a documentos pelo ID',
             params: documentsTagsRelationParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsRelationsController.deleteDocumentsTagsRelation);
 };
 export default documentsTagsRelationsRoutes;

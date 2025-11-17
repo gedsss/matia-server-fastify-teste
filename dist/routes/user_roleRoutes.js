@@ -7,6 +7,7 @@ const userRoleRoutes = async (fastify) => {
             summary: 'Associa uma nova função (role) a um usuário',
             body: createUserRoleSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, userRoleController.createUserRole);
     fastify.get('/user-role/:id', {
         schema: {

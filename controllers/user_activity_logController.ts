@@ -92,7 +92,7 @@ export const deleteUserActivityLog = async (
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const deleted = await UserActivityLog.destroy({ where: { id } })
     if (deleted === 0) return fail(reply, 404, 'log não encontrado')
     return success(reply, 200, { message: 'log deletado com sucesso' })

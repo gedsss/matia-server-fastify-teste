@@ -7,6 +7,7 @@ const documentsRoutes = async (fastify) => {
             summary: 'Cria um novo documento (realiza o upload)',
             body: createDocumentsSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsController.createDocuments);
     fastify.get('/documents/:id', {
         schema: {
@@ -14,6 +15,7 @@ const documentsRoutes = async (fastify) => {
             summary: 'Busca um documento pelo seu ID',
             params: documentsParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsController.getDocumentsById);
     fastify.put('/documents/:id', {
         schema: {
@@ -22,6 +24,7 @@ const documentsRoutes = async (fastify) => {
             params: documentsParamsSchema.params,
             body: updateDocumentsSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsController.updateDocuments);
     fastify.delete('/documents/:id', {
         schema: {
@@ -29,6 +32,7 @@ const documentsRoutes = async (fastify) => {
             summary: 'Deleta um documento pelo ID',
             params: documentsParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsController.deleteDocuments);
 };
 export default documentsRoutes;

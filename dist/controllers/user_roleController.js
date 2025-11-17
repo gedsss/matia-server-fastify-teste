@@ -34,7 +34,9 @@ export const getUserRoleById = async (request, reply) => {
 export const updateUserRole = async (request, reply) => {
     try {
         const { id } = request.params;
-        const [updatedRows] = await userRole.update(request.body, { where: { id } });
+        const [updatedRows] = await userRole.update(request.body, {
+            where: { id },
+        });
         if (updatedRows === 0)
             return fail(reply, 404, 'registro não encontrado');
         const updated = await userRole.findByPk(id);

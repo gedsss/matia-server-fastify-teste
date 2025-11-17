@@ -34,7 +34,9 @@ export const getMessagesById = async (request, reply) => {
 export const updateMessages = async (request, reply) => {
     try {
         const { id } = request.params;
-        const [updatedRows] = await messages.update(request.body, { where: { id } });
+        const [updatedRows] = await messages.update(request.body, {
+            where: { id },
+        });
         if (updatedRows === 0)
             return fail(reply, 404, 'messages não encontrado');
         const updated = await messages.findByPk(id);

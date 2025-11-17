@@ -1,10 +1,10 @@
 import cors from '@fastify/cors'
 import swagger from '@fastify/swagger'
+import fastifyEnv from '@fastify/env'
+import authenticate from './authPlugin.js'
 import swaggerUi from '@fastify/swagger-ui'
 import type { FastifyInstance, FastifyRegisterOptions } from 'fastify'
 import Fastify from 'fastify'
-import fastifyEnv from '@fastify/env'
-import authenticate from './authPlugin.js'
 // Importação da instância do Sequelize (já tipada)
 import sequelize from './db.js'
 import activityLogsRoutes from './routes/activity_logsRoutes.js'
@@ -77,7 +77,10 @@ await fastify.register(swagger, {
         name: 'ActivityLogs',
         description: 'Log de Atividades de Administrador',
       },
-      { name: 'UserActivityLog', description: 'Log de Atividades de Usuários' },
+      {
+        name: 'UserActivityLogs',
+        description: 'Log de Atividades de Usuários',
+      },
     ],
   },
 })
@@ -114,7 +117,7 @@ await fastify.register(activityLogsRoutes, {
   prefix: '/api/activity_logs',
 } as FastifyRegisterOptions<FastifyInstance>)
 await fastify.register(userActivityLogsRoutes, {
-  prefix: '/api/user_activty_log',
+  prefix: '/api/user_activity_log',
 } as FastifyRegisterOptions<FastifyInstance>)
 
 // --- SWAGGER/OPENAPI CONFIGURAÇÃO ---

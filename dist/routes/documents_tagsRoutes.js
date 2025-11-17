@@ -15,6 +15,7 @@ const documentsTagsRoutes = async (fastify) => {
             summary: 'Busca uma tag de documento pelo seu ID',
             params: documentsTagsParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsController.getDocumentsTagsById);
     fastify.put('/documents-tags/:id', {
         schema: {
@@ -23,6 +24,7 @@ const documentsTagsRoutes = async (fastify) => {
             params: documentsTagsParamsSchema.params,
             body: updateDocumentsTagsSchema.body,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsController.updateDocumentsTags);
     fastify.delete('/documents-tags/:id', {
         schema: {
@@ -30,6 +32,7 @@ const documentsTagsRoutes = async (fastify) => {
             summary: 'Deleta uma tag de documento pelo ID',
             params: documentsTagsParamsSchema.params,
         },
+        preHandler: [fastify.authenticate],
     }, documentsTagsController.deleteDocumentsTags);
 };
 export default documentsTagsRoutes;
