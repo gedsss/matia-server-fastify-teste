@@ -7,6 +7,15 @@ declare module 'fastify' {
     jwtVerify(): Promise<any>
   }
 }
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    authenticate: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>
+  }
+}
 export default fp(async (fastify: FastifyInstance) => {
   const SECRET_KEY = process.env.JWT_SECRET
 

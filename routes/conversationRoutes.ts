@@ -16,6 +16,8 @@ const conversationsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Inicia uma nova conversa',
         body: createConversationsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationsController.createConversation
   )
@@ -28,6 +30,8 @@ const conversationsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca uma conversa pelo seu ID',
         params: conversationsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationsController.getConversationById
   )
@@ -41,6 +45,8 @@ const conversationsRoutes = async (fastify: FastifyInstance) => {
         params: conversationsParamsSchema.params,
         body: updateConversationsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationsController.updateConversation
   )
@@ -53,6 +59,8 @@ const conversationsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Deleta uma conversa pelo ID',
         params: conversationsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationsController.deleteConversation
   )

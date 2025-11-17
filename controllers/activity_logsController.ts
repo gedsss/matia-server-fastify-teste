@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { ValidationErrorItem } from 'sequelize'
+import type { ValidationError, ValidationErrorItem } from 'sequelize'
 import type { ActivityLogsAttributes } from '../models/activity_logs.js'
 import activityLogs from '../models/activity_logs.js'
 import { fail, success } from '../utils/response.js'
@@ -14,11 +14,11 @@ interface Params {
 }
 
 export const createActivityLogs = async (
-  request: FastifyRequest<{ Body: CreateBody }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const payload = request.body
+    const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
@@ -33,7 +33,7 @@ export const createActivityLogs = async (
         reply,
         400,
         'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
+        (err as ValidationError).errors as ValidationErrorItem[]
       )
     }
     return fail(reply, 500, 'Erro ao criar log', err.message)
@@ -41,11 +41,11 @@ export const createActivityLogs = async (
 }
 
 export const getActivityLogsById = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const item = await activityLogs.findByPk(id)
     if (!item) return fail(reply, 404, 'log não encontrado')
     return success(reply, 200, { data: item.toJSON() })
@@ -55,14 +55,17 @@ export const getActivityLogsById = async (
 }
 
 export const updateActivityLogs = async (
-  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
-    const [updatedRows] = await activityLogs.update(request.body, {
-      where: { id },
-    })
+    const { id } = request.params as Params
+    const [updatedRows] = await activityLogs.update(
+      request.body as UpdateBody,
+      {
+        where: { id },
+      }
+    )
     if (updatedRows === 0) return fail(reply, 404, 'log não encontrado')
     const updated = await activityLogs.findByPk(id)
     return success(reply, 200, {
@@ -75,7 +78,7 @@ export const updateActivityLogs = async (
         reply,
         400,
         'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
+        (err as ValidationError).errors as ValidationErrorItem[]
       )
     }
     return fail(reply, 500, 'Erro ao atualizar log', err.message)
@@ -83,11 +86,11 @@ export const updateActivityLogs = async (
 }
 
 export const deleteActivityLogs = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const deleted = await activityLogs.destroy({ where: { id } })
     if (deleted === 0) return fail(reply, 404, 'log não encontrado')
     return success(reply, 200, { message: 'log deletado com sucesso' })

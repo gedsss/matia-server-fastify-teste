@@ -16,7 +16,9 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Cria uma nova tag para documentos',
         body: createDocumentsTagsSchema.body,
       },
-    },
+
+      preHandler: [fastify.authenticate],
+    } as const,
     documentsTagsController.createDocumentsTags
   )
 
@@ -28,6 +30,8 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca uma tag de documento pelo seu ID',
         params: documentsTagsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsController.getDocumentsTagsById
   )
@@ -41,6 +45,8 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) => {
         params: documentsTagsParamsSchema.params,
         body: updateDocumentsTagsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsController.updateDocumentsTags
   )
@@ -53,6 +59,8 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Deleta uma tag de documento pelo ID',
         params: documentsTagsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsController.deleteDocumentsTags
   )

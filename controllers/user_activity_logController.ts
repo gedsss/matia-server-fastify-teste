@@ -16,11 +16,11 @@ interface Params {
 }
 
 export const createUserActivityLog = async (
-  request: FastifyRequest<{ Body: CreateBody }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const payload = request.body
+    const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
@@ -43,11 +43,11 @@ export const createUserActivityLog = async (
 }
 
 export const getUserActivityLogById = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const item = await UserActivityLog.findByPk(id)
     if (!item) return fail(reply, 404, 'log não encontrado')
     return success(reply, 200, { data: item.toJSON() })
@@ -57,14 +57,17 @@ export const getUserActivityLogById = async (
 }
 
 export const updateUserActivityLog = async (
-  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
-    const [updatedRows] = await UserActivityLog.update(request.body, {
-      where: { id },
-    })
+    const { id } = request.params as Params
+    const [updatedRows] = await UserActivityLog.update(
+      request.body as CreateBody,
+      {
+        where: { id },
+      }
+    )
     if (updatedRows === 0) return fail(reply, 404, 'log não encontrado')
     const updated = await UserActivityLog.findByPk(id)
     return success(reply, 200, {
@@ -85,7 +88,7 @@ export const updateUserActivityLog = async (
 }
 
 export const deleteUserActivityLog = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {

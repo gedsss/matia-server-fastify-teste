@@ -5,13 +5,11 @@ import { Op, type ValidationErrorItem } from 'sequelize'
 import profile, { type ProfileAttributes } from '../models/profile.js'
 import { fail, success } from '../utils/response.js'
 
-// Erro customizado compatível com utils/response.ts
 interface CustomErrorDetail {
   message: string
   path: string[]
 }
 
-// Create body: omit DB-only fields and map `password` -> `profile_password`
 interface CreateBody
   extends Omit<
     ProfileAttributes,
@@ -27,10 +25,10 @@ interface Params {
 }
 
 export const createProfile = async (
-  request: FastifyRequest<{ Body: CreateBody }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const payload = request.body
+  const payload = request.body as CreateBody
 
   try {
     if (!payload || Object.keys(payload).length === 0) {
@@ -132,11 +130,11 @@ export const createProfile = async (
 }
 
 export const getProfileById = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const item = await profile.findByPk(id)
     if (!item) return fail(reply, 404, 'Perfil não encontrado')
     const data = item.toJSON() as any
@@ -153,12 +151,12 @@ export const getProfileById = async (
 }
 
 export const updateProfile = async (
-  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
-    const payload = request.body || {}
+    const { id } = request.params as Params
+    const payload = (request.body as UpdateBody) || {}
 
     if (payload.cpf) {
       const cleanedCpf = String(payload.cpf).replace(/\D/g, '')
@@ -258,11 +256,11 @@ export const updateProfile = async (
 }
 
 export const deleteProfile = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const deleted = await profile.destroy({ where: { id } })
     if (deleted === 0) return fail(reply, 404, 'Perfil não encontrado')
     return success(reply, 200, { message: 'Perfil deletado com sucesso' })

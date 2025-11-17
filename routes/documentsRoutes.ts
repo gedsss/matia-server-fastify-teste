@@ -16,6 +16,8 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Cria um novo documento (realiza o upload)',
         body: createDocumentsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsController.createDocuments
   )
@@ -28,6 +30,8 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca um documento pelo seu ID',
         params: documentsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsController.getDocumentsById
   )
@@ -41,6 +45,8 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
         params: documentsParamsSchema.params,
         body: updateDocumentsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsController.updateDocuments
   )
@@ -53,6 +59,8 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Deleta um documento pelo ID',
         params: documentsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsController.deleteDocuments
   )

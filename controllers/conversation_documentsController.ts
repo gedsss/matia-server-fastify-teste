@@ -17,11 +17,11 @@ interface Params {
 }
 
 export const createConversationDocuments = async (
-  request: FastifyRequest<{ Body: CreateBody }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const payload = request.body
+    const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
@@ -44,11 +44,11 @@ export const createConversationDocuments = async (
 }
 
 export const getConversationDocumentsById = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const item = await conversationDocuments.findByPk(id)
     if (!item) return fail(reply, 404, 'documento não encontrado')
     return success(reply, 200, { data: item.toJSON() })
@@ -58,14 +58,17 @@ export const getConversationDocumentsById = async (
 }
 
 export const updateConversationDocuments = async (
-  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
-    const [updatedRows] = await conversationDocuments.update(request.body, {
-      where: { id },
-    })
+    const { id } = request.params as Params
+    const [updatedRows] = await conversationDocuments.update(
+      request.body as UpdateBody,
+      {
+        where: { id },
+      }
+    )
     if (updatedRows === 0) return fail(reply, 404, 'documento não encontrado')
     const updated = await conversationDocuments.findByPk(id)
     return success(reply, 200, {

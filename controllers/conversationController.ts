@@ -14,11 +14,11 @@ interface Params {
 }
 
 export const createConversation = async (
-  request: FastifyRequest<{ Body: CreateBody }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const payload = request.body
+    const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
@@ -41,11 +41,11 @@ export const createConversation = async (
 }
 
 export const getConversationById = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const item = await conversation.findByPk(id)
     if (!item) return fail(reply, 404, 'registro não encontrado')
     return success(reply, 200, { data: item.toJSON() })
@@ -55,14 +55,17 @@ export const getConversationById = async (
 }
 
 export const updateConversation = async (
-  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
-    const [updatedRows] = await conversation.update(request.body, {
-      where: { id },
-    })
+    const { id } = request.params as Params
+    const [updatedRows] = await conversation.update(
+      request.body as UpdateBody,
+      {
+        where: { id },
+      }
+    )
     if (updatedRows === 0) return fail(reply, 404, 'registro não encontrado')
     const updated = await conversation.findByPk(id)
     return success(reply, 200, {
@@ -83,11 +86,11 @@ export const updateConversation = async (
 }
 
 export const deleteConversation = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const deleted = await conversation.destroy({ where: { id } })
     if (deleted === 0) return fail(reply, 404, 'registro não encontrado')
     return success(reply, 200, { message: 'registro deletado com sucesso' })

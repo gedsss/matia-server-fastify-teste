@@ -1,1 +1,20 @@
+# Dependências e Builds
+node_modules
+/dist
+/build
+/coverage
+
+# Arquivos de Log
+*.log
+npm-debug.log*
+
+# Variáveis de Ambiente e Credenciais
 .env
+.env.local
+config/secrets.json
+
+# IDEs e Sistema Operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

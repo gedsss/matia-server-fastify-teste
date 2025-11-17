@@ -1,0 +1,35 @@
+import * as userActivityController from '../controllers/user_activity_logController.js';
+import { createUserActivityLogSchema, userActivityLogParamsSchema, updateUserActivityLogSchema, } from '../schemas/user_activity_logSchema.js';
+const userActivityLogsRoutes = async (fastify) => {
+    fastify.post('/user-activity-log', {
+        schema: {
+            tags: ['ActivityLogs'],
+            summary: 'Cria um novo registro de log de atividade de um usuário',
+            body: createUserActivityLogSchema.body,
+        },
+    }, userActivityController.createUserActivityLog);
+    fastify.get('/user-activity-log/:id', {
+        schema: {
+            tags: ['ActivityLogs'],
+            summary: 'Busca um registro de log de atividade de um usuário pelo ID',
+            params: userActivityLogParamsSchema.params,
+        },
+    }, userActivityController.getUserActivityLogById);
+    fastify.put('/user-activity-log/:id', {
+        schema: {
+            tags: ['ActivityLogs'],
+            summary: 'Atualiza um registro de log de atividade de um usuário existente',
+            params: userActivityLogParamsSchema.params,
+            body: updateUserActivityLogSchema.body,
+        },
+    }, userActivityController.updateUserActivityLog);
+    fastify.delete('/user-activity-log/:id', {
+        schema: {
+            tags: ['ActivityLogs'],
+            summary: 'Deleta um registro de log de atividade de um usuário pelo ID',
+            params: userActivityLogParamsSchema.params,
+        },
+    }, userActivityController.deleteUserActivityLog);
+};
+export default userActivityLogsRoutes;
+//# sourceMappingURL=user_activity_logRoutes.js.map

@@ -16,6 +16,8 @@ const messagesRoutes = async (fastify: FastifyInstance) => {
         summary: 'Cria uma nova mensagem',
         body: createMessagesSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     messagesController.createMessages
   )
@@ -28,6 +30,8 @@ const messagesRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca uma mensagem pelo seu ID',
         params: messagesParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     messagesController.getMessagesById
   )
@@ -41,6 +45,8 @@ const messagesRoutes = async (fastify: FastifyInstance) => {
         params: messagesParamsSchema.params,
         body: updateMessagesSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     messagesController.updateMessages
   )
@@ -53,6 +59,8 @@ const messagesRoutes = async (fastify: FastifyInstance) => {
         summary: 'Deleta uma mensagem pelo ID',
         params: messagesParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     messagesController.deleteMessages
   )

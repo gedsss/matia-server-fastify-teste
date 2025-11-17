@@ -15,6 +15,8 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Cria um novo registro de log de atividade de um usuário',
         body: createUserActivityLogSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     userActivityController.createUserActivityLog
   )
@@ -27,6 +29,8 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca um registro de log de atividade de um usuário pelo ID',
         params: userActivityLogParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     userActivityController.getUserActivityLogById
   )
@@ -41,6 +45,8 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
         params: userActivityLogParamsSchema.params,
         body: updateUserActivityLogSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     userActivityController.updateUserActivityLog
   )
@@ -53,6 +59,8 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Deleta um registro de log de atividade de um usuário pelo ID',
         params: userActivityLogParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     userActivityController.deleteUserActivityLog
   )

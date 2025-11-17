@@ -15,6 +15,8 @@ const documentsTagsRelationsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Associa tags a documentos',
         body: createDocumentsTagsRelationSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsRelationsController.createDocumentsTagsRelation
   )
@@ -27,6 +29,8 @@ const documentsTagsRelationsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca associações documento/tag pelo ID',
         params: documentsTagsRelationParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsRelationsController.getDocumentsTagsRelationById
   )
@@ -40,6 +44,8 @@ const documentsTagsRelationsRoutes = async (fastify: FastifyInstance) => {
         params: documentsTagsRelationParamsSchema.params,
         body: updateDocumentsTagsRelationSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsRelationsController.updateDocumentsTagsRelation
   )
@@ -52,6 +58,8 @@ const documentsTagsRelationsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Remove associações de tags a documentos pelo ID',
         params: documentsTagsRelationParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     documentsTagsRelationsController.deleteDocumentsTagsRelation
   )

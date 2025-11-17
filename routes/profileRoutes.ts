@@ -17,7 +17,9 @@ const profileRoutes = async (fastify: FastifyInstance) => {
         summary: 'Cria um novo usuário no sistema',
         body: createProfileSchema.body,
       },
-    },
+
+      preHandler: [fastify.authenticate],
+    } as const,
     profileController.createProfile
   )
 
@@ -30,6 +32,8 @@ const profileRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca um usuário pelo seu ID',
         params: profileParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     profileController.getProfileById
   )
@@ -44,6 +48,8 @@ const profileRoutes = async (fastify: FastifyInstance) => {
         params: profileParamsSchema.params,
         body: updateProfileSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     profileController.updateProfile
   )
@@ -57,6 +63,8 @@ const profileRoutes = async (fastify: FastifyInstance) => {
         summary: 'Deleta um usuário pelo ID',
         params: profileParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     profileController.deleteProfile
   )

@@ -12,11 +12,11 @@ interface Params {
 }
 
 export const createUserRole = async (
-  request: FastifyRequest<{ Body: CreateBody }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const payload = request.body
+    const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
       return fail(reply, 400, 'Corpo da requisição vazio')
     }
@@ -39,11 +39,11 @@ export const createUserRole = async (
 }
 
 export const getUserRoleById = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const item = await userRole.findByPk(id)
     if (!item) return fail(reply, 404, 'registro não encontrado')
     return success(reply, 200, { data: item.toJSON() })
@@ -53,12 +53,14 @@ export const getUserRoleById = async (
 }
 
 export const updateUserRole = async (
-  request: FastifyRequest<{ Body: UpdateBody; Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
-    const [updatedRows] = await userRole.update(request.body, { where: { id } })
+    const { id } = request.params as Params
+    const [updatedRows] = await userRole.update(request.body as UpdateBody, {
+      where: { id },
+    })
     if (updatedRows === 0) return fail(reply, 404, 'registro não encontrado')
     const updated = await userRole.findByPk(id)
     return success(reply, 200, {
@@ -79,11 +81,11 @@ export const updateUserRole = async (
 }
 
 export const deleteUserRole = async (
-  request: FastifyRequest<{ Params: Params }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { id } = request.params
+    const { id } = request.params as Params
     const deleted = await userRole.destroy({ where: { id } })
     if (deleted === 0) return fail(reply, 404, 'registro não encontrado')
     return success(reply, 200, { message: 'registro deletado com sucesso' })

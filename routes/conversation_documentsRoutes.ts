@@ -16,6 +16,8 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Associa um ou mais documentos a uma conversa',
         body: createConversationDocumentsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationDocumentsController.createConversationDocuments
   )
@@ -28,6 +30,8 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Busca uma associação conversa/documento pelo ID',
         params: conversationDocumentsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationDocumentsController.getConversationDocumentsById
   )
@@ -41,6 +45,8 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
         params: conversationDocumentsParamsSchema.params,
         body: updateConversationsDocumentsSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationDocumentsController.updateConversationDocuments
   )
@@ -53,6 +59,8 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
         summary: 'Remove a associação de um documento a uma conversa pelo ID',
         params: conversationDocumentsParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     conversationDocumentsController.deleteConversationDocuments
   )
