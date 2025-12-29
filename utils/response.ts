@@ -1,38 +1,50 @@
-import type { FastifyReply } from 'fastify'
-import type { ValidationErrorItem } from 'sequelize'
+import { success } from 'zod'
 
-export interface CustomErrorDetail {
-  message: string
-  path: string[]
+export interface SuccessResponse<T = any> {
+  sucess: true
+  data: T
+  message?: string
+  meta?: {
+    page?: number
+    limit?: number
+    total?: number
+    totalPages?: number
+    [key: string]: unknown
+  }
 }
 
-type SuccesPayload = Record<string, unknown>
-
-export const success = (
-  reply: FastifyReply,
-  code = 200,
-  payload: SuccesPayload = {}
-): FastifyReply => {
-  return reply.code(code).send({ success: true, ...payload })
-}
-
-type ErrorDetails = string | (ValidationErrorItem | CustomErrorDetail)[]
-
-export const fail = (
-  reply: FastifyReply,
-  code = 500,
-  message = 'Erro interno',
-  details?: ErrorDetails | null
-): FastifyReply => {
-  const body: Record<string, unknown> = { success: false, message }
-
-  if (details) {
-    if (typeof details === 'string') {
-      body.details = details
-    } else {
-      body.errors = details
-    }
+export function successResponse<T>(
+  data: T,
+  message?: string,
+  meta?: SuccessResponse['meta']
+): SuccessResponse<T> {
+  const response: SuccessResponse = {
+    sucess: true,
+    data,
   }
 
-  return reply.code(code).send(body)
+  if (message) {
+    response.message = message
+  }
+
+  if (meta) {
+    response.meta = meta
+  }
+
+  return response
+}
+
+export function paginatedResponse<T>(
+  data: T[],
+  page: number,
+  limit: number,
+  total: number,
+  message?: string
+): SuccessResponse<T[]> {
+  return successResponse(data, message, {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  })
 }
