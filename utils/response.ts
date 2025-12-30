@@ -1,5 +1,3 @@
-import { success } from 'zod'
-
 export interface SuccessResponse<T = any> {
   sucess: true
   data: T

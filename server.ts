@@ -19,9 +19,21 @@ import messagesRoutes from './routes/messagesRoutes.js'
 import profileRoutes from './routes/profileRoutes.js'
 import userActivityLogsRoutes from './routes/user_activity_logRoutes.js'
 import userRoleRoutes from './routes/user_roleRoutes.js'
+import {
+  errorHandler,
+  setupGlobalErrorHandlers,
+} from './middleware/errorHandler.js'
 
 // Tipando a instância do Fastify explicitamente
-const fastify: FastifyInstance = Fastify({ logger: true })
+const fastify: FastifyInstance = Fastify({
+  logger: {
+    level: process.env.LOG_LEVEL,
+  },
+  requestIdHeader: 'x-request-id',
+  requestIdLogLabel: 'requestId',
+  disableRequestLogging: false,
+  genReqId: () => crypto.randomUUID(),
+})
 
 await fastify.register(fastifyEnv, {
   schema: {
@@ -34,6 +46,10 @@ await fastify.register(fastifyEnv, {
 
   dotenv: true,
 })
+
+fastify.setErrorHandler(errorHandler)
+
+setupGlobalErrorHandlers(fastify.log)
 
 await fastify.register(authenticate)
 

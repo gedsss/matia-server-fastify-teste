@@ -98,7 +98,7 @@ export class NotFoundError extends AppError {
   }
 }
 
-export class USerNotFoundError extends NotFoundError {
+export class UserNotFoundError extends NotFoundError {
   constructor(identifier?: string) {
     super('Usuário', identifier)
     this.code = ErrorCodes.USER_NOT_FOUND
@@ -138,9 +138,19 @@ export class DuplicateEmailError extends ConflictError {
 export class DuplicateCPFError extends ConflictError {
   constructor(cpf: string) {
     super('Este CPF já está em uso.', {
-      field: cpf,
-      valuer: cpf,
+      field: 'cpf',
+      value: cpf,
       code: ErrorCodes.DUPLICATE_CPF,
+    })
+  }
+}
+
+export class DuplicateNumberError extends ConflictError {
+  constructor(phone: string) {
+    super('Este número de telefone já está em uso.', {
+      field: 'phone',
+      value: phone,
+      code: ErrorCodes.DUPLICATE_PHONE,
     })
   }
 }
