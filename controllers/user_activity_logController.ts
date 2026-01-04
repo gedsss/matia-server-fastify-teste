@@ -1,65 +1,56 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { ValidationErrorItem } from 'sequelize'
+import { type FastifyReply, type FastifyRequest } from 'fastify'
 import UserActivityLog, {
   type UserActivityLogAttributes,
 } from '../models/user_activity_log.js'
-import { fail, success } from '../utils/response.js'
+import {
+  ValidationError,
+  MissingFieldError,
+  DocumentNotFoundError,
+  InternalServerError,
+} from '../errors/errors.js'
+import { ErrorCodes } from '../errors/errorCodes.js'
+import { successResponse } from '../utils/response.js'
 
 // Model `user_activity_logs` disables updatedAt, so remove it here.
 interface CreateBody
   extends Omit<UserActivityLogAttributes, 'id' | 'created_at'> {}
 
-interface UpdateBody extends Partial<CreateBody> {}
-
 interface Params {
   id: string
 }
 
-export const createUserActivityLog = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const createUserActivityLog = async (request: FastifyRequest) => {
   try {
     const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
-      return fail(reply, 400, 'Corpo da requisição vazio')
+      throw new MissingFieldError()
     }
     const created = await UserActivityLog.create(payload as any)
-    return success(reply, 201, {
-      data: created.toJSON(),
-      message: 'log criado com sucesso',
-    })
+    return successResponse(created, 'Log criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(
-        reply,
-        400,
-        'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
-      )
+      throw new ValidationError('Daados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
     }
-    return fail(reply, 500, 'Erro ao criar log', err.message)
+    throw new InternalServerError('Erro ao criar o Log', {
+      code: ErrorCodes.CREATE_FAILED,
+    })
   }
 }
 
-export const getUserActivityLogById = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const getUserActivityLogById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await UserActivityLog.findByPk(id)
-    if (!item) return fail(reply, 404, 'log não encontrado')
-    return success(reply, 200, { data: item.toJSON() })
+    if (!item) throw new DocumentNotFoundError()
+    return successResponse(item, 'Documento encontrado com sucesso')
   } catch (err: any) {
-    return fail(reply, 500, 'Erro ao buscar log', err.message)
+    throw new DocumentNotFoundError()
   }
 }
 
-export const updateUserActivityLog = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const updateUserActivityLog = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const [updatedRows] = await UserActivityLog.update(
@@ -68,22 +59,18 @@ export const updateUserActivityLog = async (
         where: { id },
       }
     )
-    if (updatedRows === 0) return fail(reply, 404, 'log não encontrado')
+    if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await UserActivityLog.findByPk(id)
-    return success(reply, 200, {
-      data: updated?.toJSON(),
-      message: 'log atualizado',
-    })
+    return successResponse(updated, 'Log encontrado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(
-        reply,
-        400,
-        'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
-      )
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
     }
-    return fail(reply, 500, 'Erro ao atualizar log', err.message)
+    throw new InternalServerError('Erro ao atualizar o Log', {
+      code: ErrorCodes.UPDATE_FAILED,
+    })
   }
 }
 
@@ -94,10 +81,12 @@ export const deleteUserActivityLog = async (
   try {
     const { id } = request.params as Params
     const deleted = await UserActivityLog.destroy({ where: { id } })
-    if (deleted === 0) return fail(reply, 404, 'log não encontrado')
-    return success(reply, 200, { message: 'log deletado com sucesso' })
+    if (deleted === 0) throw new DocumentNotFoundError()
+    return successResponse(reply, 'Documento deletado com sucesso')
   } catch (err: any) {
-    return fail(reply, 500, 'Erro ao deletar log', err.message)
+    throw new InternalServerError('Erro ao deletar o documento', {
+      code: ErrorCodes.DELETE_FAILED,
+    })
   }
 }
 

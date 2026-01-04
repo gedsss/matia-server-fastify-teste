@@ -8,6 +8,14 @@ export class ValidationError extends AppError {
   }
 }
 
+export class MissingFieldError extends ValidationError {
+  constructor() {
+    super('Dados faltando', {
+      code: ErrorCodes.MISSING_FIELD,
+    })
+  }
+}
+
 export class InvalidCPFError extends ValidationError {
   constructor(cpf?: string) {
     super('CPF inválido', {

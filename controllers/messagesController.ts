@@ -1,7 +1,13 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { ValidationErrorItem } from 'sequelize'
 import messages, { type MessagesAttributes } from '../models/messages.js'
-import { fail, success } from '../utils/response.js'
+import {
+  ValidationError,
+  MissingFieldError,
+  DocumentNotFoundError,
+  InternalServerError,
+} from '../errors/errors.js'
+import { ErrorCodes } from '../errors/errorCodes.js'
+import { successResponse } from '../utils/response.js'
 
 interface CreateBody
   extends Omit<MessagesAttributes, 'id' | 'created_at' | 'updated_at'> {}
@@ -12,72 +18,55 @@ interface Params {
   id: string
 }
 
-export const createMessages = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const createMessages = async (request: FastifyRequest) => {
   try {
     const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
-      return fail(reply, 400, 'Corpo da requisição vazio')
+      throw new MissingFieldError()
     }
     const created = await messages.create(payload as any)
-    return success(reply, 201, {
-      data: created.toJSON(),
-      message: 'messages criado com sucesso',
-    })
+    return successResponse(created, 'Registro criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(
-        reply,
-        400,
-        'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
-      )
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
     }
-    return fail(reply, 500, 'Erro ao criar messages', err.message)
+    throw new InternalServerError('Erro a criar o registro', {
+      code: ErrorCodes.CREATE_FAILED,
+    })
   }
 }
 
-export const getMessagesById = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const getMessagesById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await messages.findByPk(id)
-    if (!item) return fail(reply, 404, 'messages não encontrado')
-    return success(reply, 200, { data: item.toJSON() })
+    if (!item) throw new DocumentNotFoundError()
+    return successResponse(item, 'Registro encontrado com sucesso')
   } catch (err: any) {
-    return fail(reply, 500, 'Erro ao buscar messages', err.message)
+    throw new DocumentNotFoundError()
   }
 }
 
-export const updateMessages = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const updateMessages = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const [updatedRows] = await messages.update(request.body as UpdateBody, {
       where: { id },
     })
-    if (updatedRows === 0) return fail(reply, 404, 'messages não encontrado')
+    if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await messages.findByPk(id)
-    return success(reply, 200, {
-      data: updated?.toJSON(),
-      message: 'messages atualizado',
-    })
+    return successResponse(updated, 'Documento encontrado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(
-        reply,
-        400,
-        'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
-      )
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
     }
-    return fail(reply, 500, 'Erro ao atualizar messages', err.message)
+    throw new InternalServerError('Erro ao atualizar o documento', {
+      code: ErrorCodes.UPDATE_FAILED,
+    })
   }
 }
 
@@ -88,10 +77,12 @@ export const deleteMessages = async (
   try {
     const { id } = request.params as Params
     const deleted = await messages.destroy({ where: { id } })
-    if (deleted === 0) return fail(reply, 404, 'messages não encontrado')
-    return success(reply, 200, { message: 'messages deletado com sucesso' })
+    if (deleted === 0) throw new DocumentNotFoundError()
+    return successResponse(reply, 'Doumento deletado com sucesso')
   } catch (err: any) {
-    return fail(reply, 500, 'Erro ao deletar messages', err.message)
+    throw new ValidationError('Erro ao deletar o deocumentos', {
+      code: ErrorCodes.DELETE_FAILED,
+    })
   }
 }
 

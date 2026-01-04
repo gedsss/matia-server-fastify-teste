@@ -1,25 +1,21 @@
 import bcrypt from 'bcrypt'
 import { cpf } from 'cpf-cnpj-validator'
-import { errorCodes, type FastifyReply, type FastifyRequest } from 'fastify'
-import { Op, ValidationErrorItem } from 'sequelize'
+import { type FastifyReply, type FastifyRequest } from 'fastify'
+import { Op } from 'sequelize'
 import profile, { type ProfileAttributes } from '../models/profile.js'
 import {
   UserNotFoundError,
   DuplicateCPFError,
   DuplicateEmailError,
-  ForbiddenError,
   ValidationError,
   InvalidCPFError,
   ConflictError,
   DuplicateNumberError,
+  MissingFieldError,
+  InternalServerError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
-
-interface CustomErrorDetail {
-  message: string
-  path: string[]
-}
 
 interface CreateBody
   extends Omit<
@@ -35,43 +31,20 @@ interface Params {
   id: string
 }
 
-export const createProfile = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const createProfile = async (request: FastifyRequest) => {
   const payload = request.body as CreateBody
 
   try {
     if (!payload || Object.keys(payload).length === 0) {
-      throw new ValidationError('Corpo da requisição esta vazio', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
+      throw new MissingFieldError()
     }
 
-    if (!payload.cpf)
-      throw new ValidationError('CPF obrigatório', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
-    if (!payload.email)
-      throw new ValidationError('Email obrigatório', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
-    if (!payload.nome)
-      throw new ValidationError('Nome obrigatório', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
-    if (!payload.telefone)
-      throw new ValidationError('Telefone obrigatório', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
-    if (!payload.data_nascimento)
-      throw new ValidationError('Data de nascimento obrigatória', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
-    if (!payload.profile_password)
-      throw new ValidationError('Senha de usuário obrigatória', {
-        code: ErrorCodes.MISSING_FIELD,
-      })
+    if (!payload.cpf) throw new MissingFieldError()
+    if (!payload.email) throw new MissingFieldError()
+    if (!payload.nome) throw new MissingFieldError()
+    if (!payload.telefone) throw new MissingFieldError()
+    if (!payload.data_nascimento) throw new MissingFieldError()
+    if (!payload.profile_password) throw new MissingFieldError()
 
     const cleanedCpf = String(payload.cpf).replace(/\D/g, '')
     if (!cpf.isValid(cleanedCpf)) {
@@ -136,16 +109,13 @@ export const createProfile = async (
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
-    throw new ValidationError('Erro ao criar o usuário', {
-      code: ErrorCodes.VALIDATION_ERROR,
+    throw new InternalServerError('Erro ao criar o usuário', {
+      code: ErrorCodes.CREATE_FAILED,
     })
   }
 }
 
-export const getProfileById = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const getProfileById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await profile.findByPk(id)
@@ -158,10 +128,7 @@ export const getProfileById = async (
   }
 }
 
-export const updateProfile = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const updateProfile = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const payload = (request.body as UpdateBody) || {}
@@ -228,29 +195,25 @@ export const updateProfile = async (
       (err.name === 'SequelizeValidationError' ||
         err.name === 'SequelizeUniqueConstraintError')
     if (isValidationError) {
-      const statusCode =
-        err.name === 'SequelizeUniqueConstraintError' ? 409 : 400
+      err.name === 'SequelizeUniqueConstraintError' ? 409 : 400
       throw new ValidationError('Dados inálidos ou dulplicados', {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
-    throw new ValidationError('Não foi possivel atualizar o usuário', {
+    throw new InternalServerError('Não foi possivel atualizar o usuário', {
       code: ErrorCodes.PROFILE_UPDATE_FAILED,
     })
   }
 }
 
-export const deleteProfile = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const deleteProfile = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const deleted = await profile.destroy({ where: { id } })
     if (deleted === 0) throw new UserNotFoundError()
     return successResponse('Usuário deletado com sucesso')
   } catch (err: any) {
-    throw new ValidationError('Erro ao deletar o usuário', {
+    throw new InternalServerError('Erro ao deletar o usuário', {
       code: ErrorCodes.PROFILE_DELETE_FAILED,
     })
   }

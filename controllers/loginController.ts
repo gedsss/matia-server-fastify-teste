@@ -2,6 +2,14 @@ import jwt from 'jsonwebtoken'
 import type { FastifyReply } from 'fastify/types/reply.js'
 import type { FastifyRequest } from 'fastify/types/request.js'
 import { verifyCredentials } from '../utils/verifyCredentials.js'
+import {
+  ValidationError,
+  MissingFieldError,
+  DocumentNotFoundError,
+  InternalServerError,
+} from '../errors/errors.js'
+import { ErrorCodes } from '../errors/errorCodes.js'
+import { successResponse } from '../utils/response.js'
 
 interface LoginBody {
   email: string

@@ -1,7 +1,13 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { ValidationErrorItem } from 'sequelize'
 import userRole, { type UserRoleAttributes } from '../models/user_roles.js'
-import { fail, success } from '../utils/response.js'
+import {
+  ValidationError,
+  MissingFieldError,
+  DocumentNotFoundError,
+  InternalServerError,
+} from '../errors/errors.js'
+import { ErrorCodes } from '../errors/errorCodes.js'
+import { successResponse } from '../utils/response.js'
 
 interface CreateBody extends Omit<UserRoleAttributes, 'id' | 'created_at'> {}
 
@@ -11,72 +17,53 @@ interface Params {
   id: string
 }
 
-export const createUserRole = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const createUserRole = async (request: FastifyRequest) => {
   try {
     const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
-      return fail(reply, 400, 'Corpo da requisição vazio')
+      throw new MissingFieldError()
     }
     const created = await userRole.create(payload as any)
-    return success(reply, 201, {
-      data: created.toJSON(),
-      message: 'registro criado com sucesso',
-    })
+    return successResponse(created, 'Cargo criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(
-        reply,
-        400,
-        'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
-      )
+      throw new ValidationError('Dados inválidos.')
     }
-    return fail(reply, 500, 'Erro ao criar registro', err.message)
+    throw new InternalServerError('Erro ao criar o registro', {
+      code: ErrorCodes.CREATE_FAILED,
+    })
   }
 }
 
-export const getUserRoleById = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const getUserRoleById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await userRole.findByPk(id)
-    if (!item) return fail(reply, 404, 'registro não encontrado')
-    return success(reply, 200, { data: item.toJSON() })
+    if (!item) throw new DocumentNotFoundError()
+    return successResponse(item, 'Registro encontrado com sucesso')
   } catch (err: any) {
-    return fail(reply, 500, 'Erro ao buscar registro', err.message)
+    throw new DocumentNotFoundError()
   }
 }
 
-export const updateUserRole = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const updateUserRole = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const [updatedRows] = await userRole.update(request.body as UpdateBody, {
       where: { id },
     })
-    if (updatedRows === 0) return fail(reply, 404, 'registro não encontrado')
+    if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await userRole.findByPk(id)
-    return success(reply, 200, {
-      data: updated?.toJSON(),
-      message: 'registro atualizado',
-    })
+    return successResponse(updated, 'Registro atualizado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      return fail(
-        reply,
-        400,
-        'Dados inválidos',
-        (err as any).errors as ValidationErrorItem[]
-      )
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
     }
-    return fail(reply, 500, 'Erro ao atualizar registro', err.message)
+    throw new InternalServerError('Erro ao atualizar o registro', {
+      code: ErrorCodes.UPDATE_FAILED,
+    })
   }
 }
 
@@ -87,10 +74,12 @@ export const deleteUserRole = async (
   try {
     const { id } = request.params as Params
     const deleted = await userRole.destroy({ where: { id } })
-    if (deleted === 0) return fail(reply, 404, 'registro não encontrado')
-    return success(reply, 200, { message: 'registro deletado com sucesso' })
+    if (deleted === 0) throw new DocumentNotFoundError()
+    return successResponse(reply, 'Registro deletado com sucesso')
   } catch (err: any) {
-    return fail(reply, 500, 'Erro ao deletar registro', err.message)
+    throw new ValidationError('Erro ao deletar o resgitro', {
+      code: ErrorCodes.DELETE_FAILED,
+    })
   }
 }
 
