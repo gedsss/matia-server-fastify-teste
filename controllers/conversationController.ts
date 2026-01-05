@@ -33,7 +33,7 @@ export const createConversation = async (request: FastifyRequest) => {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
-    throw new InternalServerError('Erro ao deletar o documento', {
+    throw new InternalServerError('Erro ao criar o documento', {
       code: ErrorCodes.CREATE_FAILED,
     })
   }

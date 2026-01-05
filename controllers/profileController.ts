@@ -196,7 +196,7 @@ export const updateProfile = async (request: FastifyRequest) => {
         err.name === 'SequelizeUniqueConstraintError')
     if (isValidationError) {
       err.name === 'SequelizeUniqueConstraintError' ? 409 : 400
-      throw new ValidationError('Dados inálidos ou dulplicados', {
+      throw new ValidationError('Dados inválidos ou duplicados', {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }

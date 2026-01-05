@@ -77,7 +77,7 @@ export const deleteUserRole = async (
     if (deleted === 0) throw new DocumentNotFoundError()
     return successResponse(reply, 'Registro deletado com sucesso')
   } catch (err: any) {
-    throw new ValidationError('Erro ao deletar o resgitro', {
+    throw new ValidationError('Erro ao deletar o registro', {
       code: ErrorCodes.DELETE_FAILED,
     })
   }

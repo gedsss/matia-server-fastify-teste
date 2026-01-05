@@ -29,7 +29,7 @@ export const createUserActivityLog = async (request: FastifyRequest) => {
     return successResponse(created, 'Log criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
-      throw new ValidationError('Daados inválidos', {
+      throw new ValidationError('Dados inválidos', {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }

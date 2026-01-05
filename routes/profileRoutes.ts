@@ -17,8 +17,12 @@ const profileRoutes = async (fastify: FastifyInstance) => {
         summary: 'Cria um novo usuário no sistema',
         body: createProfileSchema.body,
       },
-
-      preHandler: [fastify.authenticate],
+      config: {
+        rateLimit: {
+          max: 3,
+          timeWindow: '1 hour',
+        },
+      },
     } as const,
     profileController.createProfile
   )

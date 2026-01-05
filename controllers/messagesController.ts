@@ -78,9 +78,9 @@ export const deleteMessages = async (
     const { id } = request.params as Params
     const deleted = await messages.destroy({ where: { id } })
     if (deleted === 0) throw new DocumentNotFoundError()
-    return successResponse(reply, 'Doumento deletado com sucesso')
+    return successResponse(reply, 'Documento deletado com sucesso')
   } catch (err: any) {
-    throw new ValidationError('Erro ao deletar o deocumentos', {
+    throw new ValidationError('Erro ao deletar o documentos', {
       code: ErrorCodes.DELETE_FAILED,
     })
   }

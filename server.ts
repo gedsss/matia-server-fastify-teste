@@ -1,12 +1,14 @@
 import cors from '@fastify/cors'
 import swagger from '@fastify/swagger'
 import fastifyEnv from '@fastify/env'
-import authenticate from './authPlugin.js'
+import { rateLimitPlugin } from './plugins/ratelimit.js'
+import authenticate from './plugins/authPlugin.js'
 import swaggerUi from '@fastify/swagger-ui'
 import type { FastifyInstance, FastifyRegisterOptions } from 'fastify'
 import Fastify from 'fastify'
 // Importação da instância do Sequelize (já tipada)
 import sequelize from './db.js'
+import loginRoutes from './routes/loginRoutes.js'
 import activityLogsRoutes from './routes/activity_logsRoutes.js'
 import conversationDocumentsRoutes from './routes/conversation_documentsRoutes.js'
 import conversationsRoutes from './routes/conversationRoutes.js'
@@ -47,6 +49,8 @@ await fastify.register(fastifyEnv, {
   dotenv: true,
 })
 
+await fastify.register(rateLimitPlugin)
+
 fastify.setErrorHandler(errorHandler)
 
 setupGlobalErrorHandlers(fastify.log)
@@ -71,6 +75,7 @@ await fastify.register(swagger, {
       },
     ],
     tags: [
+      { name: 'Auth', description: 'Autenticação e Login' },
       { name: 'Profile', description: 'Operações de Usuários' },
       { name: 'UserRole', description: 'Log de Funções de Usuários' },
       { name: 'Messages', description: 'Log de Mensagens' },
@@ -135,6 +140,9 @@ await fastify.register(activityLogsRoutes, {
 await fastify.register(userActivityLogsRoutes, {
   prefix: '/api/user_activity_log',
 } as FastifyRegisterOptions<FastifyInstance>)
+await fastify.register(loginRoutes, {
+  prefix: '/api/auth',
+})
 
 // --- SWAGGER/OPENAPI CONFIGURAÇÃO ---
 
