@@ -60,8 +60,22 @@ setupGlobalErrorHandlers(fastify.log)
 
 await fastify.register(authenticate)
 
-// 0. PLUGINS DE CONTEÚDO (CORS)
-await fastify.register(cors, { origin: true })
+await fastify.register(cors, {
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://matia-legal-ai.vercel.app',
+    'https://www.matia. com.br',
+  ],
+
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+
+  credentials: true,
+
+  maxAge: 86400,
+})
 
 // --- SWAGGER/OPENAPI CONFIGURAÇÃO ---
 await fastify.register(swagger, {
