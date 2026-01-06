@@ -1,177 +1,478 @@
-# Análise de Arquitetura Back-end - Matia Legal AI
+# 🏛️ Matia Server - API Fastify
 
-## 📋 Resumo Executivo
-
-Este documento apresenta uma análise detalhada da arquitetura back-end do projeto Matia Legal AI, identificando gaps, melhorias necessárias e recomendações de implementação.
-
-## 🏗️ Estrutura Atual
-
-### Frontend (matia-legal-ai)
-- **Framework**: React + Vite + TypeScript
-- **UI**:  Shadcn/UI + Radix UI + Tailwind CSS
-- **Estado**: TanStack Query (React Query)
-- **Backend**:  Supabase
-- **Roteamento**: React Router DOM
-
-### Backend API (matia-server-fastify-teste)
-- **Framework**: Fastify + TypeScript
-- **Estrutura**: 
-  - `/routes` - Rotas da API
-  - `/controllers` - Controladores
-  - `/models` - Modelos de dados
-  - `/schemas` - Schemas de validação
-  - `/migrations` - Migrações de banco
-  - `/utils` - Utilitários
-  - `/config` - Configurações
-
-## 🔍 Gaps Identificados
-
-### 1. Segurança e Autenticação
-- ❌ Falta implementação de rate limiting
-- ❌ Ausência de validação de CORS configurável
-- ❌ Falta helmet para headers de segurança
-- ❌ Sem proteção contra CSRF
-- ❌ Falta auditoria de logs de segurança
-- ⚠️  Autenticação básica presente (authPlugin. ts) mas precisa de melhorias
-
-### 2. Validação e Tratamento de Erros
-- ❌ Falta middleware centralizado de tratamento de erros
-- ❌ Ausência de validação consistente de schemas
-- ❌ Falta padronização de respostas de erro
-- ❌ Sem tratamento de erros assíncronos global
-
-### 3. Observabilidade e Monitoramento
-- ❌ Falta sistema de logging estruturado (ex: Winston, Pino)
-- ❌ Ausência de métricas e monitoring (ex: Prometheus)
-- ❌ Falta APM (Application Performance Monitoring)
-- ❌ Sem health checks endpoint
-- ❌ Ausência de tracing distribuído
-
-### 4. Testes
-- ❌ Falta estrutura de testes unitários
-- ❌ Ausência de testes de integração
-- ❌ Falta testes E2E
-- ❌ Sem testes de carga/performance
-- ❌ Ausência de coverage de testes
-
-### 5. Banco de Dados
-- ⚠️  Migrations presentes mas sem validação da estrutura
-- ❌ Falta sistema de seeding para desenvolvimento
-- ❌ Ausência de backup automatizado
-- ❌ Falta índices otimizados documentados
-- ❌ Sem queries otimizadas documentadas
-- ❌ Ausência de pool de conexões configurado
-
-### 6. Cache e Performance
-- ❌ Falta implementação de cache (Redis)
-- ❌ Ausência de cache de queries
-- ❌ Falta cache de sessões
-- ❌ Sem estratégia de invalidação de cache
-
-### 7. Documentação da API
-- ⚠️  Swagger. yaml presente mas precisa validação
-- ❌ Falta exemplos de requisições/respostas
-- ❌ Ausência de Postman/Insomnia collections
-- ❌ Falta documentação de autenticação
-- ❌ Sem versionamento de API documentado
-
-### 8. CI/CD e DevOps
-- ❌ Falta pipeline de CI/CD
-- ❌ Ausência de Docker/Docker Compose
-- ❌ Falta configuração de ambientes (dev, staging, prod)
-- ❌ Sem scripts de deploy
-- ❌ Ausência de rollback strategy
-
-### 9. Fila de Processamento
-- ❌ Falta sistema de filas (Bull, BullMQ)
-- ❌ Ausência de jobs agendados
-- ❌ Falta processamento assíncrono para tarefas pesadas
-- ❌ Sem retry mechanism para falhas
-
-### 10. Integração com IA
-- ❌ Falta serviço dedicado para integração com LLMs
-- ❌ Ausência de rate limiting para APIs de IA
-- ❌ Falta cache de respostas de IA
-- ❌ Sem fallback para falhas de IA
-- ❌ Ausência de versionamento de prompts
-
-### 11. Upload e Gestão de Arquivos
-- ❌ Falta serviço de upload de arquivos
-- ❌ Ausência de validação de tipos de arquivo
-- ❌ Falta compressão de imagens
-- ❌ Sem storage strategy (local, S3, etc)
-- ❌ Ausência de antivírus scanning
-
-### 12. Notificações
-- ❌ Falta sistema de notificações push
-- ❌ Ausência de serviço de email
-- ❌ Falta templates de email
-- ❌ Sem sistema de notificações in-app
-
-### 13. Webhooks e Integrações
-- ❌ Falta sistema de webhooks
-- ❌ Ausência de retry para webhooks falhos
-- ❌ Falta validação de assinaturas
-- ❌ Sem logs de webhooks
-
-### 14. Conformidade Legal (específico para Legal AI)
-- ❌ Falta sistema de auditoria completo
-- ❌ Ausência de logs de acesso a dados sensíveis
-- ❌ Falta encriptação de dados sensíveis
-- ❌ Sem política de retenção de dados
-- ❌ Ausência de LGPD/GDPR compliance tools
-
-## 📊 Priorização de Implementação
-
-### 🔴 Crítico (Implementar Imediatamente)
-1.  Tratamento centralizado de erros
-2. Logging estruturado
-3. Validação de schemas
-4. Health checks
-5. Segurança (Helmet, CORS, Rate Limiting)
-6. Testes unitários básicos
-
-### 🟡 Alta Prioridade (Próximas 2-4 semanas)
-1. Sistema de cache (Redis)
-2. Documentação completa da API
-3. Testes de integração
-4. CI/CD pipeline
-5. Docker/Docker Compose
-6. Auditoria e compliance
-
-### 🟢 Média Prioridade (1-2 meses)
-1. Sistema de filas
-2. Monitoramento e métricas
-3. Upload de arquivos
-4. Sistema de notificações
-5. Integração robusta com IA
-6. Webhooks
-
-### 🔵 Baixa Prioridade (Futuro)
-1. APM avançado
-2. Tracing distribuído
-3. Testes E2E completos
-4. Features avançadas de cache
-
-## 🎯 Recomendações Específicas
-
-### Para um Sistema Legal AI
-1. **Auditoria é essencial**: Cada ação deve ser logada
-2. **Encriptação**:  Dados sensíveis devem ser encriptados
-3. **Versionamento**: Documentos e mudanças devem ter histórico
-4. **Compliance**:  LGPD/GDPR devem ser prioridade
-5. **Backup**: Estratégia robusta de backup e recuperação
-
-## 📈 Próximos Passos
-
-1. Revisar e priorizar os gaps identificados
-2. Criar issues/tasks para cada implementação
-3. Definir sprints de desenvolvimento
-4. Implementar features críticas primeiro
-5. Estabelecer métricas de sucesso
-6. Review contínuo da arquitetura
+API REST desenvolvida com **Fastify + TypeScript** para o sistema Matia Legal AI, focada em gerenciamento de usuários, documentos, conversas e logs de atividade.
 
 ---
 
-**Data da Análise**: 2025-12-23  
-**Autor**: Análise Automatizada GitHub Copilot
+## 📋 Índice
+
+- [Tecnologias](#-tecnologias)
+- [Funcionalidades](#-funcionalidades)
+- [Segurança](#-segurança)
+- [Instalação](#-instalação)
+- [Variáveis de Ambiente](#-variáveis-de-ambiente)
+- [Executando o Projeto](#-executando-o-projeto)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Rotas da API](#-rotas-da-api)
+- [Autenticação](#-autenticação)
+- [Documentação Swagger](#-documentação-swagger)
+- [Scripts Disponíveis](#-scripts-disponíveis)
+
+---
+
+## 🚀 Tecnologias
+
+| Tecnologia | Versão | Descrição |
+|------------|--------|-----------|
+| **Node.js** | 18+ | Runtime JavaScript |
+| **TypeScript** | 5.x | Tipagem estática |
+| **Fastify** | 4.x | Framework web de alta performance |
+| **Sequelize** | 6.x | ORM para PostgreSQL |
+| **PostgreSQL** | 14+ | Banco de dados relacional |
+| **JWT** | - | Autenticação via tokens |
+| **Bcrypt** | - | Hash de senhas |
+| **Biome** | - | Linter e formatter |
+
+---
+
+## ✨ Funcionalidades
+
+- ✅ Autenticação JWT com refresh token
+- ✅ CRUD completo de usuários (profiles)
+- ✅ Gerenciamento de documentos
+- ✅ Sistema de conversas e mensagens
+- ✅ Tags e categorização de documentos
+- ✅ Análise de documentos (integração IA)
+- ✅ Logs de atividade (auditoria)
+- ✅ Documentação automática (Swagger/OpenAPI)
+
+---
+
+## 🛡️ Segurança
+
+A API implementa múltiplas camadas de segurança:
+
+| Recurso | Descrição | Status |
+|---------|-----------|--------|
+| **Helmet** | Headers HTTP de segurança (CSP, XSS, etc.) | ✅ Ativo |
+| **Rate Limiting** | 100 req/min global, 5 req/15min no login | ✅ Ativo |
+| **CORS** | Origens específicas configuradas | ✅ Ativo |
+| **JWT** | Autenticação stateless com tokens | ✅ Ativo |
+| **Bcrypt** | Hash de senhas com salt | ✅ Ativo |
+| **Validação CPF** | Validação de documentos brasileiros | ✅ Ativo |
+| **Error Handler** | Tratamento centralizado de erros | ✅ Ativo |
+
+### Configuração de CORS
+
+```typescript
+origin: [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://matia-legal-ai.vercel.app',
+  'https://www.matia.com.br',
+]
+```
+
+### Rate Limiting
+
+| Rota | Limite | Janela |
+|------|--------|--------|
+| Global | 100 requisições | 1 minuto |
+| Login (`/api/auth/login`) | 5 requisições | 15 minutos |
+| Registro (`/api/profile/profile`) | 3 requisições | 1 hora |
+
+---
+
+## 📦 Instalação
+
+### Pré-requisitos
+
+- Node.js 18+
+- PostgreSQL 14+
+- npm ou yarn
+
+### Passos
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/gedsss/matia-server-fastify-teste.git
+cd matia-server-fastify-teste
+
+# 2. Instale as dependências
+npm install
+
+# 3. Configure as variáveis de ambiente
+cp .env. example .env
+# Edite o arquivo .env com suas configurações
+
+# 4. Execute as migrations
+npm run migrate
+
+# 5. Inicie o servidor
+npm run dev
+```
+
+---
+
+## 🔐 Variáveis de Ambiente
+
+Crie um arquivo `.env` baseado no `.env.example`:
+
+```env
+# Servidor
+NODE_ENV=development
+LOG_LEVEL=info
+PORT=3002
+
+# JWT
+JWT_SECRET=sua_chave_secreta_muito_segura_aqui
+
+# Banco de Dados
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=matia_db
+DB_USER=seu_usuario
+DB_PASS=sua_senha
+
+# CORS (opcional - para sobrescrever padrões)
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+```
+
+---
+
+## ▶️ Executando o Projeto
+
+```bash
+# Desenvolvimento (com hot reload)
+npm run dev
+
+# Produção
+npm run build
+npm start
+
+# Verificar lint
+npm run lint
+
+# Formatar código
+npm run format
+```
+
+O servidor estará disponível em:  `http://localhost:3002`
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+matia-server-fastify-teste/
+├── config/                 # Configurações do Sequelize
+│   └── config.json
+├── controllers/            # Lógica de negócio
+│   ├── loginController.ts
+│   ├── profileController.ts
+│   ├── messagesController.ts
+│   ├── documentsController.ts
+│   ├── documents_tagsController.ts
+│   ├── documents_tags_relationController.ts
+│   ├── documents_analysisController.ts
+│   ├── conversationController.ts
+│   ├── conversation_documentsController.ts
+│   ├── activity_logsController.ts
+│   ├── user_activity_logController.ts
+│   └── user_roleController.ts
+├── errors/                 # Classes de erro customizadas
+│   ├── appError.ts
+│   ├── errorCodes.ts
+│   └── errors.ts
+├── middleware/             # Middlewares
+│   ├── asyncHandler.ts
+│   └── errorHandler.ts
+├── migrations/             # Migrations do banco
+├── models/                 # Modelos Sequelize
+│   ├── profile.ts
+│   ├── user_roles.ts
+│   ├── user_activity_log.ts
+│   ├── messages.ts
+│   ├── documents.ts
+│   ├── documents_tags.ts
+│   ├── documents_tags_relation. ts
+│   ├── documents_analysis.ts
+│   ├── conversation. ts
+│   ├── conversation_documents.ts
+│   ├── activity_logs.ts
+│   └── foreignKeys.ts
+├── plugins/                # Plugins Fastify
+│   ├── authPlugin.ts       # Autenticação JWT
+│   ├── helmet.ts           # Headers de segurança
+│   └── ratelimit.ts        # Rate limiting
+├── routes/                 # Definição de rotas
+│   ├── loginRoutes.ts
+│   ├── profileRoutes.ts
+│   ├── messagesRoutes.ts
+│   ├── documentsRoutes.ts
+│   ├── documents_tagsRoutes.ts
+│   ├── documents_tags_relationsRoutes.ts
+│   ├── documents_analysisRoutes.ts
+│   ├── conversationRoutes.ts
+│   ├── conversation_documentsRoutes.ts
+│   ├── activity_logsRoutes.ts
+│   ├── user_activity_logRoutes.ts
+│   └── user_roleRoutes.ts
+├── schemas/                # Schemas de validação (JSON Schema)
+├── scripts/                # Scripts utilitários
+├── utils/                  # Funções auxiliares
+│   ├── response.ts
+│   └── verifyCredentials.ts
+├── . env.example            # Template de variáveis de ambiente
+├── .gitignore
+├── biome.json              # Configuração do Biome (linter)
+├── db.ts                   # Conexão com banco de dados
+├── package.json
+├── server.ts               # Ponto de entrada da aplicação
+├── swagger.yaml            # Especificação OpenAPI
+└── tsconfig.json           # Configuração TypeScript
+```
+
+---
+
+## 🛣️ Rotas da API
+
+### 🔓 Rotas Públicas (sem autenticação)
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/auth/login` | Realizar login |
+| `POST` | `/api/profile/profile` | Criar novo usuário (registro) |
+
+### 🔐 Rotas Protegidas (requer JWT)
+
+#### Profile (Usuários)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/api/profile/profile/: id` | Buscar usuário por ID |
+| `PUT` | `/api/profile/profile/:id` | Atualizar usuário |
+| `DELETE` | `/api/profile/profile/:id` | Deletar usuário |
+
+#### User Roles (Funções)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/user_roles/user-role` | Criar função |
+| `GET` | `/api/user_roles/user-role/: id` | Buscar função |
+| `PUT` | `/api/user_roles/user-role/:id` | Atualizar função |
+| `DELETE` | `/api/user_roles/user-role/:id` | Deletar função |
+
+#### Messages (Mensagens)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/messages/messages` | Criar mensagem |
+| `GET` | `/api/messages/messages/: id` | Buscar mensagem |
+| `PUT` | `/api/messages/messages/:id` | Atualizar mensagem |
+| `DELETE` | `/api/messages/messages/:id` | Deletar mensagem |
+
+#### Documents (Documentos)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/documents/documents` | Upload de documento |
+| `GET` | `/api/documents/documents/:id` | Buscar documento |
+| `PUT` | `/api/documents/documents/:id` | Atualizar documento |
+| `DELETE` | `/api/documents/documents/:id` | Deletar documento |
+
+#### Documents Tags (Tags)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/documents_tags/documents-tags` | Criar tag |
+| `GET` | `/api/documents_tags/documents-tags/:id` | Buscar tag |
+| `PUT` | `/api/documents_tags/documents-tags/:id` | Atualizar tag |
+| `DELETE` | `/api/documents_tags/documents-tags/:id` | Deletar tag |
+
+#### Documents Analysis (Análises)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/documents_analyses/documents-analyses` | Criar análise |
+| `GET` | `/api/documents_analyses/documents-analyses/: id` | Buscar análise |
+| `PUT` | `/api/documents_analyses/documents-analyses/:id` | Atualizar análise |
+| `DELETE` | `/api/documents_analyses/documents-analyses/:id` | Deletar análise |
+
+#### Conversations (Conversas)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/conversations/conversations` | Criar conversa |
+| `GET` | `/api/conversations/conversations/:id` | Buscar conversa |
+| `PUT` | `/api/conversations/conversations/:id` | Atualizar conversa |
+| `DELETE` | `/api/conversations/conversations/:id` | Deletar conversa |
+
+#### Activity Logs (Logs de Atividade)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `POST` | `/api/activity_logs/activity-logs` | Criar log |
+| `GET` | `/api/activity_logs/activity-logs/:id` | Buscar log |
+| `PUT` | `/api/activity_logs/activity-logs/:id` | Atualizar log |
+| `DELETE` | `/api/activity_logs/activity-logs/:id` | Deletar log |
+
+---
+
+## 🔑 Autenticação
+
+A API utiliza **JWT (JSON Web Tokens)** para autenticação. 
+
+### Login
+
+```bash
+curl -X POST http://localhost:3002/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "usuario@email.com",
+    "password":  "senha123"
+  }'
+```
+
+**Resposta:**
+```json
+{
+  "message": "Login bem-sucedido",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "userData": {
+    "user_id": "uuid-do-usuario",
+    "user_role": "publico"
+  }
+}
+```
+
+### Usando o Token
+
+Inclua o token no header `Authorization`:
+
+```bash
+curl -X GET http://localhost:3002/api/profile/profile/uuid-do-usuario \
+  -H "Authorization: Bearer SEU_TOKEN_JWT"
+```
+
+### Registro de Novo Usuário
+
+```bash
+curl -X POST http://localhost:3002/api/profile/profile \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "João Silva",
+    "email": "joao@email.com",
+    "cpf": "12345678901",
+    "telefone": "11999999999",
+    "data_nascimento": "1990-01-01",
+    "profile_password": "senha123"
+  }'
+```
+
+---
+
+## 📖 Documentação Swagger
+
+A documentação interativa da API está disponível em:
+
+```
+http://localhost:3002/docs
+```
+
+Funcionalidades: 
+- 📋 Lista todas as rotas disponíveis
+- 🧪 Permite testar endpoints diretamente
+- 📝 Mostra schemas de request/response
+- 🔐 Suporta autenticação JWT
+
+---
+
+## 📜 Scripts Disponíveis
+
+| Script | Comando | Descrição |
+|--------|---------|-----------|
+| `dev` | `npm run dev` | Inicia em modo desenvolvimento |
+| `build` | `npm run build` | Compila TypeScript |
+| `start` | `npm start` | Inicia em produção |
+| `lint` | `npm run lint` | Verifica código com Biome |
+| `format` | `npm run format` | Formata código com Biome |
+| `migrate` | `npm run migrate` | Executa migrations |
+
+---
+
+## 🗄️ Banco de Dados
+
+### Modelos
+
+| Modelo | Tabela | Descrição |
+|--------|--------|-----------|
+| `Profile` | `profile` | Usuários do sistema |
+| `UserRole` | `user_roles` | Funções/papéis dos usuários |
+| `UserActivityLog` | `user_activity_log` | Log de ações dos usuários |
+| `Messages` | `messages` | Mensagens das conversas |
+| `Documents` | `documents` | Documentos enviados |
+| `DocumentsTags` | `documents_tags` | Tags para documentos |
+| `DocumentsTagsRelation` | `documents_tags_relation` | Relação documento-tag |
+| `DocumentsAnalysis` | `documents_analysis` | Análises de documentos |
+| `Conversation` | `conversations` | Conversas/chats |
+| `ConversationDocuments` | `conversation_documents` | Documentos por conversa |
+| `ActivityLogs` | `activity_logs` | Logs administrativos |
+
+### Diagrama de Relacionamentos
+
+```
+Profile (1) ────────── (N) UserRole
+   │
+   │ (1)
+   │
+   └──────────────────── (N) UserActivityLog
+   │
+   │ (1)
+   │
+   └──────────────────── (N) Documents
+   │                          │
+   │                          │ (N)
+   │                          │
+   │                          └── (N) DocumentsTagsRelation (N) ── DocumentsTags
+   │                          │
+   │                          └── (N) DocumentsAnalysis
+   │
+   └──────────────────── (N) Conversation
+                              │
+                              │ (1)
+                              │
+                              └── (N) Messages
+                              │
+                              └── (N) ConversationDocuments
+```
+
+---
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+---
+
+## 📄 Licença
+
+Este projeto está sob licença.  Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+## 👤 Autor
+
+**gedsss**
+
+- GitHub: [@gedsss](https://github.com/gedsss)
+
+---
+
+## 🙏 Agradecimentos
+
+- [Fastify](https://www.fastify.io/) - Framework web
+- [Sequelize](https://sequelize.org/) - ORM
+- [TypeScript](https://www.typescriptlang.org/) - Tipagem
+
+---
+
+<p align="center">
+  Feito com ❤️ para o projeto Matia Legal AI
+</p>
