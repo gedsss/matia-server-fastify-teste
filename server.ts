@@ -25,6 +25,7 @@ import {
   errorHandler,
   setupGlobalErrorHandlers,
 } from './middleware/errorHandler.js'
+import { helmetPlugin } from './plugins/helmet.js'
 
 // Tipando a instância do Fastify explicitamente
 const fastify: FastifyInstance = Fastify({
@@ -48,6 +49,8 @@ await fastify.register(fastifyEnv, {
 
   dotenv: true,
 })
+
+await fastify.register(helmetPlugin)
 
 await fastify.register(rateLimitPlugin)
 
