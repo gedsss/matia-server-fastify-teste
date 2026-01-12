@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import { cpf } from 'cpf-cnpj-validator'
-import { type FastifyReply, type FastifyRequest } from 'fastify'
+import { FastifyReply, type FastifyRequest } from 'fastify'
 import { Op } from 'sequelize'
 import profile, { type ProfileAttributes } from '../models/profile.js'
 import {

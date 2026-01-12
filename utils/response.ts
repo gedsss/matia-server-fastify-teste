@@ -1,5 +1,5 @@
 export interface SuccessResponse<T = any> {
-  sucess: true
+  success: true
   data: T
   message?: string
   meta?: {
@@ -17,7 +17,7 @@ export function successResponse<T>(
   meta?: SuccessResponse['meta']
 ): SuccessResponse<T> {
   const response: SuccessResponse = {
-    sucess: true,
+    success: true,
     data,
   }
 
