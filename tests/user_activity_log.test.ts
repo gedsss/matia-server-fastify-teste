@@ -23,6 +23,7 @@ describe('userActivityLogController', () => {
     it('deve criar um log de atividades dos usuarios com dados válidos', async () => {
       const req = {
         body: {
+          user_id: 'uuid-do-usuario',
           action_type: 'login',
           resource_type: 'resource de teste',
           details: {
@@ -75,7 +76,7 @@ describe('userActivityLogController', () => {
         params: { id: '00000000-0000-0000-0000-000000000000' },
       } as FastifyRequest
 
-      expect(getUserActivityLogById(req)).rejects.toThrow()
+      await expect(getUserActivityLogById(req)).rejects.toThrow()
     })
 
     it('deve retornar erro para ID inválido', async () => {
@@ -83,7 +84,7 @@ describe('userActivityLogController', () => {
         params: { id: 'id-inválido' },
       } as FastifyRequest
 
-      expect(getUserActivityLogById(req)).rejects.toThrow()
+      await expect(getUserActivityLogById(req)).rejects.toThrow()
     })
   })
 
@@ -148,7 +149,7 @@ describe('userActivityLogController', () => {
         },
       } as FastifyRequest
 
-      expect(updateUserActivityLog(req)).rejects.toThrow()
+      await expect(updateUserActivityLog(req)).rejects.toThrow()
     })
 
     it('não deve atualizar com body vazio', async () => {
@@ -185,7 +186,7 @@ describe('userActivityLogController', () => {
         },
       } as FastifyRequest
 
-      expect(await getUserActivityLogById(req)).rejects.toThrow()
+      await expect(await getUserActivityLogById(req)).rejects.toThrow()
     })
 
     it('Deve retornar erro de ID inexistente', async () => {
@@ -195,7 +196,7 @@ describe('userActivityLogController', () => {
         },
       } as FastifyRequest
 
-      expect(await deleteUserActivityLog(req)).rejects.toThrow()
+      await expect(await deleteUserActivityLog(req)).rejects.toThrow()
     })
 
     it('deve retornar erro ao deletar ID já deletado', async () => {
@@ -205,7 +206,7 @@ describe('userActivityLogController', () => {
         },
       } as FastifyRequest
 
-      expect(await deleteUserActivityLog(req)).rejects.toThrow()
+      await expect(await deleteUserActivityLog(req)).rejects.toThrow()
     })
   })
 })

@@ -23,6 +23,7 @@ describe('UserRoleControlle', () => {
     it('Deve criar um log com sucesso', async () => {
       const req = {
         body: {
+          user_id: 'uuid-do-usuario',
           role: 'Administrador',
         },
       } as FastifyRequest
@@ -30,7 +31,7 @@ describe('UserRoleControlle', () => {
       const result = await createUserRole(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.role).toBe('role')
+      expect(result.data.role).toBe('Administrador')
       expect(result.data).toHaveProperty('role')
 
       createUserRoleId = result.data.id
@@ -43,9 +44,7 @@ describe('UserRoleControlle', () => {
         },
       } as FastifyRequest
 
-      const result = await createUserRole(req)
-
-      expect(result).rejects.toThrow()
+      await expect(createUserRole(req)).rejects.toThrow()
     })
 
     it('Deve retornar erro ao enviar a requisição vazia', async () => {
@@ -53,9 +52,7 @@ describe('UserRoleControlle', () => {
         body: {},
       } as FastifyRequest
 
-      const result = await createUserRole(req)
-
-      expect(result).rejects.toThrow()
+      await expect(createUserRole(req)).rejects.toThrow()
     })
   })
 
@@ -71,30 +68,26 @@ describe('UserRoleControlle', () => {
 
       expect(result.success).toBe(true)
       expect(result.data.role).toBe('Administrador')
+    })
 
-      it('Deve retornar erro para ID inexistente', async () => {
-        const req = {
-          params: {
-            id: '00000000-0000-0000-0000-000000000000',
-          },
-        } as FastifyRequest
+    it('Deve retornar erro para ID inexistente', async () => {
+      const req = {
+        params: {
+          id: '00000000-0000-0000-0000-000000000000',
+        },
+      } as FastifyRequest
 
-        const result = await getUserRoleById(req)
+      await expect(getUserRoleById(req)).rejects.toThrow()
+    })
 
-        expect(result).rejects.toThrow()
-      })
+    it('Deve retornar erro para ID inválido', async () => {
+      const req = {
+        params: {
+          id: 'ID inválido',
+        },
+      } as FastifyRequest
 
-      it('Deve retornar erro para ID inválido', async () => {
-        const req = {
-          params: {
-            id: 'ID inválido',
-          },
-        } as FastifyRequest
-
-        const result = await getUserRoleById(req)
-
-        expect(result).rejects.toThrow()
-      })
+      await expect(getUserRoleById(req)).rejects.toThrow()
     })
   })
 
@@ -158,9 +151,7 @@ describe('UserRoleControlle', () => {
         },
       } as FastifyRequest
 
-      const result = await getUserRoleById(req)
-
-      expect(result).rejects.toThrow()
+      await expect(getUserRoleById(req)).rejects.toThrow()
     })
 
     it('deve retornar erro ao deletar ID inexistente', async () => {
