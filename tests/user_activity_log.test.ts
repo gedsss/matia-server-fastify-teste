@@ -6,7 +6,7 @@ import {
   deleteUserActivityLog,
 } from '../controllers/user_activity_logController.js'
 import sequelize from '../db.js'
-import type { FastifyRequest, FastifyReply } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 
 describe('userActivityLogController', () => {
   let createLogId: string
@@ -48,8 +48,16 @@ describe('userActivityLogController', () => {
 
     it('deve rejeitar quando campos obrigatórios estão faltando', async () => {
       const req = {
+        body: {},
+      } as FastifyRequest
+
+      await expect(createUserActivityLog(req)).rejects.toThrow()
+    })
+
+    it('Deve rejeitar quando o dado insirido não está prensente nas opções pre-definidas', async () => {
+      const req = {
         body: {
-          action_type: undefined,
+          action_type: 'teste',
         },
       } as FastifyRequest
 

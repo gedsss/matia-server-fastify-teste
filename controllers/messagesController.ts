@@ -70,15 +70,12 @@ export const updateMessages = async (request: FastifyRequest) => {
   }
 }
 
-export const deleteMessages = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const deleteMessages = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const deleted = await messages.destroy({ where: { id } })
     if (deleted === 0) throw new DocumentNotFoundError()
-    return successResponse(reply, 'Documento deletado com sucesso')
+    return successResponse('Documento deletado com sucesso')
   } catch (err: any) {
     throw new ValidationError('Erro ao deletar o documentos', {
       code: ErrorCodes.DELETE_FAILED,
