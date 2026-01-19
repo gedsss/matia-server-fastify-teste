@@ -74,15 +74,12 @@ export const updateActivityLogs = async (request: FastifyRequest) => {
   }
 }
 
-export const deleteActivityLogs = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const deleteActivityLogs = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const deleted = await activityLogs.destroy({ where: { id } })
     if (deleted === 0) throw new DocumentNotFoundError()
-    return successResponse(reply, 'Sucesso ao deletar o documento')
+    return successResponse('Sucesso ao deletar o documento')
   } catch (err: any) {
     throw new InternalServerError('Erro ao criar o documento', {
       code: ErrorCodes.DELETE_FAILED,

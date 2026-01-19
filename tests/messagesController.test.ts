@@ -6,7 +6,7 @@ import {
   deleteMessages,
 } from '../controllers/messagesController.js'
 import sequelize from '../db.js'
-import { FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 
 describe('MessagesController', async () => {
   let createMessagesID: string

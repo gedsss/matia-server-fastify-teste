@@ -1,0 +1,186 @@
+import { expect, it, beforeAll, afterAll, describe } from 'vitest'
+import {
+  createConversation,
+  getConversationById,
+  updateConversation,
+  deleteConversation,
+} from '../controllers/conversationController.js'
+import sequelize from '../db.js'
+import type { FastifyRequest } from 'fastify'
+import {
+  createMessages,
+  getMessagesById,
+} from '../controllers/messagesController.js'
+
+describe('ConversationDocuments', () => {
+  let createConversationID: string
+
+  beforeAll(async () => {
+    await sequelize.sync({ force: true })
+  })
+
+  afterAll(async () => {
+    await sequelize.close()
+  })
+
+  describe('createConversation', () => {
+    it('deve criar um message com sucesso', async () => {
+      const req = {
+        body: {
+          user_id: 'id-do-usuario',
+          title: 'titulo-teste',
+          is_favorite: true,
+          last_message_at: '20-10-2004',
+        },
+      } as FastifyRequest
+
+      const result = await createConversation(req)
+
+      createConversationID = result.data.id
+
+      expect(result.success).toBe(true)
+      expect(result.data.title).toBe('titulo-teste')
+      expect(result.data.user_id).toBe('id-do-usuário')
+      expect(result.data.is_favorite).toBe(true)
+    })
+
+    it('deve rejeitar quando campos obrigatórios estão faltando', async () => {
+      const req = {
+        body: {
+          nome: 'Incompleto',
+        },
+      } as FastifyRequest
+
+      await expect(createMessages(req)).rejects.toThrow()
+    })
+
+    it('deve rejeitar body vazio', async () => {
+      const req = {
+        body: {},
+      } as FastifyRequest
+
+      await expect(createMessages(req)).rejects.toThrow()
+    })
+  })
+
+  describe('getMessagesById', () => {
+    it('Deve retornar o message com sucesso', async () => {
+      const req = {
+        params: {
+          id: createConversationID,
+        },
+      } as FastifyRequest
+
+      const result = await getConversationById(req)
+
+      expect(result.success).toBe(true)
+      expect(result.data.user_id).toBe('titulo-teste')
+    })
+
+    it('deve retornar erro para ID inexistente', async () => {
+      const req = {
+        params: { id: '00000000-0000-0000-0000-000000000000' },
+      } as FastifyRequest
+
+      await expect(getMessagesById(req)).rejects.toThrow()
+    })
+
+    it('deve retornar erro para ID inválido', async () => {
+      const req = {
+        params: { id: 'id-invalido' },
+      } as FastifyRequest
+
+      await expect(getMessagesById(req)).rejects.toThrow()
+    })
+  })
+
+  describe('updateMessages', () => {
+    it('Deve atualizar o message com sucesso', async () => {
+      const req = {
+        params: {
+          id: getConversationById,
+        },
+        body: {
+          title: 'testando-update',
+        },
+      } as FastifyRequest
+
+      const result = await updateConversation(req)
+
+      expect(result.success).toBe(true)
+      expect(result.data?.title).toBe('testando-update')
+    })
+
+    it('deve atualizar múltiplos campos', async () => {
+      const req = {
+        params: { id: createConversationID },
+        body: {
+          title: 'testando-multiplos',
+          is_favorite: false,
+        },
+      } as FastifyRequest
+
+      const result = await updateConversation(req)
+
+      expect(result.success).toBe(true)
+      expect(result.data?.is_favorite).toBe(false)
+      expect(result.data?.title).toBe('testando-multiplos')
+    })
+
+    it('deve rejeitar quando campos obrigatórios estão faltando', async () => {
+      const req = {
+        body: {
+          original_name: 'Erro',
+        },
+      } as FastifyRequest
+
+      await expect(updateConversation(req)).rejects.toThrow()
+    })
+
+    it('deve rejeitar body vazio', async () => {
+      const req = {
+        body: {},
+      } as FastifyRequest
+
+      await expect(updateConversation(req)).rejects.toThrow()
+    })
+  })
+
+  describe('deleteConversation', () => {
+    it('Deve deletar o convsersation com sucesso', async () => {
+      const req = {
+        params: {
+          id: createConversationID,
+        },
+      } as FastifyRequest
+
+      const result = await deleteConversation(req)
+
+      expect(result.success).toBe(true)
+    })
+
+    it('deve confirmar que o conversation foi deletado', async () => {
+      const req = {
+        params: { id: createConversationID },
+      } as FastifyRequest
+
+      await expect(getConversationById(req)).rejects.toThrow()
+    })
+
+    it('deve retornar erro ao deletar ID inexistente', async () => {
+      const req = {
+        params: { id: '00000000-0000-0000-0000-000000000000' },
+      } as FastifyRequest
+
+      await expect(deleteConversation(req)).rejects.toThrow()
+    })
+
+    it('deve retornar erro ao deletar ID já deletado', async () => {
+      const req = {
+        params: { id: createConversationID },
+      } as FastifyRequest
+
+      await expect(deleteConversation(req)).rejects.toThrow()
+    })
+  })
+})

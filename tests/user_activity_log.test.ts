@@ -35,7 +35,7 @@ describe('userActivityLogController', () => {
         },
       } as FastifyRequest
 
-      const result = (await createUserActivityLog(req)) as any
+      const result = await createUserActivityLog(req)
 
       expect(result.success).toBe(true)
       expect(result.data).toHaveProperty('id')

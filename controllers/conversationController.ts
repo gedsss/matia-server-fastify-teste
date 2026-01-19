@@ -74,15 +74,12 @@ export const updateConversation = async (request: FastifyRequest) => {
   }
 }
 
-export const deleteConversation = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const deleteConversation = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const deleted = await conversation.destroy({ where: { id } })
     if (deleted === 0) throw new DocumentNotFoundError()
-    return successResponse(reply, 'Documento deletado com sucesso')
+    return successResponse('Documento deletado com sucesso')
   } catch (err: any) {
     throw new InternalServerError('Erro ao deletar o documento')
   }

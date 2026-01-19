@@ -6,7 +6,6 @@ import {
   deleteProfile,
 } from '../controllers/profileController.js'
 import sequelize from '../db.js'
-import profile from '../models/profile.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('profileController', () => {
