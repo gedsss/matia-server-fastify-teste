@@ -8,7 +8,7 @@ import {
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('ConversationDocuments', () => {
+describe('ConversationController', () => {
   let createConversationID: string
 
   beforeAll(async () => {
@@ -60,7 +60,7 @@ describe('ConversationDocuments', () => {
   })
 
   describe('getConversationById', () => {
-    it('Deve retornar o conversation com sucesso', async () => {
+    it('deve retornar o conversation com sucesso', async () => {
       const req = {
         params: {
           id: createConversationID,
@@ -91,7 +91,7 @@ describe('ConversationDocuments', () => {
   })
 
   describe('updateConversation', () => {
-    it('Deve atualizar o conversation com sucesso', async () => {
+    it('deve atualizar o conversation com sucesso', async () => {
       const req = {
         params: {
           id: getConversationById,
@@ -143,7 +143,7 @@ describe('ConversationDocuments', () => {
   })
 
   describe('deleteConversation', () => {
-    it('Deve deletar o convsersation com sucesso', async () => {
+    it('deve deletar o conversation com sucesso', async () => {
       const req = {
         params: {
           id: createConversationID,

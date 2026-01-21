@@ -8,19 +8,19 @@ import {
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('documentsController', () => {
+describe('DocumentsController', () => {
   let createDocumentosID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
   })
 
-  afterAll(() => {
-    sequelize.close()
+  afterAll(async () => {
+    await sequelize.close()
   })
 
   describe('createDocuments', () => {
-    it('Deve criar o documento com sucesso', async () => {
+    it('deve criar o documento com sucesso', async () => {
       const req = {
         body: {
           user_id: 'ID do usuário',
@@ -61,11 +61,11 @@ describe('documentsController', () => {
     })
   })
 
-  describe('getDocumentos', () => {
-    it('Deve buscar o documento com sucesso', async () => {
+  describe('getDocumentsById', () => {
+    it('deve buscar o documento com sucesso', async () => {
       const req = {
         params: {
-          createDocumentosID,
+          id: createDocumentosID,
         },
       } as FastifyRequest
 
@@ -92,8 +92,8 @@ describe('documentsController', () => {
       await expect(getDocumentsById(req)).rejects.toThrow()
     })
   })
-  describe('updateDocumentos', () => {
-    it('Deve fazer o update do documento com sucesso', async () => {
+  describe('updateDocuments', () => {
+    it('deve fazer o update do documento com sucesso', async () => {
       const req = {
         params: {
           id: createDocumentosID,
@@ -108,7 +108,7 @@ describe('documentsController', () => {
       expect(result.success).toBe(true)
       expect(result.data?.original_name).toBe('Teste de update')
     })
-    it('Deve atualizar mais de um campo com sucesso', async () => {
+    it('deve atualizar mais de um campo com sucesso', async () => {
       const req = {
         params: {
           id: createDocumentosID,
@@ -149,8 +149,8 @@ describe('documentsController', () => {
       expect(result.success).toBe(true)
     })
   })
-  describe('deleteDocumento', () => {
-    it('Deve deletar com sucesso o documento', async () => {
+  describe('deleteDocuments', () => {
+    it('deve deletar com sucesso o documento', async () => {
       const req = {
         params: {
           id: createDocumentosID,

@@ -8,7 +8,7 @@ import {
 import type { FastifyRequest } from 'fastify'
 import sequelize from '../db.js'
 
-describe('UserRoleControlle', () => {
+describe('UserRoleController', () => {
   let createUserRoleId: string
 
   beforeAll(async () => {
@@ -20,7 +20,7 @@ describe('UserRoleControlle', () => {
   })
 
   describe('createUserRole', () => {
-    it('Deve criar um log com sucesso', async () => {
+    it('deve criar um log com sucesso', async () => {
       const req = {
         body: {
           user_id: 'uuid-do-usuario',
@@ -37,7 +37,7 @@ describe('UserRoleControlle', () => {
       createUserRoleId = result.data.id
     })
 
-    it('Deve retornar erro ao enviar a requisição sem os campos obrigatórios', async () => {
+    it('deve retornar erro ao enviar a requisição sem os campos obrigatórios', async () => {
       const req = {
         body: {
           role: undefined,
@@ -47,7 +47,7 @@ describe('UserRoleControlle', () => {
       await expect(createUserRole(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro ao enviar a requisição vazia', async () => {
+    it('deve retornar erro ao enviar a requisição vazia', async () => {
       const req = {
         body: {},
       } as FastifyRequest
@@ -56,8 +56,8 @@ describe('UserRoleControlle', () => {
     })
   })
 
-  describe('getUserRole', () => {
-    it('Deve encontrar o log com sucesso', async () => {
+  describe('getUserRoleById', () => {
+    it('deve encontrar o log com sucesso', async () => {
       const req = {
         params: {
           id: createUserRoleId,
@@ -70,7 +70,7 @@ describe('UserRoleControlle', () => {
       expect(result.data.role).toBe('Administrador')
     })
 
-    it('Deve retornar erro para ID inexistente', async () => {
+    it('deve retornar erro para ID inexistente', async () => {
       const req = {
         params: {
           id: '00000000-0000-0000-0000-000000000000',
@@ -80,7 +80,7 @@ describe('UserRoleControlle', () => {
       await expect(getUserRoleById(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro para ID inválido', async () => {
+    it('deve retornar erro para ID inválido', async () => {
       const req = {
         params: {
           id: 'ID inválido',
@@ -91,8 +91,8 @@ describe('UserRoleControlle', () => {
     })
   })
 
-  describe('UpdateUserRole', () => {
-    it('Deve retornar sucesso ao atualizat o log', async () => {
+  describe('updateUserRole', () => {
+    it('deve retornar sucesso ao atualizar o log', async () => {
       const req = {
         params: {
           id: createUserRoleId,
@@ -117,7 +117,7 @@ describe('UserRoleControlle', () => {
       await expect(updateUserRole(req)).rejects.toThrow()
     })
 
-    it('Não deve atualizar com body vazio', async () => {
+    it('não deve atualizar com body vazio', async () => {
       const req = {
         params: {
           id: createUserRoleId,
@@ -132,7 +132,7 @@ describe('UserRoleControlle', () => {
   })
 
   describe('deleteUserRole', () => {
-    it('Deve deletar o log com sucesso', async () => {
+    it('deve deletar o log com sucesso', async () => {
       const req = {
         params: {
           id: createUserRoleId,
@@ -144,7 +144,7 @@ describe('UserRoleControlle', () => {
       expect(result.success).toBe(true)
     })
 
-    it('Deve confirmar que o log foi deletado', async () => {
+    it('deve confirmar que o log foi deletado', async () => {
       const req = {
         params: {
           id: createUserRoleId,
