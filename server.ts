@@ -102,7 +102,7 @@ await fastify.register(swagger, {
       { name: 'Profile', description: 'Operações de Usuários' },
       { name: 'UserRole', description: 'Log de Funções de Usuários' },
       { name: 'Messages', description: 'Log de Mensagens' },
-      { name: 'Documents', description: 'Lo de Documentos' },
+      { name: 'Documents', description: 'Log de Documentos' },
       { name: 'DocumentsTags', description: 'Log de Tags de Documenos' },
       {
         name: 'DocumentsTagsRelations',

@@ -35,6 +35,19 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
     userActivityController.getUserActivityLogById
   )
 
+  fastify.get(
+    '/user-activity-log',
+    {
+      schema: {
+        tags: ['UserActivityLogs'],
+        summary: 'Lista todos registros de atividade de usuários',
+      },
+
+      preHandler: [fastify.authenticate],
+    },
+    userActivityController.getUserActivityLog
+  )
+
   fastify.put(
     '/user-activity-log/:id',
     {

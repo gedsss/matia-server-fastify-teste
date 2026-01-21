@@ -36,6 +36,18 @@ const documentsAnalysesRoutes = async (fastify: FastifyInstance) => {
     documentsAnalysisController.getDocumentsAnalisysById
   )
 
+  fastify.get(
+    '/documents-analyses',
+    {
+      schema: {
+        tags: ['DocumentsAnalyses'],
+        summary: 'Lista todas as análises de documentos',
+      },
+      preHandler: [fastify.authenticate],
+    },
+    documentsAnalysisController.getDocumentsAnalisys
+  )
+
   fastify.put(
     '/documents-analyses/:id',
     {

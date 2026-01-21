@@ -51,13 +51,13 @@ export const getDocumentsById = async (request: FastifyRequest) => {
   }
 }
 
-export const getDocumentsBy = async () => {
+export const getDocuments = async () => {
   try {
     const item = await documents.findAll()
     if (item.length === 0) {
-      return successResponse([], 'nenhum documents encontrado')
+      return successResponse([], 'nenhum Documents encontrado')
     }
-    return successResponse(item, 'listando todos os documents')
+    return successResponse(item, 'listando todos os Documents')
   } catch (err: any) {
     throw new DataBaseError()
   }

@@ -36,6 +36,19 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
     documentsController.getDocumentsById
   )
 
+  fastify.get(
+    '/documents',
+    {
+      schema: {
+        tags: ['Documents'],
+        summary: 'Lista todos os documentos',
+      },
+
+      preHandler: [fastify.authenticate],
+    },
+    documentsController.getDocuments
+  )
+
   fastify.put(
     '/documents/:id',
     {

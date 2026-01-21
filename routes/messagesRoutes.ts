@@ -36,6 +36,19 @@ const messagesRoutes = async (fastify: FastifyInstance) => {
     messagesController.getMessagesById
   )
 
+  fastify.get(
+    '/messages',
+    {
+      schema: {
+        tags: ['Messages'],
+        summary: 'Listar todas as mensagens',
+      },
+
+      preHandler: [fastify.authenticate],
+    },
+    messagesController.getMessages
+  )
+
   fastify.put(
     '/messages/:id',
     {

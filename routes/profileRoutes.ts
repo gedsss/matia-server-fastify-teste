@@ -42,6 +42,19 @@ const profileRoutes = async (fastify: FastifyInstance) => {
     profileController.getProfileById
   )
 
+  fastify.get(
+    '/profile',
+    {
+      schema: {
+        tags: ['Profile'],
+        summary: 'Lista todos os usuários',
+      },
+
+      preHandler: [fastify.authenticate],
+    },
+    profileController.getProfile
+  )
+
   // ROTA PUT /:id (Atualização)
   fastify.put(
     '/profile/:id',

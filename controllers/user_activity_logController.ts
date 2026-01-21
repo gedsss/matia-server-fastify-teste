@@ -51,7 +51,7 @@ export const getUserActivityLogById = async (request: FastifyRequest) => {
   }
 }
 
-export const getUserActivityLogBy = async () => {
+export const getUserActivityLog = async () => {
   try {
     const item = await UserActivityLog.findAll()
     if (item.length === 0) {

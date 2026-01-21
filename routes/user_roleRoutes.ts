@@ -27,13 +27,27 @@ const userRoleRoutes = async (fastify: FastifyInstance) => {
     {
       schema: {
         tags: ['UserRole'],
-        summary: 'Busca a associação usuário/função pelo ID',
+        summary:
+          'Busca a associação de função de um usuário existente/função pelo ID',
         params: userRoleParamsSchema.params,
       },
 
       preHandler: [fastify.authenticate],
     },
     userRoleController.getUserRoleById
+  )
+
+  fastify.get(
+    '/user-role',
+    {
+      schema: {
+        tags: ['UserRole'],
+        summary: 'Busca a todas as associações de um usuário existente',
+      },
+
+      preHandler: [fastify.authenticate],
+    },
+    userRoleController.getUserRole
   )
 
   fastify.put(

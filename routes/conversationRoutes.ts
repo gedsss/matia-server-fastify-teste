@@ -36,6 +36,18 @@ const conversationsRoutes = async (fastify: FastifyInstance) => {
     conversationsController.getConversationById
   )
 
+  fastify.get(
+    '/conversations',
+    {
+      schema: {
+        tags: ['Conversations'],
+        summary: 'Lista todas as conversas',
+      },
+      preHandler: [fastify.authenticate],
+    },
+    conversationsController.getConversation
+  )
+
   fastify.put(
     '/conversations/:id',
     {

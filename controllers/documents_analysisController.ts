@@ -54,7 +54,7 @@ export const getDocumentsAnalisysById = async (request: FastifyRequest) => {
   }
 }
 
-export const getDocumentsAnalisysBy = async () => {
+export const getDocumentsAnalisys = async () => {
   try {
     const item = await documentsAnalysis.findAll()
     if (item.length === 0) {

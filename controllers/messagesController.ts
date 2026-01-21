@@ -50,13 +50,13 @@ export const getMessagesById = async (request: FastifyRequest) => {
   }
 }
 
-export const getMessagesBy = async () => {
+export const getMessages = async () => {
   try {
     const item = await messages.findAll()
     if (item.length === 0) {
-      return successResponse([], 'nenhum messages encontrado')
+      return successResponse([], 'nenhum Messages encontrado')
     }
-    return successResponse(item, 'listando todos os messages')
+    return successResponse(item, 'listando todos os Messages')
   } catch (err: any) {
     throw new DataBaseError()
   }
