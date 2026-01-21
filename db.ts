@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'test') {
   })
   
   // Disable foreign key constraints for SQLite tests
-  sequelize.addHook('afterConnect', async (connection) => {
+  sequelize.addHook('afterConnect', async (connection: any) => {
     await connection.query('PRAGMA foreign_keys = OFF')
   })
 } else {
