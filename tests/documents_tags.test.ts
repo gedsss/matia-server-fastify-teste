@@ -1,15 +1,15 @@
 import { describe, it, expect, afterAll, beforeAll } from 'vitest'
 import {
-  createMessages,
-  getMessagesById,
-  updateMessages,
-  deleteMessages,
-} from '../controllers/messagesController.js'
+  createDocumentsTags,
+  getDocumentsTagsById,
+  updateDocumentsTags,
+  deleteDocumentsTags,
+} from '../controllers/documents_tagsController.js'
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('MessagesController', async () => {
-  let createMessagesID: string
+describe('DocumentsTagsController', async () => {
+  let createDocumentsTagsIDs: string
 
   beforeAll(async () => {
     sequelize.sync({ force: true })
@@ -19,24 +19,23 @@ describe('MessagesController', async () => {
     sequelize.close()
   })
 
-  describe('createMessages', () => {
+  describe('createDocumentsTags', () => {
     it('Deve criar o relatório com sucesso', async () => {
       const req = {
         body: {
-          conversationId: 'ID-da-conversa',
-          content: 'Conteudo',
-          role: 'user',
+          name: 'nome-de-tag',
+          color: 'vermelho',
         },
       } as FastifyRequest
 
-      const result = await createMessages(req)
+      const result = await createDocumentsTags(req)
 
       expect(result.success).toBe(true)
       expect(result.data).toHaveProperty('id')
-      expect(result.data.content).toBe('Conteudo')
-      expect(result.data.role).toBe('user')
+      expect(result.data.name).toBe('nome-de-tag')
+      expect(result.data.color).toBe('vermelho')
 
-      createMessagesID = result.data.id
+      createDocumentsTagsIDs = result.data.id
     })
 
     it('Deve rejeitar caso a requisição esteja vazia', async () => {
@@ -44,33 +43,33 @@ describe('MessagesController', async () => {
         body: {},
       } as FastifyRequest
 
-      await expect(createMessages(req)).rejects.toThrow()
+      await expect(createDocumentsTags(req)).rejects.toThrow()
     })
 
     it('Deve rejeitar caso a requisição não contenha dados obrigatórios', async () => {
       const req = {
         body: {
-          content: 'conteudo',
+          name: 'nome-teste',
         },
       } as FastifyRequest
 
-      await expect(createMessages(req)).rejects.toThrow()
+      await expect(createDocumentsTags(req)).rejects.toThrow()
     })
   })
 
-  describe('getMessagesByID', () => {
+  describe('getDocumentsTagsByID', () => {
     it('Deve encontrar o log com sucesso', async () => {
       const req = {
         params: {
-          id: createMessagesID,
+          id: createDocumentsTagsIDs,
         },
       } as FastifyRequest
 
-      const result = await getMessagesById(req)
+      const result = await getDocumentsTagsById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.content).toBe('Conteudo')
-      expect(result.data.role).toBe('user')
+      expect(result.data.name).toBe('nome-da-tag')
+      expect(result.data.color).toBe('vermelho')
     })
 
     it('Deve retornar erro para ID inexistente', async () => {
@@ -80,7 +79,7 @@ describe('MessagesController', async () => {
         },
       } as FastifyRequest
 
-      await expect(getMessagesById(req)).rejects.toThrow()
+      await expect(getDocumentsTagsById(req)).rejects.toThrow()
     })
 
     it('Deve retornar erro para ID inválido', async () => {
@@ -90,56 +89,57 @@ describe('MessagesController', async () => {
         },
       } as FastifyRequest
 
-      await expect(getMessagesById(req)).rejects.toThrow()
+      await expect(getDocumentsTagsById(req)).rejects.toThrow()
     })
   })
 
-  describe('updateMessages', () => {
+  describe('updateDocumentsTags', () => {
     it('Deve atualizar o log om sucesso', async () => {
       const req = {
         params: {
-          id: createMessagesID,
+          id: createDocumentsTagsIDs,
         },
         body: {
-          content: 'Conteudo novo',
-          role: 'assistant',
+          name: 'nome-novo-teste',
+          color: 'azul',
         },
       } as FastifyRequest
 
-      const result = await updateMessages(req)
+      const result = await updateDocumentsTags(req)
 
       expect(result.success).toBe(true)
-      expect(result.data?.content).toBe('Conteudo novo')
-      expect(result.data?.role).toBe('assistant')
+
+      const getReq = {
+        params: {
+          id: createDocumentsTagsIDs,
+        },
+      } as FastifyRequest
+      const getResult = await getDocumentsTagsById(getReq)
+      expect(getResult.data?.name).toBe('nome-novo-teste')
+      expect(getResult.data?.color).toBe('azul')
     })
 
     it('Deve atualizar o log mesmo que tenha somente um item na requisição', async () => {
       const req = {
         params: {
-          id: createMessagesID,
+          id: createDocumentsTagsIDs,
         },
         body: {
-          content: 'Conteudo novo 2.0',
+          name: 'nome-teste-uma-requisicao',
         },
       } as FastifyRequest
 
-      const result = await updateMessages(req)
+      const result = await updateDocumentsTags(req)
 
       expect(result.success).toBe(true)
-      expect(result.data?.content).toBe(true)
-    })
 
-    it('Deve retornar erro ao tentar colocar um role fora das opções', async () => {
-      const req = {
+      const getReq = {
         params: {
-          id: createMessagesID,
-        },
-        body: {
-          role: 'qualquer coisa',
+          id: createDocumentsTagsIDs,
         },
       } as FastifyRequest
-
-      await expect(updateMessages(req)).rejects.toThrow()
+      const getResult = await getDocumentsTagsById(getReq)
+      expect(getResult.data?.name).toBe('nome-teste-uma-requisicao')
     })
 
     it('Deve retornar erro para ID inválido', async () => {
@@ -149,7 +149,7 @@ describe('MessagesController', async () => {
         },
       } as FastifyRequest
 
-      await expect(updateMessages(req)).rejects.toThrow()
+      await expect(updateDocumentsTags(req)).rejects.toThrow()
     })
 
     it('Deve retornar erro para ID inexistente', async () => {
@@ -159,19 +159,19 @@ describe('MessagesController', async () => {
         },
       } as FastifyRequest
 
-      await expect(updateMessages(req)).rejects.toThrow()
+      await expect(updateDocumentsTags(req)).rejects.toThrow()
     })
   })
 
-  describe('deleteMessages', () => {
+  describe('deleteDocumentsTags', () => {
     it('Deve deletar o log om sucesso', async () => {
       const req = {
         params: {
-          id: createMessagesID,
+          id: createDocumentsTagsIDs,
         },
       } as FastifyRequest
 
-      const result = await deleteMessages(req)
+      const result = await deleteDocumentsTags(req)
 
       expect(result.success).toBe(true)
     })
@@ -179,11 +179,11 @@ describe('MessagesController', async () => {
     it('Deve confirmar que deletou com sucesso', async () => {
       const req = {
         params: {
-          id: createMessagesID,
+          id: createDocumentsTagsIDs,
         },
       } as FastifyRequest
 
-      await expect(getMessagesById(req)).rejects.toThrow()
+      await expect(getDocumentsTagsById(req)).rejects.toThrow()
     })
 
     it('Deve retornar erro para ID inválido', async () => {
@@ -193,7 +193,7 @@ describe('MessagesController', async () => {
         },
       } as FastifyRequest
 
-      await expect(deleteMessages(req)).rejects.toThrow()
+      await expect(deleteDocumentsTags(req)).rejects.toThrow()
     })
 
     it('Deve retornar erro para ID inexistente', async () => {
@@ -203,7 +203,7 @@ describe('MessagesController', async () => {
         },
       } as FastifyRequest
 
-      await expect(deleteMessages(req)).rejects.toThrow()
+      await expect(deleteDocumentsTags(req)).rejects.toThrow()
     })
   })
 })

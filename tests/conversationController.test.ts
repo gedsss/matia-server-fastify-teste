@@ -7,10 +7,6 @@ import {
 } from '../controllers/conversationController.js'
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
-import {
-  createMessages,
-  getMessagesById,
-} from '../controllers/messagesController.js'
 
 describe('ConversationDocuments', () => {
   let createConversationID: string
@@ -24,7 +20,7 @@ describe('ConversationDocuments', () => {
   })
 
   describe('createConversation', () => {
-    it('deve criar um message com sucesso', async () => {
+    it('deve criar um conversation com sucesso', async () => {
       const req = {
         body: {
           user_id: 'id-do-usuario',
@@ -47,11 +43,11 @@ describe('ConversationDocuments', () => {
     it('deve rejeitar quando campos obrigatórios estão faltando', async () => {
       const req = {
         body: {
-          nome: 'Incompleto',
+          title: 'titulo-teste',
         },
       } as FastifyRequest
 
-      await expect(createMessages(req)).rejects.toThrow()
+      await expect(createConversation(req)).rejects.toThrow()
     })
 
     it('deve rejeitar body vazio', async () => {
@@ -59,12 +55,12 @@ describe('ConversationDocuments', () => {
         body: {},
       } as FastifyRequest
 
-      await expect(createMessages(req)).rejects.toThrow()
+      await expect(createConversation(req)).rejects.toThrow()
     })
   })
 
-  describe('getMessagesById', () => {
-    it('Deve retornar o message com sucesso', async () => {
+  describe('getConversationById', () => {
+    it('Deve retornar o conversation com sucesso', async () => {
       const req = {
         params: {
           id: createConversationID,
@@ -82,7 +78,7 @@ describe('ConversationDocuments', () => {
         params: { id: '00000000-0000-0000-0000-000000000000' },
       } as FastifyRequest
 
-      await expect(getMessagesById(req)).rejects.toThrow()
+      await expect(getConversationById(req)).rejects.toThrow()
     })
 
     it('deve retornar erro para ID inválido', async () => {
@@ -90,12 +86,12 @@ describe('ConversationDocuments', () => {
         params: { id: 'id-invalido' },
       } as FastifyRequest
 
-      await expect(getMessagesById(req)).rejects.toThrow()
+      await expect(getConversationById(req)).rejects.toThrow()
     })
   })
 
-  describe('updateMessages', () => {
-    it('Deve atualizar o message com sucesso', async () => {
+  describe('updateConversation', () => {
+    it('Deve atualizar o conversation com sucesso', async () => {
       const req = {
         params: {
           id: getConversationById,
