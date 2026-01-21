@@ -17,6 +17,7 @@ import documentsTagsRelationsRoutes from './routes/documents_tags_relationsRoute
 import documentsTagsRoutes from './routes/documents_tagsRoutes.js'
 import documentsRoutes from './routes/documentsRoutes.js'
 import messagesRoutes from './routes/messagesRoutes.js'
+import chatRoutes from './routes/chatRoutes.js'
 // Importações dos Módulos de Rotas (agora são arquivos .ts ou .js compilados)
 import profileRoutes from './routes/profileRoutes.js'
 import userActivityLogsRoutes from './routes/user_activity_logRoutes.js'
@@ -81,9 +82,13 @@ await fastify.register(cors, {
 await fastify.register(swagger, {
   openapi: {
     info: {
-      title: 'Matia User API',
-      description: 'API de Gerenciamento de Usuários e Logs',
+      title: 'Matia Legal AI API',
+      description: 'API completa para chatbot jurídico com IA',
       version: '1.0.0',
+      contact: {
+        name: 'Matia Team',
+        email: 'contato@matia.com.br',
+      },
     },
     servers: [
       {
@@ -93,6 +98,7 @@ await fastify.register(swagger, {
     ],
     tags: [
       { name: 'Auth', description: 'Autenticação e Login' },
+      { name: 'Chat', description: 'Endpoints de conversação com IA' },
       { name: 'Profile', description: 'Operações de Usuários' },
       { name: 'UserRole', description: 'Log de Funções de Usuários' },
       { name: 'Messages', description: 'Log de Mensagens' },
@@ -120,10 +126,23 @@ await fastify.register(swagger, {
         description: 'Log de Atividades de Usuários',
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
 })
 
 // --- REGISTRO DE ROTAS ---
+await fastify.register(chatRoutes, {
+  prefix: '/api',
+} as FastifyRegisterOptions<FastifyInstance>)
 await fastify.register(profileRoutes, {
   prefix: '/api/profile',
 } as FastifyRegisterOptions<FastifyInstance>)
