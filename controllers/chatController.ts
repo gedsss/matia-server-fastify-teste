@@ -17,6 +17,9 @@ import { Op } from 'sequelize'
 const logger = new Logger()
 const llmService = new LLMService()
 
+// Cache environment configuration
+const CHAT_HISTORY_LIMIT = Number.parseInt(process.env.CHAT_HISTORY_LIMIT || '10', 10)
+
 interface SendMessageBody {
   conversation_id: string
   content: string
@@ -76,11 +79,10 @@ export const sendMessage = async (request: FastifyRequest) => {
     }
 
     // Buscar histórico de mensagens (últimas 10)
-    const historyLimit = Number.parseInt(process.env.CHAT_HISTORY_LIMIT || '10', 10)
     const messageHistory = await Messages.findAll({
       where: { conversations_id: conversation_id },
       order: [['created_at', 'DESC']],
-      limit: historyLimit,
+      limit: CHAT_HISTORY_LIMIT,
     })
 
     // Reverter ordem para enviar ao LLM (mais antigas primeiro)

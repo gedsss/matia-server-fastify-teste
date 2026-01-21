@@ -71,7 +71,7 @@ describe('ChatRoutes - Integration Tests', () => {
   })
 
   describe('POST /api/chat/new', () => {
-    it('deve retornar 201 e criar nova conversa com sucesso', async () => {
+    it('deve retornar 200 e criar nova conversa com sucesso', async () => {
       const response = await app.inject({
         method: 'POST',
         url: '/api/chat/new',
