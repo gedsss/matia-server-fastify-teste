@@ -13,6 +13,7 @@ import {
   DuplicateNumberError,
   MissingFieldError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -125,6 +126,18 @@ export const getProfileById = async (request: FastifyRequest) => {
     return successResponse(item, 'Usuário achado com sucesso')
   } catch (err: any) {
     throw new UserNotFoundError()
+  }
+}
+
+export const getProfile = async () => {
+  try {
+    const item = await profile.findAll()
+    if (item.length === 0) {
+      successResponse([], 'Nenhum Profile encontrado')
+    }
+    return successResponse(item, 'listando todos Profiles criados')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 

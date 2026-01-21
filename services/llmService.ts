@@ -33,8 +33,13 @@ export class LLMService {
 
     this.client = new OpenAI({ apiKey })
     this.model = process.env.OPENAI_MODEL || 'gpt-4-turbo-preview'
-    this.temperature = Number.parseFloat(process.env.OPENAI_TEMPERATURE || '0.7')
-    this.maxTokens = Number.parseInt(process.env.OPENAI_MAX_TOKENS || '2000', 10)
+    this.temperature = Number.parseFloat(
+      process.env.OPENAI_TEMPERATURE || '0.7'
+    )
+    this.maxTokens = Number.parseInt(
+      process.env.OPENAI_MAX_TOKENS || '2000',
+      10
+    )
 
     this.stats = {
       totalTokens: 0,
@@ -58,10 +63,10 @@ export class LLMService {
         messageCount: messages.length,
       })
 
-      const completion = await this.retryRequest(() =>
+      const completion: any = await this.retryRequest(() =>
         this.client.chat.completions.create({
           model: this.model,
-          messages: messages.map((msg) => ({
+          messages: messages.map(msg => ({
             role: msg.role,
             content: msg.content,
           })),
@@ -91,15 +96,11 @@ export class LLMService {
       return response
     } catch (error) {
       const duration = Date.now() - startTime
-      logger.error(
-        'LLM request failed',
-        error as Error,
-        {
-          model: this.model,
-          duration,
-          messageCount: messages.length,
-        }
-      )
+      logger.error('LLM request failed', error as Error, {
+        model: this.model,
+        duration,
+        messageCount: messages.length,
+      })
 
       throw new ExternalServiceError('OpenAI', error as Error)
     }
@@ -116,7 +117,7 @@ export class LLMService {
 
       const stream = await this.client.chat.completions.create({
         model: this.model,
-        messages: messages.map((msg) => ({
+        messages: messages.map(msg => ({
           role: msg.role,
           content: msg.content,
         })),
@@ -146,15 +147,11 @@ export class LLMService {
       this.stats.requestCount += 1
     } catch (error) {
       const duration = Date.now() - startTime
-      logger.error(
-        'LLM streaming request failed',
-        error as Error,
-        {
-          model: this.model,
-          duration,
-          messageCount: messages.length,
-        }
-      )
+      logger.error('LLM streaming request failed', error as Error, {
+        model: this.model,
+        duration,
+        messageCount: messages.length,
+      })
 
       throw new ExternalServiceError('OpenAI', error as Error)
     }
@@ -175,10 +172,13 @@ export class LLMService {
         const isRetriable = this.isRetriableError(error)
 
         if (attempt < maxRetries && isRetriable) {
-          logger.warn(`LLM request failed, retrying (${attempt}/${maxRetries})`, {
-            error: (error as Error).message,
-            nextRetryIn: delay,
-          })
+          logger.warn(
+            `LLM request failed, retrying (${attempt}/${maxRetries})`,
+            {
+              error: (error as Error).message,
+              nextRetryIn: delay,
+            }
+          )
 
           await this.sleep(delay)
           delay *= 2 // Exponential backoff
@@ -205,7 +205,7 @@ export class LLMService {
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   getUsageStats(): UsageStats {
@@ -229,10 +229,7 @@ export class LLMService {
       const title = await this.generateResponse(messages)
       return title.trim().substring(0, 50)
     } catch (error) {
-      logger.error(
-        'Failed to generate conversation title',
-        error as Error
-      )
+      logger.error('Failed to generate conversation title', error as Error)
       // Fallback to a generic title
       return firstMessage.substring(0, 50)
     }

@@ -4,7 +4,6 @@ import Messages from '../models/messages.js'
 import LLMService from '../services/llmService.js'
 import type { ChatMessage } from '../services/llmService.js'
 import {
-  ValidationError,
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
@@ -12,13 +11,15 @@ import {
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse, paginatedResponse } from '../utils/response.js'
 import Logger from '../utils/logger.js'
-import { Op } from 'sequelize'
 
 const logger = new Logger()
 const llmService = new LLMService()
 
 // Cache environment configuration
-const CHAT_HISTORY_LIMIT = Number.parseInt(process.env.CHAT_HISTORY_LIMIT || '10', 10)
+const CHAT_HISTORY_LIMIT = Number.parseInt(
+  process.env.CHAT_HISTORY_LIMIT || '10',
+  10
+)
 
 interface SendMessageBody {
   conversation_id: string
@@ -57,7 +58,8 @@ export const sendMessage = async (request: FastifyRequest) => {
   const userId = (request.user as any)?.id
 
   try {
-    const { conversation_id, content, metadata } = request.body as SendMessageBody
+    const { conversation_id, content, metadata } =
+      request.body as SendMessageBody
 
     if (!conversation_id || !content) {
       throw new MissingFieldError()
@@ -104,7 +106,7 @@ export const sendMessage = async (request: FastifyRequest) => {
 
     // Preparar contexto para LLM
     const chatMessages: ChatMessage[] = [
-      ...sortedHistory.map((msg) => ({
+      ...sortedHistory.map(msg => ({
         role: msg.role,
         content: msg.content,
       })),
@@ -149,7 +151,10 @@ export const sendMessage = async (request: FastifyRequest) => {
   } catch (err) {
     const duration = Date.now() - startTime
 
-    if (err instanceof DocumentNotFoundError || err instanceof MissingFieldError) {
+    if (
+      err instanceof DocumentNotFoundError ||
+      err instanceof MissingFieldError
+    ) {
       logger.warn('Chat message validation failed', {
         requestId,
         userId,
@@ -221,7 +226,13 @@ export const getConversationHistory = async (request: FastifyRequest) => {
       totalMessages: count,
     })
 
-    return paginatedResponse(messages, page, limit, count, 'Histórico recuperado com sucesso')
+    return paginatedResponse(
+      messages,
+      page,
+      limit,
+      count,
+      'Histórico recuperado com sucesso'
+    )
   } catch (err) {
     if (err instanceof DocumentNotFoundError) {
       logger.warn('Conversation not found', {

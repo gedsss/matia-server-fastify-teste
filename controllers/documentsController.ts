@@ -6,6 +6,7 @@ import {
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -47,6 +48,18 @@ export const getDocumentsById = async (request: FastifyRequest) => {
     return successResponse(item, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
+  }
+}
+
+export const getDocumentsBy = async () => {
+  try {
+    const item = await documents.findAll()
+    if (item.length === 0) {
+      return successResponse([], 'nenhum documents encontrado')
+    }
+    return successResponse(item, 'listando todos os documents')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 

@@ -6,6 +6,7 @@ import {
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -47,6 +48,18 @@ export const getConversationById = async (request: FastifyRequest) => {
     return successResponse(item, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
+  }
+}
+
+export const getConversation = async () => {
+  try {
+    const item = await conversation.findAll()
+    if (item.length === 0) {
+      return successResponse([], 'nenhum Conversation encontrado')
+    }
+    return successResponse(item, 'listando todos os Conversations')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 

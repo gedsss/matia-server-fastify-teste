@@ -6,6 +6,7 @@ import {
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -47,6 +48,18 @@ export const getActivityLogsById = async (request: FastifyRequest) => {
     return successResponse(item, 'Sucesso ao encontrar o documento')
   } catch (err: any) {
     throw new DocumentNotFoundError()
+  }
+}
+
+export const getActivityLogs = async () => {
+  try {
+    const item = await activityLogs.findAll()
+    if (item.length === 0) {
+      return successResponse([], 'nenhum ActivityLogs encontrado')
+    }
+    return successResponse(item, 'listando todos ActivityLogs')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 

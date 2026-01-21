@@ -6,6 +6,7 @@ import {
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -50,6 +51,18 @@ export const getDocumentsAnalisysById = async (request: FastifyRequest) => {
     return successResponse(item, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
+  }
+}
+
+export const getDocumentsAnalisysBy = async () => {
+  try {
+    const item = await documentsAnalysis.findAll()
+    if (item.length === 0) {
+      return successResponse([], 'nenhum DocumentsAnalisys encontrado')
+    }
+    return successResponse(item, 'listando todos DocumentsAnalisys')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 

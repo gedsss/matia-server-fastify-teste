@@ -6,6 +6,7 @@ import {
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -50,6 +51,18 @@ export const getDocumentsTagsRelationById = async (request: FastifyRequest) => {
     return successResponse(item, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
+  }
+}
+
+export const getDocumentsTagsRelation = async () => {
+  try {
+    const item = await documentsTagRelation.findAll()
+    if (item.length === 0) {
+      return successResponse([], 'nenhum DocumentsTagsRelation encontrado')
+    }
+    return successResponse(item, 'listando todos DocumentsTagsRelation')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 

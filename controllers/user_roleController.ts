@@ -5,6 +5,7 @@ import {
   MissingFieldError,
   DocumentNotFoundError,
   InternalServerError,
+  DataBaseError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -43,6 +44,18 @@ export const getUserRoleById = async (request: FastifyRequest) => {
     return successResponse(item, 'Registro encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
+  }
+}
+
+export const getUserRole = async () => {
+  try {
+    const item = await userRole.findAll()
+    if (item.length === 0) {
+      return successResponse([], 'nenhum UserRoles encontrado')
+    }
+    return successResponse(item, 'listando todos os UserRoles')
+  } catch (err: any) {
+    throw new DataBaseError()
   }
 }
 
