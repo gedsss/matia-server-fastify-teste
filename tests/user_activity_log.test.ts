@@ -8,7 +8,7 @@ import {
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('userActivityLogController', () => {
+describe('UserActivityLogController', () => {
   let createLogId: string
 
   beforeAll(async () => {
@@ -19,7 +19,7 @@ describe('userActivityLogController', () => {
     await sequelize.close()
   })
 
-  describe('CreateUserActivityLog', () => {
+  describe('createUserActivityLog', () => {
     it('deve criar um log de atividades dos usuarios com dados válidos', async () => {
       const req = {
         body: {
@@ -54,7 +54,7 @@ describe('userActivityLogController', () => {
       await expect(createUserActivityLog(req)).rejects.toThrow()
     })
 
-    it('Deve rejeitar quando o dado insirido não está prensente nas opções pre-definidas', async () => {
+    it('deve rejeitar quando o dado inserido não está presente nas opções pré-definidas', async () => {
       const req = {
         body: {
           action_type: 'teste',
@@ -65,8 +65,8 @@ describe('userActivityLogController', () => {
     })
   })
 
-  describe('GetUserActivityLogById', () => {
-    it('deve retornar um perfil exitente pelo ID', async () => {
+  describe('getUserActivityLogById', () => {
+    it('deve retornar um perfil existente pelo ID', async () => {
       const req = {
         params: { id: createLogId },
       } as FastifyRequest
@@ -96,8 +96,8 @@ describe('userActivityLogController', () => {
     })
   })
 
-  describe('UpdateUserActivityLog', () => {
-    it('Deve atualizar o tipo de ação documento', async () => {
+  describe('updateUserActivityLog', () => {
+    it('deve atualizar o tipo de ação documento', async () => {
       const req = {
         params: {
           id: createLogId,
@@ -113,7 +113,7 @@ describe('userActivityLogController', () => {
       expect(result.data?.action_type).toBe('logout')
     })
 
-    it('Deve atualizar os detalhes do documento', async () => {
+    it('deve atualizar os detalhes do documento', async () => {
       const req = {
         params: {
           id: createLogId,
@@ -129,7 +129,7 @@ describe('userActivityLogController', () => {
       expect(result.data?.details).toBe('Detalhe novo')
     })
 
-    it('Deve atualizar múltiplos campos', async () => {
+    it('deve atualizar múltiplos campos', async () => {
       const req = {
         params: {
           id: createLogId,
@@ -147,7 +147,7 @@ describe('userActivityLogController', () => {
       expect(result.data?.details).toBe('Multiplos updates')
     })
 
-    it('Deve me devolver um erro de ID inválido', async () => {
+    it('deve me devolver um erro de ID inválido', async () => {
       const req = {
         params: {
           id: '00000000-0000-0000-0000-000000000000',
@@ -174,7 +174,7 @@ describe('userActivityLogController', () => {
     })
   })
 
-  describe('DeleteUserActivityLog', () => {
+  describe('deleteUserActivityLog', () => {
     it('deve deletar um documento existente', async () => {
       const req = {
         params: {
@@ -187,7 +187,7 @@ describe('userActivityLogController', () => {
       expect(result.success).toBe(true)
     })
 
-    it('Deve convfirmar que o perfil foi deletado', async () => {
+    it('deve confirmar que o perfil foi deletado', async () => {
       const req = {
         params: {
           id: createLogId,
@@ -197,7 +197,7 @@ describe('userActivityLogController', () => {
       await expect(await getUserActivityLogById(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro de ID inexistente', async () => {
+    it('deve retornar erro de ID inexistente', async () => {
       const req = {
         params: {
           id: '00000000-0000-0000-0000-000000000000',

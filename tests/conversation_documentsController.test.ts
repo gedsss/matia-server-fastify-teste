@@ -8,7 +8,7 @@ import {
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('ActivityLogs', () => {
+describe('ConversationDocumentsController', () => {
   let createConversationDocumentsID: string
 
   beforeAll(async () => {
@@ -69,7 +69,7 @@ describe('ActivityLogs', () => {
   })
 
   describe('getConversationDocumentsById', () => {
-    it('Deve retornar o documento de conversa com sucesso', async () => {
+    it('deve retornar o documento de conversa com sucesso', async () => {
       const req = {
         params: {
           id: createConversationDocumentsID,
@@ -100,11 +100,11 @@ describe('ActivityLogs', () => {
     })
   })
 
-  describe('updateMessages', () => {
-    it('Deve atualizar o documento de conversa com sucesso', async () => {
+  describe('updateConversationDocuments', () => {
+    it('deve atualizar o documento de conversa com sucesso', async () => {
       const req = {
         params: {
-          id: getConversationDocumentsById,
+          id: createConversationDocumentsID,
         },
         body: {
           linked_at: 'linkado-teste-update',
@@ -127,7 +127,7 @@ describe('ActivityLogs', () => {
   })
 
   describe('deleteConversationDocuments', () => {
-    it('Deve deletar o documento de conversa com sucesso', async () => {
+    it('deve deletar o documento de conversa com sucesso', async () => {
       const req = {
         params: {
           id: createConversationDocumentsID,

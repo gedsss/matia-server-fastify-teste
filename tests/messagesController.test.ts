@@ -8,19 +8,19 @@ import {
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('MessagesController', async () => {
+describe('MessagesController', () => {
   let createMessagesID: string
 
   beforeAll(async () => {
-    sequelize.sync({ force: true })
+    await sequelize.sync({ force: true })
   })
 
   afterAll(async () => {
-    sequelize.close()
+    await sequelize.close()
   })
 
   describe('createMessages', () => {
-    it('Deve criar o relatório com sucesso', async () => {
+    it('deve criar a mensagem com sucesso', async () => {
       const req = {
         body: {
           conversationId: 'ID-da-conversa',
@@ -39,7 +39,7 @@ describe('MessagesController', async () => {
       createMessagesID = result.data.id
     })
 
-    it('Deve rejeitar caso a requisição esteja vazia', async () => {
+    it('deve rejeitar caso a requisição esteja vazia', async () => {
       const req = {
         body: {},
       } as FastifyRequest
@@ -47,7 +47,7 @@ describe('MessagesController', async () => {
       await expect(createMessages(req)).rejects.toThrow()
     })
 
-    it('Deve rejeitar caso a requisição não contenha dados obrigatórios', async () => {
+    it('deve rejeitar caso a requisição não contenha dados obrigatórios', async () => {
       const req = {
         body: {
           content: 'conteudo',
@@ -59,7 +59,7 @@ describe('MessagesController', async () => {
   })
 
   describe('getMessagesByID', () => {
-    it('Deve encontrar o log com sucesso', async () => {
+    it('deve encontrar o log com sucesso', async () => {
       const req = {
         params: {
           id: createMessagesID,
@@ -73,7 +73,7 @@ describe('MessagesController', async () => {
       expect(result.data.role).toBe('user')
     })
 
-    it('Deve retornar erro para ID inexistente', async () => {
+    it('deve retornar erro para ID inexistente', async () => {
       const req = {
         params: {
           id: '00000000-0000-0000-0000-000000000000',
@@ -83,7 +83,7 @@ describe('MessagesController', async () => {
       await expect(getMessagesById(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro para ID inválido', async () => {
+    it('deve retornar erro para ID inválido', async () => {
       const req = {
         params: {
           id: 'ID inválido',
@@ -95,7 +95,7 @@ describe('MessagesController', async () => {
   })
 
   describe('updateMessages', () => {
-    it('Deve atualizar o log om sucesso', async () => {
+    it('deve atualizar o log com sucesso', async () => {
       const req = {
         params: {
           id: createMessagesID,
@@ -113,7 +113,7 @@ describe('MessagesController', async () => {
       expect(result.data?.role).toBe('assistant')
     })
 
-    it('Deve atualizar o log mesmo que tenha somente um item na requisição', async () => {
+    it('deve atualizar o log mesmo que tenha somente um item na requisição', async () => {
       const req = {
         params: {
           id: createMessagesID,
@@ -126,10 +126,10 @@ describe('MessagesController', async () => {
       const result = await updateMessages(req)
 
       expect(result.success).toBe(true)
-      expect(result.data?.content).toBe(true)
+      expect(result.data?.content).toBe('Conteudo novo 2.0')
     })
 
-    it('Deve retornar erro ao tentar colocar um role fora das opções', async () => {
+    it('deve retornar erro ao tentar colocar um role fora das opções', async () => {
       const req = {
         params: {
           id: createMessagesID,
@@ -142,7 +142,7 @@ describe('MessagesController', async () => {
       await expect(updateMessages(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro para ID inválido', async () => {
+    it('deve retornar erro para ID inválido', async () => {
       const req = {
         params: {
           id: 'ID inválido',
@@ -152,7 +152,7 @@ describe('MessagesController', async () => {
       await expect(updateMessages(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro para ID inexistente', async () => {
+    it('deve retornar erro para ID inexistente', async () => {
       const req = {
         params: {
           id: '00000000-0000-0000-0000-000000000000',
@@ -164,7 +164,7 @@ describe('MessagesController', async () => {
   })
 
   describe('deleteMessages', () => {
-    it('Deve deletar o log om sucesso', async () => {
+    it('deve deletar o log com sucesso', async () => {
       const req = {
         params: {
           id: createMessagesID,
@@ -176,7 +176,7 @@ describe('MessagesController', async () => {
       expect(result.success).toBe(true)
     })
 
-    it('Deve confirmar que deletou com sucesso', async () => {
+    it('deve confirmar que deletou com sucesso', async () => {
       const req = {
         params: {
           id: createMessagesID,
@@ -186,7 +186,7 @@ describe('MessagesController', async () => {
       await expect(getMessagesById(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro para ID inválido', async () => {
+    it('deve retornar erro para ID inválido', async () => {
       const req = {
         params: {
           id: 'ID inválido',
@@ -196,7 +196,7 @@ describe('MessagesController', async () => {
       await expect(deleteMessages(req)).rejects.toThrow()
     })
 
-    it('Deve retornar erro para ID inexistente', async () => {
+    it('deve retornar erro para ID inexistente', async () => {
       const req = {
         params: {
           id: '00000000-0000-0000-0000-000000000000',

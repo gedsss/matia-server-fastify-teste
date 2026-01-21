@@ -8,7 +8,7 @@ import {
 import sequelize from '../db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('DocumentAnalysis', () => {
+describe('DocumentAnalysisController', () => {
   let createDocumentsAnalisysID: string
 
   beforeAll(async () => {
@@ -70,7 +70,7 @@ describe('DocumentAnalysis', () => {
   })
 
   describe('getDocumentsAnalisysById', () => {
-    it('Deve retornar a analise de documento com sucesso', async () => {
+    it('deve retornar a análise de documento com sucesso', async () => {
       const req = {
         params: {
           id: createDocumentsAnalisysID,
@@ -100,8 +100,8 @@ describe('DocumentAnalysis', () => {
     })
   })
 
-  describe('updateDocumentAnalysis', () => {
-    it('Deve atualizar a analise de documento com sucesso', async () => {
+  describe('updateDocumentsAnalisys', () => {
+    it('deve atualizar a análise de documento com sucesso', async () => {
       const req = {
         params: {
           id: createDocumentsAnalisysID,
@@ -143,7 +143,7 @@ describe('DocumentAnalysis', () => {
   })
 
   describe('deleteDocumentsAnalisys', () => {
-    it('Deve deletar oa analise de documento com sucesso', async () => {
+    it('deve deletar a análise de documento com sucesso', async () => {
       const req = {
         params: {
           id: createDocumentsAnalisysID,
@@ -155,7 +155,7 @@ describe('DocumentAnalysis', () => {
       expect(result.success).toBe(true)
     })
 
-    it('deve confirmar que oa analise de documento foi deletado', async () => {
+    it('deve confirmar que a análise de documento foi deletada', async () => {
       const req = {
         params: { id: createDocumentsAnalisysID },
       } as FastifyRequest
