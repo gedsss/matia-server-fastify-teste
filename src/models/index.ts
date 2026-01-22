@@ -26,7 +26,7 @@ interface Db {
 const basename: string = path.basename(__filename)
 const env: string = process.env.NODE_ENV || 'development'
 
-const config = require(path.join(__dirname, '/../config/config.json'))[
+const config = require(path.join(__dirname, '../config/config.json'))[
   env
 ] as DbConfig
 const db: Partial<Db> = {}
