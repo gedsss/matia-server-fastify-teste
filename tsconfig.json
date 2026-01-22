@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Layout de Arquivos */
-    "rootDir": "./" /* Onde o TSC começa a procurar seus arquivos .ts (pasta raiz) */,
+    "rootDir": "./src" /* Onde o TSC começa a procurar seus arquivos .ts (pasta raiz) */,
     "outDir": "./dist" /* Onde o TSC salvará os arquivos .js compilados */,
 
     /* Configurações de Módulos (Essenciais para Node.js ESM) */
@@ -22,6 +22,6 @@
     "sourceMap": true /* Gera mapas para facilitar o debug */,
     "declaration": true /* Gera arquivos .d.ts para tipagem */
   },
-  "include": ["**/*.ts"] /* Quais arquivos incluir na compilação */,
-  "exclude": ["node_modules", "dist"] /* Quais pastas ignorar */
+  "include": ["src/**/*.ts"] /* Quais arquivos incluir na compilação */,
+  "exclude": ["node_modules", "dist", "tests", "scripts", "migrations"] /* Quais pastas ignorar */
 }

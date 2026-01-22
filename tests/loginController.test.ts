@@ -1,9 +1,9 @@
 // tests/loginController.test.ts
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { login } from '../controllers/loginController.js'
-import { createProfile } from '../controllers/profileController.js'
-import sequelize from '../db.js'
+import { login } from '../src/controllers/loginController.js'
+import { createProfile } from '../src/controllers/profileController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest, FastifyReply } from 'fastify'
 
 describe('loginController', () => {

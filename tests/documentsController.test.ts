@@ -4,8 +4,8 @@ import {
   getDocumentsById,
   updateDocuments,
   deleteDocuments,
-} from '../controllers/documentsController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/documentsController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('DocumentsController', () => {

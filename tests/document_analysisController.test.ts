@@ -4,8 +4,8 @@ import {
   getDocumentsAnalisysById,
   updateDocumentsAnalisys,
   deleteDocumentsAnalisys,
-} from '../controllers/documents_analysisController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/documents_analysisController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('DocumentAnalysisController', () => {

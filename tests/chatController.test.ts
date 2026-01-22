@@ -5,16 +5,16 @@ import {
   startNewConversation,
   getConversationsList,
   deleteConversation,
-} from '../controllers/chatController.js'
-import sequelize from '../db.js'
-import Conversation from '../models/conversation.js'
-import Messages from '../models/messages.js'
-import Profile from '../models/profile.js'
+} from '../src/controllers/chatController.js'
+import sequelize from '../src/db.js'
+import Conversation from '../src/models/conversation.js'
+import Messages from '../src/models/messages.js'
+import Profile from '../src/models/profile.js'
 import type { FastifyRequest } from 'fastify'
-import LLMService from '../services/llmService.js'
+import LLMService from '../src/services/llmService.js'
 
 // Mock do LLMService
-vi.mock('../services/llmService.js', () => {
+vi.mock('../src/services/llmService.js', () => {
   const LLMService = vi.fn()
   LLMService.prototype.generateResponse = vi.fn().mockResolvedValue('Esta é uma resposta mockada da IA')
   LLMService.prototype.generateConversationTitle = vi.fn().mockResolvedValue('Título Gerado pela IA')
