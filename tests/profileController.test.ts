@@ -4,8 +4,8 @@ import {
   getProfileById,
   updateProfile,
   deleteProfile,
-} from '../controllers/profileController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/profileController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('profileController', () => {

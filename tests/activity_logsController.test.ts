@@ -4,8 +4,8 @@ import {
   getActivityLogsById,
   updateActivityLogs,
   deleteActivityLogs,
-} from '../controllers/activity_logsController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/activity_logsController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('ActivityLogs', () => {

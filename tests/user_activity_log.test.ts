@@ -4,8 +4,8 @@ import {
   getUserActivityLogById,
   updateUserActivityLog,
   deleteUserActivityLog,
-} from '../controllers/user_activity_logController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/user_activity_logController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('UserActivityLogController', () => {

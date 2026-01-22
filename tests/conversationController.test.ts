@@ -4,8 +4,8 @@ import {
   getConversationById,
   updateConversation,
   deleteConversation,
-} from '../controllers/conversationController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/conversationController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('ConversationController', () => {

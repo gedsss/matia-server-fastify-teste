@@ -1,15 +1,15 @@
 import { expect, it, beforeAll, afterAll, describe, vi, beforeEach } from 'vitest'
 import Fastify from 'fastify'
 import type { FastifyInstance } from 'fastify'
-import sequelize from '../db.js'
-import chatRoutes from '../routes/chatRoutes.js'
-import authenticate from '../plugins/authPlugin.js'
-import Conversation from '../models/conversation.js'
-import Messages from '../models/messages.js'
+import sequelize from '../src/db.js'
+import chatRoutes from '../src/routes/chatRoutes.js'
+import authenticate from '../src/plugins/authPlugin.js'
+import Conversation from '../src/models/conversation.js'
+import Messages from '../src/models/messages.js'
 import fastifyJwt from '@fastify/jwt'
 
 // Mock do LLMService
-vi.mock('../services/llmService.js', () => {
+vi.mock('../src/services/llmService.js', () => {
   const LLMService = vi.fn()
   LLMService.prototype.generateResponse = vi.fn().mockResolvedValue('Resposta mockada da IA para teste')
   LLMService.prototype.generateConversationTitle = vi.fn().mockResolvedValue('Título de Teste')

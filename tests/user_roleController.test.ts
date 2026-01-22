@@ -4,9 +4,9 @@ import {
   getUserRoleById,
   updateUserRole,
   deleteUserRole,
-} from '../controllers/user_roleController.js'
+} from '../src/controllers/user_roleController.js'
 import type { FastifyRequest } from 'fastify'
-import sequelize from '../db.js'
+import sequelize from '../src/db.js'
 
 describe('UserRoleController', () => {
   let createUserRoleId: string

@@ -7,8 +7,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8', // Usa c8 para relatório de cobertura
       enabled: true,
-      include: ['**/*.ts'],
-      exclude: ['node_modules', 'dist', '**/*.d.ts'],
+      include: ['src/**/*.ts'],
+      exclude: ['node_modules', 'dist', '**/*.d.ts', 'tests', 'scripts', 'migrations'],
     },
   },
 })

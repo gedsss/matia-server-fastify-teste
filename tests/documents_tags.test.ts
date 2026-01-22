@@ -4,8 +4,8 @@ import {
   getDocumentsTagsById,
   updateDocumentsTags,
   deleteDocumentsTags,
-} from '../controllers/documents_tagsController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/documents_tagsController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('DocumentsTagsController', async () => {

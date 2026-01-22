@@ -4,8 +4,8 @@ import {
   getConversationDocumentsById,
   updateConversationDocuments,
   deleteConversationDocuments,
-} from '../controllers/conversation_documentsController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/conversation_documentsController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('ConversationDocumentsController', () => {

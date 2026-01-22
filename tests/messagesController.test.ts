@@ -4,8 +4,8 @@ import {
   getMessagesById,
   updateMessages,
   deleteMessages,
-} from '../controllers/messagesController.js'
-import sequelize from '../db.js'
+} from '../src/controllers/messagesController.js'
+import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
 describe('MessagesController', () => {
