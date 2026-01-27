@@ -88,8 +88,8 @@ describe('DocumentsController', () => {
       const result = await getDocumentsById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.id).toBe(createDocumentosID)
-      expect(result.data.original_name).toBe('Nome original')
+      expect(result.data?.id).toBe(createDocumentosID)
+      expect(result.data?.original_name).toBe('Nome original')
     })
 
     it('deve retornar erro para ID inexistente', async () => {

@@ -30,7 +30,8 @@ export const createDocumentsTagsRelation = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await documentsTagRelation.create(payload as any)
-    return successResponse(created, 'Documento criado com sucesso')
+    const data = created.toJSON()
+    return successResponse(data, 'Documento criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -47,8 +48,9 @@ export const getDocumentsTagsRelationById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await documentsTagRelation.findByPk(id)
+    const data = item?.toJSON()
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Documento encontrado com sucesso')
+    return successResponse(data, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }

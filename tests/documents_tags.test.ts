@@ -68,8 +68,8 @@ describe('DocumentsTagsController', () => {
       const result = await getDocumentsTagsById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.name).toBe('nome-de-tag')
-      expect(result.data.color).toBe('vermelho')
+      expect(result.data?.name).toBe('nome-de-tag')
+      expect(result.data?.color).toBe('vermelho')
     })
 
     it('Deve retornar erro para ID inexistente', async () => {

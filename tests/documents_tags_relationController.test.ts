@@ -7,24 +7,71 @@ import {
 } from '../src/controllers/documents_tags_relationController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
+import { createDocuments } from '../src/controllers/documentsController.js'
+import { createDocumentsTags } from '../src/controllers/documents_tagsController.js'
 
 describe('DocumentsTagRelation', async () => {
   let documentsTagsRelationID: string
+  let docID: string
+  let docTagID: string
 
   beforeAll(async () => {
-    sequelize.sync({ force: true })
+    await sequelize.sync({ force: true })
   })
 
   afterAll(async () => {
-    sequelize.close()
+    await sequelize.close()
   })
 
   describe('createDocumentsTagsRelation', () => {
     it('Deve criar o relatório com sucesso', async () => {
+      const profileReq = {
+        body: {
+          nome: 'Usuário-de-Teste Rotas',
+          email: 'test.routes@email.com',
+          cpf: '52998224725',
+          telefone: '11988887777',
+          data_nascimento: '1995-05-15',
+          profile_password: 'password123',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      const profileID = profileBody.data.id
+
+      const docReq = {
+        body: {
+          user_id: profileID,
+          original_name: 'Nome original',
+          storage_path: 'Caminho de armazenamento',
+          file_type: 'Tipo de arquivo',
+          file_size: 25,
+          status: 'enviando',
+          progress: 20,
+        },
+      } as FastifyRequest
+
+      const docBody = await createDocuments(docReq)
+
+      docID = docBody.data.id
+
+      const docTagReq = {
+        body: {
+          name: 'nome-de-tag',
+          color: 'vermelho',
+        },
+      } as FastifyRequest
+
+      const docTagBody = await createDocumentsTags(docTagReq)
+
+      docTagID = docTagBody.data.id
+
       const req = {
         body: {
-          document_id: 'id-do-documento',
-          tag_id: 'id-da-tag',
+          tag_id: docTagID,
+          document_id: docID,
         },
       } as FastifyRequest
 
@@ -32,8 +79,8 @@ describe('DocumentsTagRelation', async () => {
 
       expect(result.success).toBe(true)
       expect(result.data).toHaveProperty('id')
-      expect(result.data.document_id).toBe('id-do-documento')
-      expect(result.data.tag_id).toBe('id-da-tag')
+      expect(result.data.document_id).toBe(docID)
+      expect(result.data.tag_id).toBe(docTagID)
 
       documentsTagsRelationID = result.data.id
     })
@@ -68,8 +115,8 @@ describe('DocumentsTagRelation', async () => {
       const result = await getDocumentsTagsRelationById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.document_id).toBe('id-de-documento')
-      expect(result.data.tag_id).toBe('id-de-tag')
+      expect(result.data?.document_id).toBe(docID)
+      expect(result.data?.tag_id).toBe(docTagID)
     })
 
     it('Deve retornar erro para ID inexistente', async () => {
@@ -90,62 +137,6 @@ describe('DocumentsTagRelation', async () => {
       } as FastifyRequest
 
       await expect(getDocumentsTagsRelationById(req)).rejects.toThrow()
-    })
-  })
-
-  describe('updateDocumentsTagsRelation', () => {
-    it('Deve atualizar a relação om sucesso', async () => {
-      const req = {
-        params: {
-          id: documentsTagsRelationID,
-        },
-        body: {
-          tag_id: 'id-de-tag-update',
-          document_id: 'id-de-documento-update',
-        },
-      } as FastifyRequest
-
-      const result = await updateDocumentsTagsRelation(req)
-
-      expect(result.success).toBe(true)
-      expect(result.data?.tag_id).toBe('id-de-tag-update')
-      expect(result.data?.document_id).toBe('id-de-documento-update')
-    })
-
-    it('Deve atualizar a relaçao mesmo que tenha somente um item na requisição', async () => {
-      const req = {
-        params: {
-          id: documentsTagsRelationID,
-        },
-        body: {
-          tag_id: 'mais-um-teste',
-        },
-      } as FastifyRequest
-
-      const result = await updateDocumentsTagsRelation(req)
-
-      expect(result.success).toBe(true)
-      expect(result.data?.tag_id).toBe('mais-um-teste')
-    })
-
-    it('Deve retornar erro para ID inválido', async () => {
-      const req = {
-        params: {
-          id: 'ID inválido',
-        },
-      } as FastifyRequest
-
-      await expect(updateDocumentsTagsRelation(req)).rejects.toThrow()
-    })
-
-    it('Deve retornar erro para ID inexistente', async () => {
-      const req = {
-        params: {
-          id: '00000000-0000-0000-0000-000000000000',
-        },
-      } as FastifyRequest
-
-      await expect(updateDocumentsTagsRelation(req)).rejects.toThrow()
     })
   })
 

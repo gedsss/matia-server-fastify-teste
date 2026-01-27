@@ -7,10 +7,6 @@ import {
 } from '../src/controllers/user_roleController.js'
 import type { FastifyRequest } from 'fastify'
 import sequelize from '../src/db.js'
-import {
-  DocumentNotFoundError,
-  MissingFieldError,
-} from '../src/errors/errors.js'
 import { createProfile } from '../src/controllers/profileController.js'
 
 describe('UserRoleController', () => {
@@ -87,7 +83,7 @@ describe('UserRoleController', () => {
       const result = await getUserRoleById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.role).toBe('Administrador')
+      expect(result.data?.role).toBe('Administrador')
     })
 
     it('deve retornar erro para ID inexistente', async () => {
