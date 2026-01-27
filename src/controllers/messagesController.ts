@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import messages, { type MessagesAttributes } from '../models/messages.js'
 import {
   ValidationError,
@@ -25,8 +25,10 @@ export const createMessages = async (request: FastifyRequest) => {
     if (!payload || Object.keys(payload).length === 0) {
       throw new MissingFieldError()
     }
+    console.log(payload)
     const created = await messages.create(payload as any)
-    return successResponse(created, 'Registro criado com sucesso')
+    const data = created.toJSON()
+    return successResponse(data, 'Registro criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -43,8 +45,9 @@ export const getMessagesById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await messages.findByPk(id)
+    const data = item?.toJSON()
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Registro encontrado com sucesso')
+    return successResponse(data, 'Registro encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -65,12 +68,19 @@ export const getMessages = async () => {
 export const updateMessages = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
+    const { role } = request.body as UpdateBody
+    if (role && !['user', 'assistant', 'system'].includes(role)) {
+      throw new ValidationError('Role inválido', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
+    }
     const [updatedRows] = await messages.update(request.body as UpdateBody, {
       where: { id },
     })
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await messages.findByPk(id)
-    return successResponse(updated, 'Documento encontrado com sucesso')
+    const data = updated?.toJSON()
+    return successResponse(data, 'Documento encontrado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {

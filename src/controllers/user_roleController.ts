@@ -25,10 +25,11 @@ export const createUserRole = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await userRole.create(payload as any)
-    return successResponse(created, 'Cargo criado com sucesso')
+    const data = created.toJSON()
+    return successResponse(data, 'Cargo criado com sucesso')
   } catch (err: any) {
-    if (err && err.name === 'SequelizeValidationError') {
-      throw new ValidationError('Dados inválidos.')
+    if (err instanceof MissingFieldError) {
+      throw err
     }
     throw new InternalServerError('Erro ao criar o registro', {
       code: ErrorCodes.CREATE_FAILED,
@@ -40,8 +41,9 @@ export const getUserRoleById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await userRole.findByPk(id)
+    const data = item?.toJSON()
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Registro encontrado com sucesso')
+    return successResponse(data, 'Registro encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -67,7 +69,8 @@ export const updateUserRole = async (request: FastifyRequest) => {
     })
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await userRole.findByPk(id)
-    return successResponse(updated, 'Registro atualizado com sucesso')
+    const data = updated?.toJSON()
+    return successResponse(data, 'Registro atualizado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -84,7 +87,8 @@ export const deleteUserRole = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const deleted = await userRole.destroy({ where: { id } })
-    if (deleted === 0) return successResponse('Registro deletado com sucesso')
+    if (deleted === 0) throw new DocumentNotFoundError()
+    return successResponse('Registro deletado com sucesso')
   } catch (err: any) {
     if (err instanceof DocumentNotFoundError) {
       throw err

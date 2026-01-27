@@ -26,10 +26,7 @@ describe('UserActivityLogController', () => {
           user_id: 'uuid-do-usuario',
           action_type: 'login',
           resource_type: 'resource de teste',
-          details: {
-            nome_documento: 'nome de documento de teste',
-            titulo: 'titulo de teste',
-          },
+          resource_id: 'id-do-resource',
           ip_address: '200.148.12.188',
           user_agent: 'Chrome',
         },

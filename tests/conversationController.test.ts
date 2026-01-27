@@ -23,7 +23,7 @@ describe('ConversationController', () => {
     it('deve criar um conversation com sucesso', async () => {
       const req = {
         body: {
-          user_id: 'id-do-usuario',
+          user_id: '5e2a8d7d-9586-4bf8-80b8-06d8c16e13e3',
           title: 'titulo-teste',
           is_favorite: true,
           last_message_at: '20-10-2004',

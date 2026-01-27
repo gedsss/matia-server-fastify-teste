@@ -27,7 +27,8 @@ export const createConversation = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await conversation.create(payload as any)
-    return successResponse(created, 'Documento criado com sucesso')
+    const data = created.toJSON()
+    return successResponse(data, 'Documento criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {

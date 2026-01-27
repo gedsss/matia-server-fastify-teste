@@ -7,6 +7,7 @@ import {
 } from '../src/controllers/documentsController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
 
 describe('DocumentsController', () => {
   let createDocumentosID: string
@@ -21,9 +22,24 @@ describe('DocumentsController', () => {
 
   describe('createDocuments', () => {
     it('deve criar o documento com sucesso', async () => {
+      const profileReq = {
+        body: {
+          nome: 'João Silva',
+          email: 'joao@email.com',
+          cpf: '52998224725', // CPF válido
+          telefone: '19999999999',
+          data_nascimento: '1990-01-01',
+          profile_password: 'senha123',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      const profileID = profileBody.data.id
+
       const req = {
         body: {
-          user_id: 'ID do usuário',
+          user_id: profileID,
           original_name: 'Nome original',
           storage_path: 'Caminho de armazenamento',
           file_type: 'Tipo de arquivo',
@@ -73,7 +89,7 @@ describe('DocumentsController', () => {
 
       expect(result.success).toBe(true)
       expect(result.data.id).toBe(createDocumentosID)
-      expect(result.data.original_name).toBe('Nome Original')
+      expect(result.data.original_name).toBe('Nome original')
     })
 
     it('deve retornar erro para ID inexistente', async () => {
@@ -145,8 +161,7 @@ describe('DocumentsController', () => {
 
       // Dependendo da implementação, pode retornar sucesso sem alterações
       // ou pode lançar erro
-      const result = await updateDocuments(req)
-      expect(result.success).toBe(true)
+      await expect(updateDocuments(req)).rejects.toThrow()
     })
   })
   describe('deleteDocuments', () => {

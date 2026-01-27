@@ -8,15 +8,15 @@ import {
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
 
-describe('DocumentsTagsController', async () => {
+describe('DocumentsTagsController', () => {
   let createDocumentsTagsIDs: string
 
   beforeAll(async () => {
-    sequelize.sync({ force: true })
+    await sequelize.sync({ force: true })
   })
 
   afterAll(async () => {
-    sequelize.close()
+    await sequelize.close()
   })
 
   describe('createDocumentsTags', () => {
@@ -49,7 +49,7 @@ describe('DocumentsTagsController', async () => {
     it('Deve rejeitar caso a requisição não contenha dados obrigatórios', async () => {
       const req = {
         body: {
-          name: 'nome-teste',
+          color: 'cor-teste',
         },
       } as FastifyRequest
 
@@ -68,7 +68,7 @@ describe('DocumentsTagsController', async () => {
       const result = await getDocumentsTagsById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.name).toBe('nome-da-tag')
+      expect(result.data.name).toBe('nome-de-tag')
       expect(result.data.color).toBe('vermelho')
     })
 

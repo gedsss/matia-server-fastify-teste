@@ -5,8 +5,10 @@ import {
   updateMessages,
   deleteMessages,
 } from '../src/controllers/messagesController.js'
+import { createConversation } from '../src/controllers/conversationController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
 
 describe('MessagesController', () => {
   let createMessagesID: string
@@ -21,9 +23,37 @@ describe('MessagesController', () => {
 
   describe('createMessages', () => {
     it('deve criar a mensagem com sucesso', async () => {
+      const profileReq = {
+        body: {
+          nome: 'Maria Silva',
+          email: 'maria@email.com',
+          cpf: '52998224725', // CPF já existe
+          telefone: '19777777777',
+          data_nascimento: '1992-03-20',
+          profile_password: 'senha789',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      const profileID = profileBody.data.id
+
+      const conversationReq = {
+        body: {
+          user_id: profileID,
+          title: 'titulo-teste',
+          is_favorite: true,
+          last_message_at: '2004-10-20',
+        },
+      } as FastifyRequest
+
+      const conversationsBody = await createConversation(conversationReq)
+
+      const conversationsID = conversationsBody.data.id
+
       const req = {
         body: {
-          conversationId: 'ID-da-conversa',
+          conversations_id: conversationsID,
           content: 'Conteudo',
           role: 'user',
         },

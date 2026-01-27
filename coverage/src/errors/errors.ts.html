@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">28.57% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/35</span>
+                <span class='fraction'>7/35</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30.76% </span>
+                <span class="strong">19.23% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/26</span>
+                <span class='fraction'>5/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">28.57% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/35</span>
+                <span class='fraction'>7/35</span>
             </div>
         
             
@@ -299,15 +299,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -321,6 +313,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -403,6 +403,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -418,19 +425,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -491,7 +491,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -542,8 +542,8 @@ export class MissingFieldError extends ValidationError {
 }
 &nbsp;
 export class InvalidCPFError extends ValidationError {
-  constructor(cpf?: string) {
-    super('CPF inválido', {
+<span class="fstat-no" title="function not covered" >  constructor(c</span>pf?: string) {
+<span class="cstat-no" title="statement not covered" >    super('CPF inválido', {</span>
       field: 'cpf',
       value: cpf,
       code: ErrorCodes.INVALID_CPF,
@@ -632,16 +632,16 @@ export class NotFoundError extends AppError {
 }
 &nbsp;
 export class UserNotFoundError extends NotFoundError {
-  constructor(identifier?: string) {
-    super('Usuário', identifier)
-    this.code = ErrorCodes.USER_NOT_FOUND
+<span class="fstat-no" title="function not covered" >  constructor(i</span>dentifier?: string) {
+<span class="cstat-no" title="statement not covered" >    super('Usuário', identifier)</span>
+<span class="cstat-no" title="statement not covered" >    this.code = ErrorCodes.USER_NOT_FOUND</span>
   }
 }
 &nbsp;
 export class DocumentNotFoundError extends NotFoundError {
-<span class="fstat-no" title="function not covered" >  constructor(i</span>dentifier?: string) {
-<span class="cstat-no" title="statement not covered" >    super('Documento', identifier)</span>
-<span class="cstat-no" title="statement not covered" >    this.code = ErrorCodes.DOCUMENT_NOT_FOUND</span>
+  constructor(identifier?: string) {
+    super('Documento', identifier)
+    this.code = ErrorCodes.DOCUMENT_NOT_FOUND
   }
 }
 &nbsp;
@@ -653,14 +653,14 @@ export class ProcessNotFoundError extends NotFoundError {
 }
 &nbsp;
 export class ConflictError extends AppError {
-  constructor(message: string, details?: ErrorDetails) {
-    super(409, ErrorCodes.CONFLICT, message, details)
+<span class="fstat-no" title="function not covered" >  constructor(m</span>essage: string, details?: ErrorDetails) {
+<span class="cstat-no" title="statement not covered" >    super(409, ErrorCodes.CONFLICT, message, details)</span>
   }
 }
 &nbsp;
 export class DuplicateEmailError extends ConflictError {
-  constructor(email: string) {
-    super('Este email já está em uso.', {
+<span class="fstat-no" title="function not covered" >  constructor(e</span>mail: string) {
+<span class="cstat-no" title="statement not covered" >    super('Este email já está em uso.', {</span>
       field: 'email',
       value: email,
       code: ErrorCodes.DUPLICATE_EMAIL,
@@ -760,7 +760,7 @@ export class TimeoutError extends InternalServerError {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-27T00:28:16.508Z
+                at 2026-01-27T13:54:11.280Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
