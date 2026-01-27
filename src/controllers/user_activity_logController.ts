@@ -27,7 +27,8 @@ export const createUserActivityLog = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await UserActivityLog.create(payload as any)
-    return successResponse(created, 'Log criado com sucesso')
+    const data = created.toJSON() as any
+    return successResponse(data, 'Log criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -44,8 +45,9 @@ export const getUserActivityLogById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await UserActivityLog.findByPk(id)
+    const data = item?.toJSON() as any
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Documento encontrado com sucesso')
+    return successResponse(data, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -74,7 +76,8 @@ export const updateUserActivityLog = async (request: FastifyRequest) => {
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await UserActivityLog.findByPk(id)
-    return successResponse(updated, 'Log encontrado com sucesso')
+    const data = updated?.toJSON() as any
+    return successResponse(data, 'Log encontrado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {

@@ -7,6 +7,11 @@ import {
 } from '../src/controllers/user_roleController.js'
 import type { FastifyRequest } from 'fastify'
 import sequelize from '../src/db.js'
+import {
+  DocumentNotFoundError,
+  MissingFieldError,
+} from '../src/errors/errors.js'
+import { ValidationError } from 'sequelize'
 
 describe('UserRoleController', () => {
   let createUserRoleId: string
@@ -44,7 +49,7 @@ describe('UserRoleController', () => {
         },
       } as FastifyRequest
 
-      await expect(createUserRole(req)).rejects.toThrow()
+      await expect(createUserRole(req)).rejects.toThrow(MissingFieldError)
     })
 
     it('deve retornar erro ao enviar a requisição vazia', async () => {
@@ -52,7 +57,7 @@ describe('UserRoleController', () => {
         body: {},
       } as FastifyRequest
 
-      await expect(createUserRole(req)).rejects.toThrow()
+      await expect(createUserRole(req)).rejects.toThrow(MissingFieldError)
     })
   })
 
@@ -77,7 +82,7 @@ describe('UserRoleController', () => {
         },
       } as FastifyRequest
 
-      await expect(getUserRoleById(req)).rejects.toThrow()
+      await expect(getUserRoleById(req)).rejects.toThrow(DocumentNotFoundError)
     })
 
     it('deve retornar erro para ID inválido', async () => {
@@ -87,7 +92,7 @@ describe('UserRoleController', () => {
         },
       } as FastifyRequest
 
-      await expect(getUserRoleById(req)).rejects.toThrow()
+      await expect(getUserRoleById(req)).rejects.toThrow(DocumentNotFoundError)
     })
   })
 
@@ -114,7 +119,7 @@ describe('UserRoleController', () => {
         body: { nome: 'Teste' },
       } as FastifyRequest
 
-      await expect(updateUserRole(req)).rejects.toThrow()
+      await expect(updateUserRole(req)).rejects.toThrow(DocumentNotFoundError)
     })
 
     it('não deve atualizar com body vazio', async () => {
@@ -139,7 +144,7 @@ describe('UserRoleController', () => {
         },
       } as FastifyRequest
 
-      const result = await deleteUserRole(req)
+      const result = (await deleteUserRole(req)) as any
 
       expect(result.success).toBe(true)
     })

@@ -1,6 +1,6 @@
-import { expect, it, beforeAll, beforeEach, describe, afterAll } from 'vitest'
+import { expect, it, beforeAll, describe, afterAll } from 'vitest'
 import Fastify from 'fastify'
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import fastifyJwt from '@fastify/jwt'
 import sequelize from '../src/db.js'
 import profileRoutes from '../src/routes/profileRoutes.js'
@@ -29,13 +29,16 @@ describe('ProfileRoutes - Testes de Integração', () => {
       secret: 'test-secret-key',
     })
 
-    app.decorate('authenticate', async (request: any, reply: any) => {
-      try {
-        await request.jwtVerify()
-      } catch (err) {
-        reply.code(401).send({ message: 'Unauthorized' })
+    app.decorate(
+      'authenticate',
+      async (request: FastifyRequest, reply: FastifyReply) => {
+        try {
+          await request.jwtVerify()
+        } catch (err) {
+          reply.code(401).send({ message: 'Unauthorized' })
+        }
       }
-    })
+    )
 
     await app.register(profileRoutes, { prefix: '/profile' })
 
@@ -126,6 +129,15 @@ describe('ProfileRoutes - Testes de Integração', () => {
       expect(body.success).toBe(true)
       expect(body.data.nome).toBe(novoNome)
     })
+
+    it('deve retornar erro 401 ao tentar acessar sem token', async () => {
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/profile/profile/${createdUserID}`,
+      })
+
+      expect(response.statusCode).toBe(401)
+    })
   })
 
   describe('DELETE /profile/:id', () => {
@@ -145,6 +157,15 @@ describe('ProfileRoutes - Testes de Integração', () => {
 
       const userAfterDelete = await Profile.findByPk(createdUserID)
       expect(userAfterDelete).toBeNull()
+    })
+
+    it('Deve retornar erro 401 ao tentar acessar sem token', async () => {
+      const response = await app.inject({
+        method: 'DELETE',
+        url: `/profile/profile/${createdUserID}`,
+      })
+
+      expect(response.statusCode).toBe(401)
     })
   })
 })

@@ -98,7 +98,7 @@ export const createProfile = async (request: FastifyRequest) => {
     const data = created.toJSON() as any
     delete data.profile_password
 
-    return successResponse(profile, 'Perfil criado com sucesso')
+    return successResponse(data, 'Perfil criado com sucesso')
   } catch (err: any) {
     const isValidationError =
       err &&
@@ -123,7 +123,7 @@ export const getProfileById = async (request: FastifyRequest) => {
     if (!item) throw new UserNotFoundError()
     const data = item.toJSON() as any
     delete data.profile_password
-    return successResponse(item, 'Usuário achado com sucesso')
+    return successResponse(data, 'Usuário achado com sucesso')
   } catch (err: any) {
     throw new UserNotFoundError()
   }

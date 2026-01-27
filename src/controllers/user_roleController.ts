@@ -84,9 +84,11 @@ export const deleteUserRole = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const deleted = await userRole.destroy({ where: { id } })
-    if (deleted === 0) throw new DocumentNotFoundError()
-    return successResponse('Registro deletado com sucesso')
+    if (deleted === 0) return successResponse('Registro deletado com sucesso')
   } catch (err: any) {
+    if (err instanceof DocumentNotFoundError) {
+      throw err
+    }
     throw new ValidationError('Erro ao deletar o registro', {
       code: ErrorCodes.DELETE_FAILED,
     })

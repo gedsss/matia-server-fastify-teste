@@ -37,13 +37,13 @@ describe('UserActivityLogController', () => {
 
       const result = await createUserActivityLog(req)
 
+      createLogId = result.data.id
+
       expect(result.success).toBe(true)
       expect(result.data).toHaveProperty('id')
       expect(result.data.action_type).toBe('login')
       expect(result.data.ip_address).toBe('200.148.12.188')
       expect(result.data.user_agent).toBe('Chrome')
-
-      createLogId = result.data.id
     })
 
     it('deve rejeitar quando campos obrigatórios estão faltando', async () => {
@@ -168,9 +168,7 @@ describe('UserActivityLogController', () => {
         body: {},
       } as FastifyRequest
 
-      const result = await updateUserActivityLog(req)
-
-      expect(result.success).toBe(true)
+      await expect(updateUserActivityLog(req)).rejects.toThrow()
     })
   })
 
@@ -194,7 +192,7 @@ describe('UserActivityLogController', () => {
         },
       } as FastifyRequest
 
-      await expect(await getUserActivityLogById(req)).rejects.toThrow()
+      await expect(getUserActivityLogById(req)).rejects.toThrow()
     })
 
     it('deve retornar erro de ID inexistente', async () => {
@@ -204,7 +202,7 @@ describe('UserActivityLogController', () => {
         },
       } as FastifyRequest
 
-      await expect(await deleteUserActivityLog(req)).rejects.toThrow()
+      await expect(deleteUserActivityLog(req)).rejects.toThrow()
     })
 
     it('deve retornar erro ao deletar ID já deletado', async () => {
@@ -214,7 +212,7 @@ describe('UserActivityLogController', () => {
         },
       } as FastifyRequest
 
-      await expect(await deleteUserActivityLog(req)).rejects.toThrow()
+      await expect(deleteUserActivityLog(req)).rejects.toThrow()
     })
   })
 })
