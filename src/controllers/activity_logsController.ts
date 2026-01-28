@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import type { ActivityLogsAttributes } from '../models/activity_logs.js'
 import activityLogs from '../models/activity_logs.js'
 import {
@@ -27,7 +27,8 @@ export const createActivityLogs = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await activityLogs.create(payload as any)
-    return successResponse(created, 'Sucesso ao criar o documento')
+    const data = created.toJSON()
+    return successResponse(data, 'Sucesso ao criar o documento')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -44,8 +45,9 @@ export const getActivityLogsById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await activityLogs.findByPk(id)
+    const data = item?.toJSON()
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Sucesso ao encontrar o documento')
+    return successResponse(data, 'Sucesso ao encontrar o documento')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -74,13 +76,15 @@ export const updateActivityLogs = async (request: FastifyRequest) => {
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await activityLogs.findByPk(id)
-    return successResponse(updated, 'Sucesso ao atualizar o documento')
+    const data = updated?.toJSON()
+    return successResponse(data, 'Sucesso ao atualizar o documento')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
+    console.log('ERRO ESTÁ AQUI: ', err)
     throw new InternalServerError('Erro ao atualizar o documento', {
       code: ErrorCodes.UPDATE_FAILED,
     })

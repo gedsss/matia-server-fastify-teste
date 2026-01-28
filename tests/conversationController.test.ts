@@ -7,9 +7,11 @@ import {
 } from '../src/controllers/conversationController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
 
 describe('ConversationController', () => {
   let createConversationID: string
+  let profileID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -21,9 +23,24 @@ describe('ConversationController', () => {
 
   describe('createConversation', () => {
     it('deve criar um conversation com sucesso', async () => {
+      const profileReq = {
+        body: {
+          nome: 'Usuário-de-Teste Rotas',
+          email: 'test.routes@email.com',
+          cpf: '52998224725',
+          telefone: '11988887777',
+          data_nascimento: '1995-05-15',
+          profile_password: 'password123',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      profileID = profileBody.data.id
+
       const req = {
         body: {
-          user_id: '5e2a8d7d-9586-4bf8-80b8-06d8c16e13e3',
+          user_id: profileID,
           title: 'titulo-teste',
           is_favorite: true,
           last_message_at: '20-10-2004',
@@ -36,7 +53,7 @@ describe('ConversationController', () => {
 
       expect(result.success).toBe(true)
       expect(result.data.title).toBe('titulo-teste')
-      expect(result.data.user_id).toBe('id-do-usuário')
+      expect(result.data.user_id).toBe(profileID)
       expect(result.data.is_favorite).toBe(true)
     })
 
@@ -70,7 +87,7 @@ describe('ConversationController', () => {
       const result = await getConversationById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.user_id).toBe('titulo-teste')
+      expect(result.data?.user_id).toBe(profileID)
     })
 
     it('deve retornar erro para ID inexistente', async () => {
@@ -94,7 +111,7 @@ describe('ConversationController', () => {
     it('deve atualizar o conversation com sucesso', async () => {
       const req = {
         params: {
-          id: getConversationById,
+          id: createConversationID,
         },
         body: {
           title: 'testando-update',

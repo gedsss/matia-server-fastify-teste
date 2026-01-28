@@ -2,7 +2,6 @@ import { describe, it, expect, afterAll, beforeAll } from 'vitest'
 import {
   createDocumentsTagsRelation,
   getDocumentsTagsRelationById,
-  updateDocumentsTagsRelation,
   deleteDocumentsTagsRelation,
 } from '../src/controllers/documents_tags_relationController.js'
 import sequelize from '../src/db.js'

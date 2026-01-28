@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import type { DocumentsAnalysisAttributes } from '../models/documents_analysis.js'
 import documentsAnalysis from '../models/documents_analysis.js'
 import {
@@ -30,7 +30,8 @@ export const createDocumentsAnalisys = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await documentsAnalysis.create(payload as any)
-    return successResponse(created, 'Documento criado com sucesso')
+    const data = created.toJSON()
+    return successResponse(data, 'Documento criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -47,8 +48,9 @@ export const getDocumentsAnalisysById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await documentsAnalysis.findByPk(id)
+    const data = item?.toJSON()
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Documento encontrado com sucesso')
+    return successResponse(data, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -77,7 +79,8 @@ export const updateDocumentsAnalisys = async (request: FastifyRequest) => {
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await documentsAnalysis.findByPk(id)
-    return successResponse(updated, 'Documento atualizado com sucesso')
+    const data = updated?.toJSON()
+    return successResponse(data, 'Documento atualizado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {

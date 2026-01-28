@@ -45,8 +45,9 @@ export const getConversationById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
     const item = await conversation.findByPk(id)
+    const data = item?.toJSON()
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Documento encontrado com sucesso')
+    return successResponse(data, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -75,13 +76,15 @@ export const updateConversation = async (request: FastifyRequest) => {
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await conversation.findByPk(id)
-    return successResponse(updated, 'Documento atualizado com sucesso')
+    const data = updated?.toJSON()
+    return successResponse(data, 'Documento atualizado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
+    console.log('Erro EM: ', err)
     throw new InternalServerError('Erro ao atualizar o documento', {
       code: ErrorCodes.UPDATE_FAILED,
     })

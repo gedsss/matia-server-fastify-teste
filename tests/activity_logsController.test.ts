@@ -7,9 +7,12 @@ import {
 } from '../src/controllers/activity_logsController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
 
 describe('ActivityLogs', () => {
   let createActivityLogsID: string
+  let profileID1: string
+  let profileID2: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -21,11 +24,41 @@ describe('ActivityLogs', () => {
 
   describe('createActivityLogs', () => {
     it('deve criar um ActivityLog com sucesso', async () => {
+      const profileReq1 = {
+        body: {
+          nome: 'Usuário-de-Teste Rotas',
+          email: 'test.routes@email.com',
+          cpf: '52998224725',
+          telefone: '11988887777',
+          data_nascimento: '1995-05-15',
+          profile_password: 'password123',
+        },
+      } as FastifyRequest
+
+      const profileBody1 = await createProfile(profileReq1)
+
+      profileID1 = profileBody1.data.id
+
+      const profileReq2 = {
+        body: {
+          nome: 'Usuário-de-Teste Rtas',
+          email: 'test.routss@email.com',
+          cpf: '70963685074',
+          telefone: '11988887677',
+          data_nascimento: '1995-04-15',
+          profile_password: 'password1234',
+        },
+      } as FastifyRequest
+
+      const profileBody2 = await createProfile(profileReq2)
+
+      profileID2 = profileBody2.data.id
+
       const req = {
         body: {
-          user_id: 'id-do-usuario',
+          user_id: profileID1,
           action: 'login',
-          entity_id: 'id-de-entidade',
+          entity_id: profileID2,
           entity_type: 'document',
         },
       } as FastifyRequest
@@ -36,7 +69,7 @@ describe('ActivityLogs', () => {
 
       expect(result.success).toBe(true)
       expect(result.data.action).toBe('login')
-      expect(result.data.user_id).toBe('id-do-usuario')
+      expect(result.data.user_id).toBe(profileID1)
       expect(result.data.entity_type).toBe('document')
     })
 
@@ -90,7 +123,7 @@ describe('ActivityLogs', () => {
       const result = await getActivityLogsById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.user_id).toBe('id-do-usuario')
+      expect(result.data?.user_id).toBe(profileID1)
     })
 
     it('deve retornar erro para ID inexistente', async () => {
@@ -114,17 +147,17 @@ describe('ActivityLogs', () => {
     it('Deve atualizar o ActivityLog com sucesso', async () => {
       const req = {
         params: {
-          id: getActivityLogsById,
+          id: createActivityLogsID,
         },
         body: {
-          entity_id: 'testando-update',
+          entity_type: 'user',
         },
       } as FastifyRequest
 
       const result = await updateActivityLogs(req)
 
       expect(result.success).toBe(true)
-      expect(result.data?.entity_id).toBe('testando-update')
+      expect(result.data?.entity_type).toBe('user')
     })
 
     it('deve atualizar múltiplos campos', async () => {
@@ -132,15 +165,15 @@ describe('ActivityLogs', () => {
         params: { id: createActivityLogsID },
         body: {
           ip_address: 'testando-multiplos-mudando-o-ip',
-          entity_type: 'ActivityLog',
+          entity_type: 'conversation',
         },
       } as FastifyRequest
 
       const result = await updateActivityLogs(req)
 
       expect(result.success).toBe(true)
-      expect(result.data?.ip_address).toBe(false)
-      expect(result.data?.entity_type).toBe('testando-multiplos')
+      expect(result.data?.ip_address).toBe('testando-multiplos-mudando-o-ip')
+      expect(result.data?.entity_type).toBe('conversation')
     })
 
     it('deve rejeitar body vazio', async () => {

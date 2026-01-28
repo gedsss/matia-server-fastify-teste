@@ -110,7 +110,6 @@ export const createProfile = async (request: FastifyRequest) => {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
-    console.error('ERRO EM createProfile:', err)
     throw new InternalServerError('Erro ao criar o usuário', {
       code: ErrorCodes.CREATE_FAILED,
     })

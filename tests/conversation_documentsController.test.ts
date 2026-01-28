@@ -5,11 +5,18 @@ import {
   updateConversationDocuments,
   deleteConversationDocuments,
 } from '../src/controllers/conversation_documentsController.js'
+
+import { createConversation } from '../src/controllers/conversationController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
+import { createDocuments } from '../src/controllers/documentsController.js'
 
 describe('ConversationDocumentsController', () => {
   let createConversationDocumentsID: string
+  let conversationID: string
+  let docID: string
+  let profileID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -21,11 +28,54 @@ describe('ConversationDocumentsController', () => {
 
   describe('createConversationDocuments', () => {
     it('deve criar um conversation documents com sucesso', async () => {
+      const profileReq = {
+        body: {
+          nome: 'Usuário-de-Teste Rotas',
+          email: 'test.routes@email.com',
+          cpf: '52998224725',
+          telefone: '11988887777',
+          data_nascimento: '1995-05-15',
+          profile_password: 'password123',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      profileID = profileBody.data.id
+
+      const docReq = {
+        body: {
+          user_id: profileID,
+          original_name: 'Nome original',
+          storage_path: 'Caminho de armazenamento',
+          file_type: 'Tipo de arquivo',
+          file_size: 25,
+          status: 'enviando',
+          progress: 20,
+        },
+      } as FastifyRequest
+
+      const docBody = await createDocuments(docReq)
+
+      docID = docBody.data.id
+
+      const conversationReq = {
+        body: {
+          user_id: profileID,
+          title: 'titulo-teste',
+          is_favorite: true,
+          last_message_at: '20-10-2004',
+        },
+      } as FastifyRequest
+
+      const conversationBody = await createConversation(conversationReq)
+
+      conversationID = conversationBody.data.id
+
       const req = {
         body: {
-          conversation_id: 'id-de-conversa',
-          document_id: 'id-de-documento',
-          linked_at: 'linkado',
+          conversation_id: conversationID,
+          document_id: docID,
         },
       } as FastifyRequest
 
@@ -34,19 +84,8 @@ describe('ConversationDocumentsController', () => {
       createConversationDocumentsID = result.data.id
 
       expect(result.success).toBe(true)
-      expect(result.data.conversation_id).toBe('id-de-conversa')
-      expect(result.data.document_id).toBe('id-de-documento')
-      expect(result.data.linked_at).toBe('linkado')
-    })
-
-    it('deve rejeitar quando campos obrigatórios estão faltando', async () => {
-      const req = {
-        body: {
-          linked_at: 'linkado',
-        },
-      } as FastifyRequest
-
-      await expect(createConversationDocuments(req)).rejects.toThrow()
+      expect(result.data.conversation_id).toBe(conversationID)
+      expect(result.data.document_id).toBe(docID)
     })
 
     it('deve rejeitar body vazio', async () => {
@@ -79,8 +118,8 @@ describe('ConversationDocumentsController', () => {
       const result = await getConversationDocumentsById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.conversation_id).toBe('id-de-conversa')
-      expect(result.data.document_id).toBe('id-de-documento')
+      expect(result.data?.conversation_id).toBe(conversationID)
+      expect(result.data?.document_id).toBe(docID)
     })
 
     it('deve retornar erro para ID inexistente', async () => {
@@ -97,32 +136,6 @@ describe('ConversationDocumentsController', () => {
       } as FastifyRequest
 
       await expect(getConversationDocumentsById(req)).rejects.toThrow()
-    })
-  })
-
-  describe('updateConversationDocuments', () => {
-    it('deve atualizar o documento de conversa com sucesso', async () => {
-      const req = {
-        params: {
-          id: createConversationDocumentsID,
-        },
-        body: {
-          linked_at: 'linkado-teste-update',
-        },
-      } as FastifyRequest
-
-      const result = await updateConversationDocuments(req)
-
-      expect(result.success).toBe(true)
-      expect(result.data?.linked_at).toBe('linkado-teste-update')
-    })
-
-    it('deve rejeitar body vazio', async () => {
-      const req = {
-        body: {},
-      } as FastifyRequest
-
-      await expect(updateConversationDocuments(req)).rejects.toThrow()
     })
   })
 

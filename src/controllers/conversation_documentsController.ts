@@ -30,7 +30,8 @@ export const createConversationDocuments = async (request: FastifyRequest) => {
       throw new MissingFieldError()
     }
     const created = await conversationDocuments.create(payload as any)
-    return successResponse(created, 'Documento criado com sucesso')
+    const data = created.toJSON()
+    return successResponse(data, 'Documento criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {
@@ -48,7 +49,8 @@ export const getConversationDocumentsById = async (request: FastifyRequest) => {
     const { id } = request.params as Params
     const item = await conversationDocuments.findByPk(id)
     if (!item) throw new DocumentNotFoundError()
-    return successResponse(item, 'Sucesso ao encontrar o documento')
+    const data = item?.toJSON()
+    return successResponse(data, 'Sucesso ao encontrar o documento')
   } catch (err: any) {
     throw new DocumentNotFoundError()
   }
@@ -77,7 +79,8 @@ export const updateConversationDocuments = async (request: FastifyRequest) => {
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await conversationDocuments.findByPk(id)
-    return successResponse(updated, 'Sucesso ao atualizar o documento')
+    const data = updated?.toJSON()
+    return successResponse(data, 'Sucesso ao atualizar o documento')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {

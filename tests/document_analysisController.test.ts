@@ -7,9 +7,14 @@ import {
 } from '../src/controllers/documents_analysisController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
+import { createDocuments } from '../src/controllers/documentsController.js'
+import { createConversation } from '../src/controllers/conversationController.js'
 
 describe('DocumentAnalysisController', () => {
   let createDocumentsAnalisysID: string
+  let docID: string
+  let conversationID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -21,10 +26,54 @@ describe('DocumentAnalysisController', () => {
 
   describe('createDocumentsAnalisys', () => {
     it('deve criar uma analise de documento com sucesso', async () => {
+      const profileReq = {
+        body: {
+          nome: 'Usuário-de-Teste Rotas',
+          email: 'test.routes@email.com',
+          cpf: '52998224725',
+          telefone: '11988887777',
+          data_nascimento: '1995-05-15',
+          profile_password: 'password123',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      const profileID = profileBody.data.id
+
+      const docReq = {
+        body: {
+          user_id: profileID,
+          original_name: 'Nome original',
+          storage_path: 'Caminho de armazenamento',
+          file_type: 'Tipo de arquivo',
+          file_size: 25,
+          status: 'enviando',
+          progress: 20,
+        },
+      } as FastifyRequest
+
+      const docBody = await createDocuments(docReq)
+
+      docID = docBody.data.id
+
+      const conversationReq = {
+        body: {
+          user_id: profileID,
+          title: 'titulo-teste',
+          is_favorite: true,
+          last_message_at: '20-10-2004',
+        },
+      } as FastifyRequest
+
+      const conversationBody = await createConversation(conversationReq)
+
+      conversationID = conversationBody.data.id
+
       const req = {
         body: {
-          conversation_id: 'id-de-conversa',
-          document_id: 'id-de-documento',
+          conversation_id: conversationID,
+          document_id: docID,
           analysis_type: 'sumario',
           confidence_score: 7,
         },
@@ -35,8 +84,8 @@ describe('DocumentAnalysisController', () => {
       createDocumentsAnalisysID = result.data.id
 
       expect(result.success).toBe(true)
-      expect(result.data.conversation_id).toBe('id-de-conversa')
-      expect(result.data.document_id).toBe('id-de-documento')
+      expect(result.data.conversation_id).toBe(conversationID)
+      expect(result.data.document_id).toBe(docID)
       expect(result.data.analysis_type).toBe('sumario')
     })
 
@@ -80,7 +129,7 @@ describe('DocumentAnalysisController', () => {
       const result = await getDocumentsAnalisysById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.conversation_id).toBe('id-de-conversa')
+      expect(result.data?.conversation_id).toBe(conversationID)
     })
 
     it('deve retornar erro para ID inexistente', async () => {
