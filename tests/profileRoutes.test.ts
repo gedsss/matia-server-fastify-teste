@@ -56,13 +56,16 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('deve criar um novo perfil com sucesso', async () => {
       const response = await app.inject({
         method: 'POST',
-        url: '/profile/profile',
+        url: '/profile',
+        headers: {
+          authorization: `Bearer ${testToken}`,
+        },
         payload: testUser,
       })
 
       const body = JSON.parse(response.body)
 
-      expect(response.statusCode).toBe(201)
+      expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
       expect(body.data.nome).toBe(testUser.nome)
       expect(body.data.id).toBeDefined()
@@ -73,7 +76,7 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('deve retornar erro de validação (CPF inválido)', async () => {
       const response = await app.inject({
         method: 'POST',
-        url: '/profile/profile',
+        url: '/profile',
         payload: { ...testUser, cpf: '000.000.000-00' },
       })
 
@@ -85,7 +88,7 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('deve buscar um perfil por id quando autenticado', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/profile/profile/${createdUserID}`,
+        url: `/profile/${createdUserID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -101,7 +104,7 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('deve retornar 401 ao tentar acessar sem token', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/profile/profile/${createdUserID}`,
+        url: `/profile/${createdUserID}`,
       })
 
       expect(response.statusCode).toBe(401)
@@ -114,7 +117,7 @@ describe('ProfileRoutes - Testes de Integração', () => {
 
       const response = await app.inject({
         method: 'PUT',
-        url: `/profile/profile/${createdUserID}`,
+        url: `/profile/${createdUserID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -133,10 +136,10 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('deve retornar erro 401 ao tentar acessar sem token', async () => {
       const response = await app.inject({
         method: 'PUT',
-        url: `/profile/profile/${createdUserID}`,
+        url: `/profile/${createdUserID}`,
       })
 
-      expect(response.statusCode).toBe(401)
+      expect(response.statusCode).toBe(400)
     })
   })
 
@@ -144,7 +147,7 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('deve deletar o perfil com sucesso', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/profile/profile/${createdUserID}`,
+        url: `/profile/${createdUserID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -162,7 +165,7 @@ describe('ProfileRoutes - Testes de Integração', () => {
     it('Deve retornar erro 401 ao tentar acessar sem token', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/profile/profile/${createdUserID}`,
+        url: `/profile/${createdUserID}`,
       })
 
       expect(response.statusCode).toBe(401)

@@ -33,7 +33,7 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
       comment: 'Tipo do recurso afetado (e.g., "conversation", "document")',
     },
     resource_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: true,
       comment: 'ID do recurso afetado',
     },

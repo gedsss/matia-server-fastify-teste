@@ -22,7 +22,7 @@ export const createUserActivityLogSchema: FastifySchema = {
         ],
       },
       resource_type: { type: 'string', nullable: true },
-      resource_id: { type: 'string', format: 'uuid', nullable: true },
+      resource_id: { type: 'string', nullable: true },
       details: { type: ['object', 'array', 'null'], nullable: true },
       ip_address: { type: 'string', maxLength: 45, nullable: true },
       user_agent: { type: 'string', nullable: true },

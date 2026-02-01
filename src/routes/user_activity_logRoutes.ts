@@ -8,7 +8,7 @@ import {
 
 const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   fastify.post(
-    '/user-activity-log',
+    '/',
     {
       schema: {
         tags: ['UserActivityLogs'],
@@ -22,7 +22,7 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/user-activity-log/:id',
+    '/:id',
     {
       schema: {
         tags: ['UserActivityLogs'],
@@ -36,7 +36,7 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/user-activity-log',
+    '/',
     {
       schema: {
         tags: ['UserActivityLogs'],
@@ -49,7 +49,7 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.put(
-    '/user-activity-log/:id',
+    '/:id',
     {
       schema: {
         tags: ['UserActivityLogs'],
@@ -65,7 +65,7 @@ const userActivityLogsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.delete(
-    '/user-activity-log/:id',
+    '/:id',
     {
       schema: {
         tags: ['UserActivityLogs'],

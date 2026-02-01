@@ -10,7 +10,7 @@ import {
 const profileRoutes = async (fastify: FastifyInstance) => {
   // ROTA POST / (Criação)
   fastify.post(
-    '/profile',
+    '/',
     {
       schema: {
         tags: ['Profile'],
@@ -23,13 +23,15 @@ const profileRoutes = async (fastify: FastifyInstance) => {
           timeWindow: '1 hour',
         },
       },
+
+      preHandler: [fastify.authenticate],
     } as const,
     profileController.createProfile
   )
 
   // ROTA GET /:id (Busca)
   fastify.get(
-    '/profile/:id',
+    '/:id',
     {
       schema: {
         tags: ['Profile'],
@@ -43,7 +45,7 @@ const profileRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/profile',
+    '/',
     {
       schema: {
         tags: ['Profile'],
@@ -57,7 +59,7 @@ const profileRoutes = async (fastify: FastifyInstance) => {
 
   // ROTA PUT /:id (Atualização)
   fastify.put(
-    '/profile/:id',
+    '/:id',
     {
       schema: {
         tags: ['Profile'],
@@ -73,7 +75,7 @@ const profileRoutes = async (fastify: FastifyInstance) => {
 
   // ROTA DELETE /:id (Deleção)
   fastify.delete(
-    '/profile/:id',
+    '/:id',
     {
       schema: {
         tags: ['Profile'],

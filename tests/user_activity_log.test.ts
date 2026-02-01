@@ -7,9 +7,11 @@ import {
 } from '../src/controllers/user_activity_logController.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest } from 'fastify'
+import { createProfile } from '../src/controllers/profileController.js'
 
 describe('UserActivityLogController', () => {
-  let createLogId: string
+  let createLogID: string
+  let profileID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -21,9 +23,24 @@ describe('UserActivityLogController', () => {
 
   describe('createUserActivityLog', () => {
     it('deve criar um log de atividades dos usuarios com dados válidos', async () => {
+      const profileReq = {
+        body: {
+          nome: 'João Silva',
+          email: 'joao@email.com',
+          cpf: '52998224725', // CPF válido
+          telefone: '19999999999',
+          data_nascimento: '1990-01-01',
+          profile_password: 'senha123',
+        },
+      } as FastifyRequest
+
+      const profileBody = await createProfile(profileReq)
+
+      profileID = profileBody.data.id
+
       const req = {
         body: {
-          user_id: 'uuid-do-usuario',
+          user_id: profileID,
           action_type: 'login',
           resource_type: 'resource de teste',
           resource_id: 'id-do-resource',
@@ -34,7 +51,7 @@ describe('UserActivityLogController', () => {
 
       const result = await createUserActivityLog(req)
 
-      createLogId = result.data.id
+      createLogID = result.data.id
 
       expect(result.success).toBe(true)
       expect(result.data).toHaveProperty('id')
@@ -65,13 +82,13 @@ describe('UserActivityLogController', () => {
   describe('getUserActivityLogById', () => {
     it('deve retornar um perfil existente pelo ID', async () => {
       const req = {
-        params: { id: createLogId },
+        params: { id: createLogID },
       } as FastifyRequest
 
       const result = await getUserActivityLogById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.id).toBe(createLogId)
+      expect(result.data.id).toBe(createLogID)
       expect(result.data.action_type).toBe('login')
       expect(result.data).toHaveProperty('action_type')
     })
@@ -97,7 +114,7 @@ describe('UserActivityLogController', () => {
     it('deve atualizar o tipo de ação documento', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
         body: {
           action_type: 'logout',
@@ -113,7 +130,7 @@ describe('UserActivityLogController', () => {
     it('deve atualizar os detalhes do documento', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
         body: {
           details: 'Detalhe novo',
@@ -129,7 +146,7 @@ describe('UserActivityLogController', () => {
     it('deve atualizar múltiplos campos', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
         body: {
           action_type: 'profile_updated',
@@ -160,7 +177,7 @@ describe('UserActivityLogController', () => {
     it('não deve atualizar com body vazio', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
         body: {},
       } as FastifyRequest
@@ -173,7 +190,7 @@ describe('UserActivityLogController', () => {
     it('deve deletar um documento existente', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
       } as FastifyRequest
 
@@ -185,7 +202,7 @@ describe('UserActivityLogController', () => {
     it('deve confirmar que o perfil foi deletado', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
       } as FastifyRequest
 
@@ -205,7 +222,7 @@ describe('UserActivityLogController', () => {
     it('deve retornar erro ao deletar ID já deletado', async () => {
       const req = {
         params: {
-          id: createLogId,
+          id: createLogID,
         },
       } as FastifyRequest
 
