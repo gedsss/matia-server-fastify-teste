@@ -1,18 +1,39 @@
-import { expect, it, beforeAll, afterAll, describe, vi, beforeEach } from 'vitest'
+import {
+  expect,
+  it,
+  beforeAll,
+  afterAll,
+  describe,
+  vi,
+  beforeEach,
+} from 'vitest'
 import Fastify from 'fastify'
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import sequelize from '../src/db.js'
 import chatRoutes from '../src/routes/chatRoutes.js'
-import authenticate from '../src/plugins/authPlugin.js'
+// ✅ Removido import não utilizado: authenticate
 import Conversation from '../src/models/conversation.js'
 import Messages from '../src/models/messages.js'
 import fastifyJwt from '@fastify/jwt'
 
+// Interface para tipagem das mensagens
+interface MessageResponse {
+  id: string
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  created_at: Date
+  metadata: object | null
+}
+
 // Mock do LLMService
 vi.mock('../src/services/llmService.js', () => {
   const LLMService = vi.fn()
-  LLMService.prototype.generateResponse = vi.fn().mockResolvedValue('Resposta mockada da IA para teste')
-  LLMService.prototype.generateConversationTitle = vi.fn().mockResolvedValue('Título de Teste')
+  LLMService.prototype.generateResponse = vi
+    .fn()
+    .mockResolvedValue('Resposta mockada da IA para teste')
+  LLMService.prototype.generateConversationTitle = vi
+    .fn()
+    .mockResolvedValue('Título de Teste')
   LLMService.prototype.getUsageStats = vi.fn().mockReturnValue({
     totalTokens: 100,
     totalCost: 0.02,
@@ -40,14 +61,17 @@ describe('ChatRoutes - Integration Tests', () => {
       secret: 'test-secret-key-for-testing-only',
     })
 
-    // Configurar autenticação
-    app.decorate('authenticate', async (request: any, reply: any) => {
-      try {
-        await request.jwtVerify()
-      } catch (err) {
-        reply.code(401).send({ message: 'Unauthorized' })
+    // ✅ Corrigido: adicionado return e tipagem correta
+    app.decorate(
+      'authenticate',
+      async (request: FastifyRequest, reply: FastifyReply) => {
+        try {
+          await request.jwtVerify()
+        } catch (err) {
+          return reply.code(401).send({ message: 'Unauthorized' })
+        }
       }
-    })
+    )
 
     // Registrar rotas de chat
     await app.register(chatRoutes, { prefix: '/api' })
@@ -88,8 +112,12 @@ describe('ChatRoutes - Integration Tests', () => {
       expect(body.success).toBe(true)
       expect(body.data.conversation_id).toBeDefined()
       expect(body.data.title).toBe('Título de Teste')
-      expect(body.data.userMessage.content).toBe('Olá, preciso de ajuda jurídica')
-      expect(body.data.assistantMessage.content).toBe('Resposta mockada da IA para teste')
+      expect(body.data.userMessage.content).toBe(
+        'Olá, preciso de ajuda jurídica'
+      )
+      expect(body.data.assistantMessage.content).toBe(
+        'Resposta mockada da IA para teste'
+      )
     })
 
     it('deve retornar 401 sem token', async () => {
@@ -146,7 +174,9 @@ describe('ChatRoutes - Integration Tests', () => {
       const body = JSON.parse(response.body)
       expect(body.success).toBe(true)
       expect(body.data.userMessage.content).toBe('Qual o prazo para recurso?')
-      expect(body.data.assistantMessage.content).toBe('Resposta mockada da IA para teste')
+      expect(body.data.assistantMessage.content).toBe(
+        'Resposta mockada da IA para teste'
+      )
     })
 
     it('deve retornar 401 sem token', async () => {
@@ -279,7 +309,10 @@ describe('ChatRoutes - Integration Tests', () => {
 
       expect(response.statusCode).toBe(200)
       const body = JSON.parse(response.body)
-      expect(body.data.every((msg: any) => msg.role === 'user')).toBe(true)
+      // ✅ Corrigido: usando tipo específico ao invés de any
+      expect(
+        body.data.every((msg: MessageResponse) => msg.role === 'user')
+      ).toBe(true)
     })
   })
 

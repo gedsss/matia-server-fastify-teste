@@ -2,11 +2,8 @@ import bcrypt from 'bcrypt'
 import profile from '../models/profile.js'
 
 export const verifyCredentials = async (password: string, email: string) => {
-  const user = await profile.findOne({
+  const user = await profile.unscoped().findOne({
     where: { email },
-    attributes: {
-      include: ['profile_password'],
-    },
   })
 
   if (!user) {
@@ -14,6 +11,11 @@ export const verifyCredentials = async (password: string, email: string) => {
   }
 
   const hashedPassword = user.profile_password as string
+
+  if (!hashedPassword) {
+    return null
+  }
+
   const isPasswordValid = await bcrypt.compare(password, hashedPassword)
 
   if (isPasswordValid) {

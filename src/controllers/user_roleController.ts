@@ -6,6 +6,7 @@ import {
   DocumentNotFoundError,
   InternalServerError,
   DataBaseError,
+  InvalideCredentialsError,
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
@@ -23,6 +24,9 @@ export const createUserRole = async (request: FastifyRequest) => {
     const payload = request.body as CreateBody
     if (!payload || Object.keys(payload).length === 0) {
       throw new MissingFieldError()
+    }
+    if (payload.role !== 'admin' && payload.role !== 'publico') {
+      throw new InvalideCredentialsError()
     }
     const created = await userRole.create(payload as any)
     const data = created.toJSON()

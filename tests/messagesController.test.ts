@@ -99,8 +99,8 @@ describe('MessagesController', () => {
       const result = await getMessagesById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.content).toBe('Conteudo')
-      expect(result.data.role).toBe('user')
+      expect(result.data?.content).toBe('Conteudo')
+      expect(result.data?.role).toBe('user')
     })
 
     it('deve retornar erro para ID inexistente', async () => {

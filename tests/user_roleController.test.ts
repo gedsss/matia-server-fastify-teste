@@ -11,9 +11,24 @@ import { createProfile } from '../src/controllers/profileController.js'
 
 describe('UserRoleController', () => {
   let createUserRoleId: string
+  let profileID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
+
+    const profileReq = {
+      body: {
+        nome: 'João Silva',
+        email: 'joao@email.com',
+        cpf: '52998224725', // CPF válido
+        telefone: '19999999999',
+        data_nascimento: '1990-01-01',
+        profile_password: 'senha123',
+      },
+    } as FastifyRequest
+
+    const profileBody = await createProfile(profileReq)
+    profileID = profileBody.data.id
   })
 
   afterAll(async () => {
@@ -22,32 +37,17 @@ describe('UserRoleController', () => {
 
   describe('createUserRole', () => {
     it('deve criar um log com sucesso', async () => {
-      const profileReq = {
-        body: {
-          nome: 'João Silva',
-          email: 'joao@email.com',
-          cpf: '52998224725', // CPF válido
-          telefone: '19999999999',
-          data_nascimento: '1990-01-01',
-          profile_password: 'senha123',
-        },
-      } as FastifyRequest
-
-      const profileBody = await createProfile(profileReq)
-
-      const profileID = profileBody.data.id
-
       const req = {
         body: {
           user_id: profileID,
-          role: 'Administrador',
+          role: 'admin',
         },
       } as FastifyRequest
 
       const result = await createUserRole(req)
 
       expect(result.success).toBe(true)
-      expect(result.data.role).toBe('Administrador')
+      expect(result.data.role).toBe('admin')
       expect(result.data).toHaveProperty('role')
 
       createUserRoleId = result.data.id
@@ -70,6 +70,17 @@ describe('UserRoleController', () => {
 
       await expect(createUserRole(req)).rejects.toThrow()
     })
+
+    it('deve retornar erro ao enviar a requisição com campos nao presentes nas opções', async () => {
+      const req = {
+        body: {
+          user_id: profileID,
+          role: 'administrador',
+        },
+      } as FastifyRequest
+
+      await expect(createUserRole(req)).rejects.toThrow()
+    })
   })
 
   describe('getUserRoleById', () => {
@@ -83,7 +94,7 @@ describe('UserRoleController', () => {
       const result = await getUserRoleById(req)
 
       expect(result.success).toBe(true)
-      expect(result.data?.role).toBe('Administrador')
+      expect(result.data?.role).toBe('admin')
     })
 
     it('deve retornar erro para ID inexistente', async () => {

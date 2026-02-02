@@ -3,6 +3,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { login } from '../src/controllers/loginController.js'
 import { createProfile } from '../src/controllers/profileController.js'
+import Profile from '../src/models/profile.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest, FastifyReply } from 'fastify'
 
@@ -10,7 +11,7 @@ describe('loginController', () => {
   // Dados do usuário de teste
   const testUser = {
     nome: 'Usuário Teste Login',
-    email: 'teste. login@email.com',
+    email: 'teste.login@email.com', // ✅ Corrigido: removido espaço
     cpf: '52998224725', // CPF válido
     telefone: '19999999999',
     data_nascimento: '1990-01-01',
@@ -51,12 +52,20 @@ describe('loginController', () => {
   beforeAll(async () => {
     await sequelize.sync({ force: true })
 
-    // Criar usuário de teste para usar no login
-    const req = {
-      body: testUser,
+    const testUser = {
+      body: {
+        nome: 'João Silva',
+        email: 'joao@email.com',
+        cpf: '52998224725',
+        telefone: '19999999999',
+        data_nascimento: '1990-01-01',
+        profile_password: 'senha123',
+      },
     } as FastifyRequest
 
-    await createProfile(req)
+    await createProfile(testUser)
+
+    // Criar usuário de teste para usar no login
   })
 
   afterAll(async () => {
@@ -77,6 +86,8 @@ describe('loginController', () => {
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
+
+      console.log(result.data)
 
       expect(result.statusCode).toBe(200)
       expect(result.data).toHaveProperty('token')
@@ -108,7 +119,7 @@ describe('loginController', () => {
     it('deve retornar erro 401 com email inválido', async () => {
       const req = {
         body: {
-          email: 'email. inexistente@email.com',
+          email: 'email.inexistente@email.com', // ✅ Corrigido: removido espaço
           password: testUser.profile_password,
         },
       } as FastifyRequest

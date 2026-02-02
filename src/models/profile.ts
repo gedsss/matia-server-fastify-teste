@@ -13,12 +13,13 @@ export interface ProfileAttributes {
   avatar_url: string | null
   nome: string
   email: string
+  role: string | null // ✅ Adicionado campo role
 }
 
 export interface ProfileCreationAttributes
   extends Optional<
     ProfileAttributes,
-    'updated_at' | 'avatar_url' | 'id' | 'creation_time'
+    'updated_at' | 'avatar_url' | 'id' | 'creation_time' | 'role'
   > {}
 
 class Profile
@@ -35,6 +36,7 @@ class Profile
   public avatar_url!: string | null
   public nome!: string
   public email!: string
+  public role!: string | null // ✅ Adicionado campo role
 }
 
 Profile.init(
@@ -85,6 +87,12 @@ Profile.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    // ✅ Adicionado campo role
+    role: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: 'publico',
     },
   },
   {

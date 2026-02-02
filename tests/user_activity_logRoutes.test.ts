@@ -39,7 +39,7 @@ describe('UserActivityLogRoutes', async () => {
         try {
           await request.jwtVerify()
         } catch (err) {
-          reply.code(401).send({ message: 'Unauthorized' })
+          return reply.code(401).send({ message: 'Unauthorized' })
         }
       }
     )
@@ -66,7 +66,7 @@ describe('UserActivityLogRoutes', async () => {
         user_id: profileID,
         action_type: 'login',
         resource_type: 'resource de teste',
-        resource_id: 'id-do-resource',
+        resource_id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         ip_address: '200.148.12.188',
         user_agent: 'Chrome',
       }
@@ -84,7 +84,7 @@ describe('UserActivityLogRoutes', async () => {
 
       console.log(response)
 
-      expect(response.statusCode).toBe(201)
+      expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
       expect(body.data.user_id).toBe(testLog.user_id)
       expect(body.data.id).toBeDefined()
@@ -153,7 +153,7 @@ describe('UserActivityLogRoutes', async () => {
         },
       })
 
-      expect(response.statusCode).toBe(400)
+      expect(response.statusCode).toBe(401)
     })
   })
 

@@ -9,7 +9,7 @@ import {
 
 const userRoleRoutes = async (fastify: FastifyInstance) => {
   fastify.post(
-    '/user-role',
+    '/',
     {
       schema: {
         tags: ['UserRole'],
@@ -23,7 +23,7 @@ const userRoleRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/user-role/:id',
+    '/:id',
     {
       schema: {
         tags: ['UserRole'],
@@ -38,7 +38,7 @@ const userRoleRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/user-role',
+    '/',
     {
       schema: {
         tags: ['UserRole'],
@@ -51,7 +51,7 @@ const userRoleRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.put(
-    '/user-role/:id',
+    '/:id',
     {
       schema: {
         tags: ['UserRole'],
@@ -59,18 +59,22 @@ const userRoleRoutes = async (fastify: FastifyInstance) => {
         params: userRoleParamsSchema.params,
         body: updateUserRoleSchema.body,
       },
+
+      preHandler: [fastify.authenticate],
     },
     userRoleController.updateUserRole
   )
 
   fastify.delete(
-    '/user-role/:id',
+    '/:id',
     {
       schema: {
         tags: ['UserRole'],
         summary: 'Remove a função de um usuário pelo ID da associação',
         params: userRoleParamsSchema.params,
       },
+
+      preHandler: [fastify.authenticate],
     },
     userRoleController.deleteUserRole
   )
