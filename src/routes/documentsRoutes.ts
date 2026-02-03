@@ -9,7 +9,7 @@ import {
 
 const documentsRoutes = async (fastify: FastifyInstance) => {
   fastify.post(
-    '/documents',
+    '/',
     {
       schema: {
         tags: ['Documents'],
@@ -23,7 +23,7 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/documents/:id',
+    '/:id',
     {
       schema: {
         tags: ['Documents'],
@@ -37,7 +37,7 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/documents',
+    '/',
     {
       schema: {
         tags: ['Documents'],
@@ -50,7 +50,7 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.put(
-    '/documents/:id',
+    '/:id',
     {
       schema: {
         tags: ['Documents'],
@@ -65,7 +65,7 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.delete(
-    '/documents/:id',
+    '/:id',
     {
       schema: {
         tags: ['Documents'],

@@ -3,16 +3,13 @@ import Fastify from 'fastify'
 import fastifyJwt, { FastifyJWT } from '@fastify/jwt'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import sequelize from '../src/db'
-import userRoleRoutes from '../src/routes/user_roleRoutes'
-import UserRole from '../src/models/user_roles'
-import { createProfile } from '../src/controllers/profileController'
+import documentsTagsRoutes from '../src/routes/documents_tagsRoutes'
+import DocumentsTags from '../src/models/documents_tags'
 
-describe('UserRoleRoutes', () => {
+describe('DocumentsTags', () => {
   let app: FastifyInstance
   let testToken: string
-  let profileReq: string
-  let profileID: string
-  let userRoleID: string
+  let documentsTagsID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -34,26 +31,11 @@ describe('UserRoleRoutes', () => {
       }
     )
 
-    await app.register(userRoleRoutes, { prefix: '/user-role' })
+    await app.register(documentsTagsRoutes, { prefix: '/documents-tags' })
 
     await app.ready()
 
     testToken = app.jwt.sign({ id: 'some-id' })
-
-    const profileReq = {
-      body: {
-        nome: 'João Silva',
-        email: 'joao@email.com',
-        cpf: '52998224725', // CPF válido
-        telefone: '19999999999',
-        data_nascimento: '1990-01-01',
-        profile_password: 'senha123',
-      },
-    } as FastifyRequest
-
-    const profileBody = await createProfile(profileReq)
-
-    profileID = profileBody.data.id
   })
 
   afterAll(async () => {
@@ -61,20 +43,20 @@ describe('UserRoleRoutes', () => {
     await sequelize.close()
   })
 
-  describe('POST /user-role', () => {
-    it('Deve criar um userRole com sucesso', async () => {
-      const userRole = {
-        user_id: profileID,
-        role: 'admin',
+  describe('POST /documents-tags', () => {
+    it('Deve criar um documentsTags com sucesso', async () => {
+      const documentsTags = {
+        color: 'red',
+        name: 'nome-da-tag',
       }
 
       const response = await app.inject({
         method: 'POST',
-        url: '/user-role',
+        url: '/documents-tags',
         headers: {
           authorization: `Bearer ${testToken}`,
         },
-        payload: userRole,
+        payload: documentsTags,
       })
 
       const body = JSON.parse(response.body)
@@ -83,18 +65,18 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.user_id).toBe(profileID)
+      expect(body.data.color).toBe('red')
       expect(body.data.id).toBeDefined()
 
-      userRoleID = body.data.id
+      documentsTagsID = body.data.id
     })
   })
 
-  describe('GET /user-role', () => {
-    it('Deve encontrar o userRole com sucesso', async () => {
+  describe('GET /documents-tags', () => {
+    it('Deve encontrar o documentsTags com sucesso', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents-tags/${documentsTagsID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -104,30 +86,30 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.user_id).toBe(profileID)
+      expect(body.data.id).toBe(documentsTagsID)
     })
 
     it('Deve retornar erro 401 ao tentar acessar sem o token', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents-tags/${documentsTagsID}`,
       })
 
       expect(response.statusCode).toBe(401)
     })
   })
-  describe('PUT /user-role', () => {
-    it('Deve atualizar o UserRole com sucesso', async () => {
-      const novaAcao = 'publico'
+  describe('PUT /documents-tags', () => {
+    it('Deve atualizar o documentsTags com sucesso', async () => {
+      const novaAcao = 'verde'
 
       const response = await app.inject({
         method: 'PUT',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents-tags/${documentsTagsID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
         payload: {
-          role: novaAcao,
+          color: novaAcao,
         },
       })
 
@@ -135,17 +117,17 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.role).toBe(novaAcao)
+      expect(body.data.color).toBe(novaAcao)
     })
 
     it('Deve retornar erro 401 ao tentar atualizar sem o token', async () => {
-      const novaAcao2 = 'publico'
+      const novaAcao2 = 'azul'
 
       const response = await app.inject({
         method: 'PUT',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents-tags/${documentsTagsID}`,
         payload: {
-          role: novaAcao2,
+          color: novaAcao2,
         },
       })
 
@@ -153,11 +135,11 @@ describe('UserRoleRoutes', () => {
     })
   })
 
-  describe('DELETE /user-role', () => {
-    it('Deve deletar um UserRole com sucesso', async () => {
+  describe('DELETE /documents-tags', () => {
+    it('Deve deletar um documentsTags com sucesso', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents-tags/${documentsTagsID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -168,14 +150,14 @@ describe('UserRoleRoutes', () => {
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
 
-      const deletedUserRole = await UserRole.findByPk(userRoleID)
-      expect(deletedUserRole).toBeNull()
+      const deleteddocumentsTags = await DocumentsTags.findByPk(documentsTagsID)
+      expect(deleteddocumentsTags).toBeNull()
     })
 
     it('Deve retornar erro 401 ao tentar deletar sem o token', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents-tags/${documentsTagsID}`,
       })
 
       expect(response.statusCode).toBe(401)

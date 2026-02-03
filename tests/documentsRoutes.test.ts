@@ -3,16 +3,16 @@ import Fastify from 'fastify'
 import fastifyJwt, { FastifyJWT } from '@fastify/jwt'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import sequelize from '../src/db'
-import userRoleRoutes from '../src/routes/user_roleRoutes'
-import UserRole from '../src/models/user_roles'
+import documentsRoutes from '../src/routes/documentsRoutes'
+import Documents from '../src/models/documents'
 import { createProfile } from '../src/controllers/profileController'
 
-describe('UserRoleRoutes', () => {
+describe('DocumentsRoutes', () => {
   let app: FastifyInstance
   let testToken: string
   let profileReq: string
   let profileID: string
-  let userRoleID: string
+  let documentsID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
@@ -34,7 +34,7 @@ describe('UserRoleRoutes', () => {
       }
     )
 
-    await app.register(userRoleRoutes, { prefix: '/user-role' })
+    await app.register(documentsRoutes, { prefix: '/documents' })
 
     await app.ready()
 
@@ -57,44 +57,46 @@ describe('UserRoleRoutes', () => {
   })
 
   afterAll(async () => {
-    await app.close()
-    await sequelize.close()
+    sequelize.close()
+    app.close()
   })
 
-  describe('POST /user-role', () => {
-    it('Deve criar um userRole com sucesso', async () => {
-      const userRole = {
+  describe('POST /documents', () => {
+    it('Deve criar um documents com sucesso', async () => {
+      const documents = {
         user_id: profileID,
-        role: 'admin',
+        original_name: 'Nome original',
+        storage_path: 'Caminho de armazenamento',
+        file_type: 'Tipo de arquivo',
+        file_size: 25,
+        status: 'enviando',
+        progress: 20,
       }
 
       const response = await app.inject({
         method: 'POST',
-        url: '/user-role',
+        url: '/documents',
         headers: {
           authorization: `Bearer ${testToken}`,
         },
-        payload: userRole,
+        payload: documents,
       })
 
       const body = JSON.parse(response.body)
-
-      console.log(response)
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
       expect(body.data.user_id).toBe(profileID)
       expect(body.data.id).toBeDefined()
 
-      userRoleID = body.data.id
+      documentsID = body.data.id
     })
   })
-
-  describe('GET /user-role', () => {
-    it('Deve encontrar o userRole com sucesso', async () => {
+  describe('GET /documents', () => {
+    it('Deve encontrar um documento com sucesso', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents/${documentsID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -104,30 +106,31 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.user_id).toBe(profileID)
+      expect(body.data.id).toBe(documentsID)
     })
 
     it('Deve retornar erro 401 ao tentar acessar sem o token', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents/${documentsID}`,
       })
 
       expect(response.statusCode).toBe(401)
     })
   })
-  describe('PUT /user-role', () => {
-    it('Deve atualizar o UserRole com sucesso', async () => {
-      const novaAcao = 'publico'
+
+  describe('PUT /documents', () => {
+    it('Deve atualizar o documents com sucesso', async () => {
+      const novaAcao = 28
 
       const response = await app.inject({
         method: 'PUT',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents/${documentsID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
         payload: {
-          role: novaAcao,
+          file_size: novaAcao,
         },
       })
 
@@ -135,17 +138,17 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.role).toBe(novaAcao)
+      expect(body.data.file_size).toBe(novaAcao)
     })
 
     it('Deve retornar erro 401 ao tentar atualizar sem o token', async () => {
-      const novaAcao2 = 'publico'
+      const novaAcao2 = 34
 
       const response = await app.inject({
         method: 'PUT',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents/${documentsID}`,
         payload: {
-          role: novaAcao2,
+          file_size: novaAcao2,
         },
       })
 
@@ -153,11 +156,11 @@ describe('UserRoleRoutes', () => {
     })
   })
 
-  describe('DELETE /user-role', () => {
-    it('Deve deletar um UserRole com sucesso', async () => {
+  describe('DELETE /documents', () => {
+    it('Deve deletar o documents com sucesso', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents/${documentsID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -168,14 +171,14 @@ describe('UserRoleRoutes', () => {
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
 
-      const deletedUserRole = await UserRole.findByPk(userRoleID)
-      expect(deletedUserRole).toBeNull()
+      const deletedDouments = await Documents.findByPk(documentsID)
+      expect(deletedDouments).toBeNull()
     })
 
     it('Deve retornar erro 401 ao tentar deletar sem o token', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/user-role/${userRoleID}`,
+        url: `/documents/${documentsID}`,
       })
 
       expect(response.statusCode).toBe(401)

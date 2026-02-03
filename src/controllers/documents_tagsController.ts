@@ -10,6 +10,7 @@ import {
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
+import DocumentsTags from '../models/documents_tags.js'
 
 interface CreateBody
   extends Omit<DocumentsTagsAttributes, 'id' | 'created_at' | 'updated_at'> {}
@@ -75,7 +76,9 @@ export const updateDocumentsTags = async (request: FastifyRequest) => {
       }
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
-    return successResponse(updatedRows, 'Documento atualizado com sucesso')
+    const updated = await DocumentsTags.findByPk(id)
+    const data = updated?.toJSON()
+    return successResponse(data, 'Documento atualizado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
       throw new ValidationError('Dados inválidos', {

@@ -1,8 +1,8 @@
 // tests/loginController.test.ts
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import bcrypt from 'bcrypt'
 import { login } from '../src/controllers/loginController.js'
-import { createProfile } from '../src/controllers/profileController.js'
 import Profile from '../src/models/profile.js'
 import sequelize from '../src/db.js'
 import type { FastifyRequest, FastifyReply } from 'fastify'
@@ -11,8 +11,8 @@ describe('loginController', () => {
   // Dados do usuário de teste
   const testUser = {
     nome: 'Usuário Teste Login',
-    email: 'teste.login@email.com', // ✅ Corrigido: removido espaço
-    cpf: '52998224725', // CPF válido
+    email: 'teste.login@email.com',
+    cpf: '52998224725',
     telefone: '19999999999',
     data_nascimento: '1990-01-01',
     profile_password: 'senha123',
@@ -50,29 +50,62 @@ describe('loginController', () => {
   // SETUP - Criar usuário antes dos testes
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   beforeAll(async () => {
-    await sequelize.sync({ force: true })
+    // ✅ Sincronizar a tabela Profile
+    await Profile.sync({ force: true })
 
-    const testUser = {
-      body: {
-        nome: 'João Silva',
-        email: 'joao@email.com',
-        cpf: '52998224725',
-        telefone: '19999999999',
-        data_nascimento: '1990-01-01',
-        profile_password: 'senha123',
-      },
-    } as FastifyRequest
+    console.log('📋 Tabela Profile sincronizada')
 
-    await createProfile(testUser)
+    // ✅ CRIAR USUÁRIO DIRETAMENTE NO BANCO
+    const hashedPassword = await bcrypt.hash(testUser.profile_password, 10)
+    console.log('🔐 Senha hasheada:', hashedPassword)
 
-    // Criar usuário de teste para usar no login
+    try {
+      const newUser = await Profile.create({
+        nome: testUser.nome,
+        email: testUser.email,
+        cpf: testUser.cpf,
+        telefone: testUser.telefone,
+        data_nascimento: new Date(testUser.data_nascimento),
+        profile_password: hashedPassword,
+      })
+
+      console.log('✅ Usuário criado com sucesso:', {
+        id: newUser.id,
+        email: newUser.email,
+      })
+    } catch (error) {
+      console.error('❌ ERRO ao criar usuário:', error)
+      throw error
+    }
+
+    // ✅ Verificar que foi criado usando unscoped
+    const createdUser = await Profile.unscoped().findOne({
+      where: { email: testUser.email },
+    })
+
+    if (!createdUser) {
+      // Tentar listar todos os usuários para debug
+      const allUsers = await Profile.unscoped().findAll()
+      console.log(
+        '📋 Todos os usuários no banco:',
+        allUsers.map(u => ({ id: u.id, email: u.email }))
+      )
+      throw new Error('Usuário não encontrado após criação!')
+    }
+
+    console.log('✅ Usuário verificado no banco:', {
+      id: createdUser.id,
+      email: createdUser.email,
+      hasPassword: !!createdUser.profile_password,
+      passwordLength: createdUser.profile_password?.length,
+    })
   })
 
   afterAll(async () => {
     await sequelize.close()
   })
 
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ━━━━━━━━━━━━━━━━━━━━━━━��━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // LOGIN - Testes de Autenticação
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   describe('login', () => {
@@ -86,8 +119,6 @@ describe('loginController', () => {
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
-
-      console.log(result.data)
 
       expect(result.statusCode).toBe(200)
       expect(result.data).toHaveProperty('token')
@@ -108,7 +139,6 @@ describe('loginController', () => {
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
 
-      // Verificar se o token tem formato JWT (3 partes separadas por ponto)
       const token = result.data.token
       expect(token).toBeDefined()
       if (token) {
@@ -119,7 +149,7 @@ describe('loginController', () => {
     it('deve retornar erro 401 com email inválido', async () => {
       const req = {
         body: {
-          email: 'email.inexistente@email.com', // ✅ Corrigido: removido espaço
+          email: 'email.inexistente@email.com',
           password: testUser.profile_password,
         },
       } as FastifyRequest
@@ -196,7 +226,6 @@ describe('loginController', () => {
 
       const reply = createMockReply()
 
-      // Pode lançar erro ou retornar 401, dependendo da implementação
       try {
         const result = (await login(req, reply)) as unknown as MockReplyResult
         expect(result.statusCode).toBe(401)
@@ -208,7 +237,7 @@ describe('loginController', () => {
     it('deve ser case-sensitive para o email', async () => {
       const req = {
         body: {
-          email: testUser.email.toUpperCase(), // EMAIL EM MAIÚSCULO
+          email: testUser.email.toUpperCase(),
           password: testUser.profile_password,
         },
       } as FastifyRequest
@@ -216,9 +245,6 @@ describe('loginController', () => {
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
 
-      // Dependendo da implementação, pode aceitar ou rejeitar
-      // Se o banco for case-insensitive, vai passar
-      // Se for case-sensitive, vai falhar
       expect([200, 401]).toContain(result.statusCode)
     })
 
@@ -235,7 +261,6 @@ describe('loginController', () => {
 
       expect(result.statusCode).toBe(200)
       expect(result.data.userData?.user_role).toBeDefined()
-      // Se o usuário não tem role definido, deve ser 'publico'
       expect(result.data.userData?.user_role).toBe('publico')
     })
   })
@@ -275,7 +300,6 @@ describe('loginController', () => {
       const reply2 = createMockReply()
       const result2 = (await login(req, reply2)) as unknown as MockReplyResult
 
-      // Tokens devem ser diferentes (por causa do timestamp)
       expect(result1.data.token).not.toBe(result2.data.token)
     })
 

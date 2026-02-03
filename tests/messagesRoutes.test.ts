@@ -1,23 +1,25 @@
-import { it, describe, expect, afterAll, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import Fastify from 'fastify'
-import fastifyJwt, { FastifyJWT } from '@fastify/jwt'
+import fastifyJwt from '@fastify/jwt'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import sequelize from '../src/db'
-import userRoleRoutes from '../src/routes/user_roleRoutes'
-import UserRole from '../src/models/user_roles'
+import messagesRoutes from '../src/routes/messagesRoutes'
+import Profile from '../src/models/profile'
+import Messages from '../src/models/messages'
 import { createProfile } from '../src/controllers/profileController'
+import { createConversation } from '../src/controllers/conversationController'
 
-describe('UserRoleRoutes', () => {
+describe('MessagesRoutes', () => {
   let app: FastifyInstance
   let testToken: string
-  let profileReq: string
   let profileID: string
-  let userRoleID: string
+  let conversationsID: string
+  let messagesID: string
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
 
-    app = Fastify()
+    app = await Fastify()
 
     await app.register(fastifyJwt, {
       secret: 'test-secret-key',
@@ -34,7 +36,7 @@ describe('UserRoleRoutes', () => {
       }
     )
 
-    await app.register(userRoleRoutes, { prefix: '/user-role' })
+    await app.register(messagesRoutes, { prefix: '/messages' })
 
     await app.ready()
 
@@ -54,47 +56,58 @@ describe('UserRoleRoutes', () => {
     const profileBody = await createProfile(profileReq)
 
     profileID = profileBody.data.id
+
+    const conversationReq = {
+      body: {
+        user_id: profileID,
+        title: 'titulo-teste',
+        is_favorite: true,
+        last_message_at: '2004-10-20',
+      },
+    } as FastifyRequest
+
+    const conversationsBody = await createConversation(conversationReq)
+
+    conversationsID = conversationsBody.data.id
   })
 
   afterAll(async () => {
-    await app.close()
-    await sequelize.close()
+    sequelize.close()
+    app.close()
   })
 
-  describe('POST /user-role', () => {
-    it('Deve criar um userRole com sucesso', async () => {
-      const userRole = {
-        user_id: profileID,
-        role: 'admin',
+  describe('POST /messages', () => {
+    it('deve criar uma mensagem com sucesso', async () => {
+      const messages = {
+        conversations_id: conversationsID,
+        content: 'Conteudo',
+        role: 'user',
       }
 
       const response = await app.inject({
         method: 'POST',
-        url: '/user-role',
+        url: '/messages',
         headers: {
           authorization: `Bearer ${testToken}`,
         },
-        payload: userRole,
+        payload: messages,
       })
 
       const body = JSON.parse(response.body)
 
-      console.log(response)
+      messagesID = body.data.id
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.user_id).toBe(profileID)
+      expect(body.data.conversations_id).toBe(conversationsID)
       expect(body.data.id).toBeDefined()
-
-      userRoleID = body.data.id
     })
   })
-
-  describe('GET /user-role', () => {
-    it('Deve encontrar o userRole com sucesso', async () => {
+  describe('GET /messages', () => {
+    it('Deve encontrar o messages com sucesso', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/user-role/${userRoleID}`,
+        url: `/messages/${messagesID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -104,30 +117,31 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.user_id).toBe(profileID)
+      expect(body.data.conversations_id).toBe(conversationsID)
     })
 
     it('Deve retornar erro 401 ao tentar acessar sem o token', async () => {
       const response = await app.inject({
         method: 'GET',
-        url: `/user-role/${userRoleID}`,
+        url: `/messages/${messagesID}`,
       })
 
       expect(response.statusCode).toBe(401)
     })
   })
-  describe('PUT /user-role', () => {
-    it('Deve atualizar o UserRole com sucesso', async () => {
-      const novaAcao = 'publico'
+
+  describe('PUT /messages', async () => {
+    it('Deve atualizar o messages com sucesso', async () => {
+      const novaAcao = 'Conteudo2'
 
       const response = await app.inject({
         method: 'PUT',
-        url: `/user-role/${userRoleID}`,
+        url: `/messages/${messagesID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
         payload: {
-          role: novaAcao,
+          content: novaAcao,
         },
       })
 
@@ -135,17 +149,17 @@ describe('UserRoleRoutes', () => {
 
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
-      expect(body.data.role).toBe(novaAcao)
+      expect(body.data.content).toBe(novaAcao)
     })
 
-    it('Deve retornar erro 401 ao tentar atualizar sem o token', async () => {
-      const novaAcao2 = 'publico'
+    it('Deve retornar erro 401 ao tentar acessar sem o token', async () => {
+      const novaAcao2 = 'teste2'
 
       const response = await app.inject({
-        method: 'PUT',
-        url: `/user-role/${userRoleID}`,
+        method: 'GET',
+        url: `/messages/${messagesID}`,
         payload: {
-          role: novaAcao2,
+          content: novaAcao2,
         },
       })
 
@@ -153,11 +167,11 @@ describe('UserRoleRoutes', () => {
     })
   })
 
-  describe('DELETE /user-role', () => {
-    it('Deve deletar um UserRole com sucesso', async () => {
+  describe('DELETE /messages', () => {
+    it('Deve deletar o messages com sucesso', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/user-role/${userRoleID}`,
+        url: `/messages/${messagesID}`,
         headers: {
           authorization: `Bearer ${testToken}`,
         },
@@ -168,14 +182,14 @@ describe('UserRoleRoutes', () => {
       expect(response.statusCode).toBe(200)
       expect(body.success).toBe(true)
 
-      const deletedUserRole = await UserRole.findByPk(userRoleID)
-      expect(deletedUserRole).toBeNull()
+      const deletedMessages = await Messages.findByPk(messagesID)
+      expect(deletedMessages).toBeNull()
     })
 
     it('Deve retornar erro 401 ao tentar deletar sem o token', async () => {
       const response = await app.inject({
         method: 'DELETE',
-        url: `/user-role/${userRoleID}`,
+        url: `/messages/${messagesID}`,
       })
 
       expect(response.statusCode).toBe(401)
