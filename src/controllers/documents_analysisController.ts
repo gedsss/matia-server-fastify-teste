@@ -29,6 +29,15 @@ export const createDocumentsAnalisys = async (request: FastifyRequest) => {
     if (!payload || Object.keys(payload).length === 0) {
       throw new MissingFieldError()
     }
+    if (
+      payload.analysis_type !== 'sumario' &&
+      payload.analysis_type !== 'analise_legal' &&
+      payload.analysis_type !== 'extracao_entidade'
+    ) {
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
+    }
     const created = await documentsAnalysis.create(payload as any)
     const data = created.toJSON()
     return successResponse(data, 'Documento criado com sucesso')

@@ -9,7 +9,7 @@ export const createDocumentsAnalysisSchema: FastifySchema = {
       conversation_id: { type: 'string', format: 'uuid' },
       analysis_type: {
         type: 'string',
-        enum: ['summary', 'legal_review', 'entity_extraction'],
+        enum: ['sumario', 'analise_legal', 'extracao_entidade'],
       },
     } as const,
     additionalProperties: false,
@@ -25,7 +25,7 @@ export const updateDocumentsAnalysisSchema: FastifySchema = {
       conversation_id: { type: 'string', format: 'uuid' },
       analysis_type: {
         type: 'string',
-        enum: ['summary', 'legal_review', 'entity_extraction'],
+        enum: ['sumario', 'analise_legal', 'extracao_entidade'],
       },
     } as const,
     additionalProperties: false,

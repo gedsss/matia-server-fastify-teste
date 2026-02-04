@@ -9,7 +9,7 @@ import {
 
 const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
   fastify.post(
-    '/conversations-documents',
+    '/',
     {
       schema: {
         tags: ['ConversationDocuments'],
@@ -23,7 +23,7 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/conversations-documents/:id',
+    '/:id',
     {
       schema: {
         tags: ['ConversationDocuments'],
@@ -37,7 +37,7 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.get(
-    '/conversations-documents',
+    '/',
     {
       schema: {
         tags: ['ConversationDocuments'],
@@ -50,7 +50,7 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.put(
-    '/conversations-documents/:id',
+    '/:id',
     {
       schema: {
         tags: ['ConversationDocuments'],
@@ -65,7 +65,7 @@ const conversationDocumentsRoutes = async (fastify: FastifyInstance) => {
   )
 
   fastify.delete(
-    '/conversations-documents/:id',
+    '/:id',
     {
       schema: {
         tags: ['ConversationDocuments'],

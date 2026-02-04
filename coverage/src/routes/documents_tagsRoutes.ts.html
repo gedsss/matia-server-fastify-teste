@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -153,8 +153,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -168,7 +168,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -182,7 +182,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,7 +194,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,7 +209,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -234,8 +234,8 @@ import {
   updateDocumentsTagsSchema,
 } from '../schemas/documents_tagsSchema.js'
 &nbsp;
-const documentsTagsRoutes = async (fastify: FastifyInstance) =&gt; {
-  fastify.post(
+const documentsTagsRoutes = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async (f</span>astify: FastifyInstance) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  fastify.post(</span>
     '/',
     {
       schema: {
@@ -249,7 +249,7 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) =&gt; {
     documentsTagsController.createDocumentsTags
   )
 &nbsp;
-  fastify.get(
+<span class="cstat-no" title="statement not covered" >  fastify.get(</span>
     '/:id',
     {
       schema: {
@@ -263,7 +263,7 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) =&gt; {
     documentsTagsController.getDocumentsTagsById
   )
 &nbsp;
-  fastify.get(
+<span class="cstat-no" title="statement not covered" >  fastify.get(</span>
     '/',
     {
       schema: {
@@ -275,7 +275,7 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) =&gt; {
     documentsTagsController.getDocumentsTags
   )
 &nbsp;
-  fastify.put(
+<span class="cstat-no" title="statement not covered" >  fastify.put(</span>
     '/:id',
     {
       schema: {
@@ -290,7 +290,7 @@ const documentsTagsRoutes = async (fastify: FastifyInstance) =&gt; {
     documentsTagsController.updateDocumentsTags
   )
 &nbsp;
-  fastify.delete(
+<span class="cstat-no" title="statement not covered" >  fastify.delete(</span>
     '/:id',
     {
       schema: {
@@ -313,7 +313,7 @@ export default documentsTagsRoutes
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-03T13:51:20.297Z
+                at 2026-02-04T21:12:02.809Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

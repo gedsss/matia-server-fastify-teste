@@ -7,7 +7,7 @@ export const createActivityLogsSchema: FastifySchema = {
     properties: {
       action: {
         type: 'string',
-        enum: ['pendente', 'em_progresso', 'concluido'],
+        enum: ['login', 'upload_document', 'delete_user'],
       },
       user_id: {
         type: 'string',

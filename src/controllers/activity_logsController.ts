@@ -26,6 +26,24 @@ export const createActivityLogs = async (request: FastifyRequest) => {
     if (!payload || Object.keys(payload).length === 0) {
       throw new MissingFieldError()
     }
+    if (
+      payload.action !== 'login' &&
+      payload.action !== 'upload_document' &&
+      payload.action !== 'delete_user'
+    ) {
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
+    }
+    if (
+      payload.entity_type !== 'conversation' &&
+      payload.entity_type !== 'user' &&
+      payload.entity_type !== 'document'
+    ) {
+      throw new ValidationError('Dados inválidos', {
+        code: ErrorCodes.VALIDATION_ERROR,
+      })
+    }
     const created = await activityLogs.create(payload as any)
     const data = created.toJSON()
     return successResponse(data, 'Sucesso ao criar o documento')
