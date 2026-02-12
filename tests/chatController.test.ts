@@ -80,7 +80,7 @@ describe('ChatController', () => {
     await sequelize.close()
   })
 
-  // ✅ Limpeza de dados entre testes
+  // Clean data to ensure isolation between tests
   beforeEach(async () => {
     // Limpar dados para garantir isolamento entre testes
     await Messages.destroy({ where: {}, force: true })

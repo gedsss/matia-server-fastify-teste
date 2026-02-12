@@ -51,7 +51,8 @@ describe('ChatRoutes - Integration Tests', () => {
   let testConversationId: string
 
   beforeAll(async () => {
-    // Sync models in correct order (Profile first, then Conversation)
+    // Sync models in correct order: Profile first (parent), then Conversation (child with FK), then Messages (child)
+    // This ensures foreign key constraints are satisfied
     await Profile.sync({ force: true })
     await Conversation.sync({ force: true })
     await Messages.sync({ force: true })
