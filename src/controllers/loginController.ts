@@ -1,9 +1,6 @@
-import jwt from 'jsonwebtoken'
 import type { FastifyReply } from 'fastify/types/reply.js'
 import type { FastifyRequest } from 'fastify/types/request.js'
 import { verifyCredentials } from '../utils/verifyCredentials.js'
-
-const SECRET_KEY = process.env.JWT_SECRET
 
 export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   const { email, password } = request.body as {
@@ -22,13 +19,7 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
     user_role: user.role ?? 'publico',
   }
 
-  if (!SECRET_KEY) {
-    return reply.code(500).send({
-      message: 'Erro de configuração do servidor (JWT_SECRET não definido)',
-    })
-  }
-
-  const token = jwt.sign(payload, SECRET_KEY, {
+  const token = request.server.jwt.sign(payload, {
     expiresIn: '7d',
   })
 

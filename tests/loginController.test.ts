@@ -2,12 +2,16 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import bcrypt from 'bcrypt'
+import Fastify from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import { login } from '../src/controllers/loginController.js'
 import Profile from '../src/models/profile.js'
 import sequelize from '../src/db.js'
-import type { FastifyRequest, FastifyReply } from 'fastify'
+import fastifyJwt from '@fastify/jwt'
 
 describe('loginController', () => {
+  let app: FastifyInstance
+
   // Dados do usuário de teste
   const testUser = {
     nome: 'Usuário Teste Login',
@@ -55,6 +59,16 @@ describe('loginController', () => {
 
     console.log('📋 Tabela Profile sincronizada')
 
+    // ✅ Criar Fastify app e configurar JWT
+    app = Fastify()
+
+    // Configurar JWT
+    await app.register(fastifyJwt, {
+      secret: 'test-secret-key-for-testing-only',
+    })
+
+    await app.ready()
+
     // ✅ CRIAR USUÁRIO DIRETAMENTE NO BANCO
     const hashedPassword = await bcrypt.hash(testUser.profile_password, 10)
     console.log('🔐 Senha hasheada:', hashedPassword)
@@ -94,14 +108,15 @@ describe('loginController', () => {
     }
 
     console.log('✅ Usuário verificado no banco:', {
-      id: createdUser.id,
-      email: createdUser.email,
-      hasPassword: !!createdUser.profile_password,
-      passwordLength: createdUser.profile_password?.length,
+      id: createdUser.get('id'),
+      email: createdUser.get('email'),
+      hasPassword: !!createdUser.get('profile_password'),
+      passwordLength: createdUser.get('profile_password')?.length,
     })
   })
 
   afterAll(async () => {
+    await app.close()
     await sequelize.close()
   })
 
@@ -115,7 +130,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -134,7 +150,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -152,7 +169,8 @@ describe('loginController', () => {
           email: 'email.inexistente@email.com',
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -167,7 +185,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: 'senhaErrada123',
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -182,7 +201,8 @@ describe('loginController', () => {
           email: 'naoexiste@email.com',
           password: 'senhaErrada123',
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -197,7 +217,8 @@ describe('loginController', () => {
           email: '',
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -211,7 +232,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: '',
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -222,7 +244,8 @@ describe('loginController', () => {
     it('deve retornar erro com body vazio', async () => {
       const req = {
         body: {},
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
 
@@ -240,7 +263,8 @@ describe('loginController', () => {
           email: testUser.email.toUpperCase(),
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -254,7 +278,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -275,7 +300,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -287,18 +313,30 @@ describe('loginController', () => {
     })
 
     it('deve gerar tokens diferentes para logins consecutivos', async () => {
-      const req = {
+      const req1 = {
         body: {
           email: testUser.email,
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply1 = createMockReply()
-      const result1 = (await login(req, reply1)) as unknown as MockReplyResult
+      const result1 = (await login(req1, reply1)) as unknown as MockReplyResult
+
+      // Wait 1 second to ensure different iat
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      const req2 = {
+        body: {
+          email: testUser.email,
+          password: testUser.profile_password,
+        },
+        server: app,
+      } as any
 
       const reply2 = createMockReply()
-      const result2 = (await login(req, reply2)) as unknown as MockReplyResult
+      const result2 = (await login(req2, reply2)) as unknown as MockReplyResult
 
       expect(result1.data.token).not.toBe(result2.data.token)
     })
@@ -309,7 +347,8 @@ describe('loginController', () => {
           email: "' OR '1'='1",
           password: testUser.profile_password,
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
@@ -323,7 +362,8 @@ describe('loginController', () => {
           email: testUser.email,
           password: "' OR '1'='1",
         },
-      } as FastifyRequest
+        server: app,
+      } as any
 
       const reply = createMockReply()
       const result = (await login(req, reply)) as unknown as MockReplyResult
