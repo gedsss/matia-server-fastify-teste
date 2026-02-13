@@ -80,9 +80,8 @@ describe('ChatController', () => {
     await sequelize.close()
   })
 
-  // ✅ Limpeza de dados entre testes
+  // Clean data to ensure isolation between tests
   beforeEach(async () => {
-    testUserId = crypto.randomUUID()
     // Limpar dados para garantir isolamento entre testes
     await Messages.destroy({ where: {}, force: true })
     await Conversation.destroy({ where: {}, force: true })
@@ -181,7 +180,7 @@ describe('ChatController', () => {
         is_favorite: false,
         last_message_at: new Date(),
       })
-      testConversationId = conversation.id
+      testConversationId = conversation.get('id')
 
       // Criar algumas mensagens de histórico
       await Messages.create({
@@ -260,7 +259,7 @@ describe('ChatController', () => {
 
     it('deve atualizar last_message_at', async () => {
       const beforeUpdate = await Conversation.findByPk(testConversationId)
-      const oldTimestamp = beforeUpdate?.last_message_at
+      const oldTimestamp = beforeUpdate?.get('last_message_at')
 
       await new Promise(resolve => setTimeout(resolve, 100))
 
@@ -276,7 +275,7 @@ describe('ChatController', () => {
       await sendMessage(req)
 
       const afterUpdate = await Conversation.findByPk(testConversationId)
-      const newTimestamp = afterUpdate?.last_message_at
+      const newTimestamp = afterUpdate?.get('last_message_at')
 
       expect(newTimestamp).toBeDefined()
       expect(new Date(newTimestamp!).getTime()).toBeGreaterThan(
@@ -330,7 +329,7 @@ describe('ChatController', () => {
         title: 'Conversa de Teste',
         is_favorite: false,
       })
-      testConversationId = conversation.id
+      testConversationId = conversation.get('id')
 
       // Criar várias mensagens
       for (let i = 1; i <= 5; i++) {
@@ -479,7 +478,7 @@ describe('ChatController', () => {
         title: 'Conversa para Deletar',
         is_favorite: false,
       })
-      testConversationId = conversation.id
+      testConversationId = conversation.get('id')
 
       // Criar mensagens associadas
       await Messages.create({

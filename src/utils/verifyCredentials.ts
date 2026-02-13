@@ -10,7 +10,7 @@ export const verifyCredentials = async (password: string, email: string) => {
     return null
   }
 
-  const hashedPassword = user.profile_password as string
+  const hashedPassword = user.get('profile_password') as string
 
   if (!hashedPassword) {
     return null

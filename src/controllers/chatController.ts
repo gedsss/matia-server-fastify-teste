@@ -143,8 +143,8 @@ export const sendMessage = async (request: FastifyRequest) => {
 
     return successResponse(
       {
-        userMessage,
-        assistantMessage,
+        userMessage: userMessage.toJSON(),
+        assistantMessage: assistantMessage.toJSON(),
       },
       'Mensagem enviada com sucesso'
     )
@@ -227,7 +227,7 @@ export const getConversationHistory = async (request: FastifyRequest) => {
     })
 
     return paginatedResponse(
-      messages,
+      messages.map(m => m.toJSON()),
       page,
       limit,
       count,
@@ -288,13 +288,13 @@ export const startNewConversation = async (request: FastifyRequest) => {
 
     logger.info('Conversation created', {
       requestId,
-      conversationId: conversation.id,
+      conversationId: conversation.get('id'),
       title: conversationTitle,
     })
 
     // Salvar primeira mensagem do usuário
     const userMessage = await Messages.create({
-      conversations_id: conversation.id,
+      conversations_id: conversation.get('id'),
       content,
       role: 'user',
       metadata: {},
@@ -312,7 +312,7 @@ export const startNewConversation = async (request: FastifyRequest) => {
 
     // Salvar resposta da IA
     const assistantMessage = await Messages.create({
-      conversations_id: conversation.id,
+      conversations_id: conversation.get('id'),
       content: aiResponse,
       role: 'assistant',
       metadata: {},
@@ -323,16 +323,16 @@ export const startNewConversation = async (request: FastifyRequest) => {
     logger.info('New conversation started successfully', {
       requestId,
       userId,
-      conversationId: conversation.id,
+      conversationId: conversation.get('id'),
       duration,
     })
 
     return successResponse(
       {
-        conversation_id: conversation.id,
+        conversation_id: conversation.get('id'),
         title: conversationTitle,
-        userMessage,
-        assistantMessage,
+        userMessage: userMessage.toJSON(),
+        assistantMessage: assistantMessage.toJSON(),
       },
       'Conversa criada com sucesso'
     )
@@ -401,7 +401,7 @@ export const getConversationsList = async (request: FastifyRequest) => {
     })
 
     return paginatedResponse(
-      conversations,
+      conversations.map(c => c.toJSON()),
       page,
       limit,
       count,

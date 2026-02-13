@@ -11,9 +11,9 @@ import Fastify from 'fastify'
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import sequelize from '../src/db.js'
 import chatRoutes from '../src/routes/chatRoutes.js'
-// ✅ Removido import não utilizado: authenticate
 import Conversation from '../src/models/conversation.js'
 import Messages from '../src/models/messages.js'
+import Profile from '../src/models/profile.js'
 import fastifyJwt from '@fastify/jwt'
 
 // Interface para tipagem das mensagens
@@ -51,7 +51,11 @@ describe('ChatRoutes - Integration Tests', () => {
   let testConversationId: string
 
   beforeAll(async () => {
-    await sequelize.sync({ force: true })
+    // Sync models in correct order: Profile first (parent), then Conversation (child with FK), then Messages (child)
+    // This ensures foreign key constraints are satisfied
+    await Profile.sync({ force: true })
+    await Conversation.sync({ force: true })
+    await Messages.sync({ force: true })
 
     // Configurar Fastify app
     app = Fastify()
@@ -80,6 +84,18 @@ describe('ChatRoutes - Integration Tests', () => {
 
     // Criar usuário de teste e token
     testUserId = crypto.randomUUID()
+
+    // Create a test user in the database
+    await Profile.create({
+      id: testUserId,
+      nome: 'Test User',
+      email: 'test@example.com',
+      cpf: '12345678901',
+      telefone: '11999999999',
+      data_nascimento: new Date('1990-01-01'),
+      profile_password: 'hashedpassword',
+    })
+
     testToken = app.jwt.sign({ id: testUserId })
   })
 
@@ -154,7 +170,7 @@ describe('ChatRoutes - Integration Tests', () => {
         title: 'Conversa de Teste',
         is_favorite: false,
       })
-      testConversationId = conversation.id
+      testConversationId = conversation.get('id')
     })
 
     it('deve retornar 200 e enviar mensagem com sucesso', async () => {
@@ -232,7 +248,7 @@ describe('ChatRoutes - Integration Tests', () => {
         title: 'Conversa de Teste',
         is_favorite: false,
       })
-      testConversationId = conversation.id
+      testConversationId = conversation.get('id')
 
       // Criar mensagens
       for (let i = 1; i <= 5; i++) {
@@ -393,7 +409,7 @@ describe('ChatRoutes - Integration Tests', () => {
         title: 'Conversa para Deletar',
         is_favorite: false,
       })
-      testConversationId = conversation.id
+      testConversationId = conversation.get('id')
 
       // Criar mensagens
       await Messages.create({
