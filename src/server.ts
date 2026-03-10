@@ -27,6 +27,7 @@ import {
   setupGlobalErrorHandlers,
 } from './middleware/errorHandler.js'
 import { helmetPlugin } from './plugins/helmet.js'
+import { cachePlugin } from './plugins/cachePlugin.js'
 
 // Tipando a instância do Fastify explicitamente
 const fastify: FastifyInstance = Fastify({
@@ -52,6 +53,8 @@ await fastify.register(fastifyEnv, {
 })
 
 await fastify.register(helmetPlugin)
+
+await fastify.register(cachePlugin)
 
 await fastify.register(rateLimitPlugin)
 

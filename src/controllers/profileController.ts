@@ -17,6 +17,7 @@ import {
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
+import cacheService from '../utils/cache.js'
 
 interface CreateBody
   extends Omit<
@@ -98,6 +99,9 @@ export const createProfile = async (request: FastifyRequest) => {
     const data = created.toJSON() as any
     delete data.profile_password
 
+    // Invalida cache da lista ao criar novo perfil
+    await cacheService.invalidatePrefix('profiles:')
+
     return successResponse(data, 'Perfil criado com sucesso')
   } catch (err: any) {
     const isValidationError =
@@ -120,10 +124,20 @@ export const createProfile = async (request: FastifyRequest) => {
 export const getProfileById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
-    const item = await profile.findByPk(id)
-    if (!item) throw new UserNotFoundError()
-    const data = item.toJSON() as any
-    delete data.profile_password
+
+    // Cache-Aside: tenta cache, senão busca do banco
+    const data = await cacheService.getOrSet(
+      `profiles:${id}`,
+      async () => {
+        const item = await profile.findByPk(id)
+        if (!item) throw new UserNotFoundError()
+        const json = item.toJSON() as any
+        delete json.profile_password
+        return json
+      },
+      300 // 5 minutos
+    )
+
     return successResponse(data, 'Usuário achado com sucesso')
   } catch (err: any) {
     throw new UserNotFoundError()
@@ -132,11 +146,19 @@ export const getProfileById = async (request: FastifyRequest) => {
 
 export const getProfile = async () => {
   try {
-    const item = await profile.findAll()
-    if (item.length === 0) {
-      successResponse([], 'Nenhum Profile encontrado')
+    const items = await cacheService.getOrSet(
+      'profiles:all',
+      async () => {
+        const item = await profile.findAll()
+        return item
+      },
+      120 // 2 minutos
+    )
+
+    if (Array.isArray(items) && items.length === 0) {
+      return successResponse([], 'Nenhum Profile encontrado')
     }
-    return successResponse(item, 'listando todos Profiles criados')
+    return successResponse(items, 'listando todos Profiles criados')
   } catch (err: any) {
     throw new DataBaseError()
   }
@@ -202,6 +224,11 @@ export const updateProfile = async (request: FastifyRequest) => {
     const updated = await profile.findByPk(id)
     const data = updated?.toJSON() as any
     if (data) delete data.profile_password
+
+    // Invalida cache do perfil atualizado e da lista
+    await cacheService.del(`profiles:${id}`)
+    await cacheService.del('profiles:all')
+
     return successResponse(data, 'Usuario atualizado com sucesso')
   } catch (err: any) {
     const isValidationError =
@@ -225,6 +252,11 @@ export const deleteProfile = async (request: FastifyRequest) => {
     const { id } = request.params as Params
     const deleted = await profile.destroy({ where: { id } })
     if (deleted === 0) throw new UserNotFoundError()
+
+    // Invalida cache do perfil deletado e da lista
+    await cacheService.del(`profiles:${id}`)
+    await cacheService.del('profiles:all')
+
     return successResponse('Usuário deletado com sucesso')
   } catch (err: any) {
     throw new InternalServerError('Erro ao deletar o usuário', {

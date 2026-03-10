@@ -10,6 +10,7 @@ import {
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
+import cacheService from '../utils/cache.js'
 
 interface CreateBody
   extends Omit<DocumentsAttributes, 'id' | 'created_at' | 'updated_at'> {}
@@ -28,6 +29,10 @@ export const createDocuments = async (request: FastifyRequest) => {
     }
     const created = await documents.create(payload as any)
     const data = created.toJSON()
+
+    // Invalida cache da lista ao criar novo documento
+    await cacheService.invalidatePrefix('documents:')
+
     return successResponse(data, 'Documento criado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
@@ -44,9 +49,18 @@ export const createDocuments = async (request: FastifyRequest) => {
 export const getDocumentsById = async (request: FastifyRequest) => {
   try {
     const { id } = request.params as Params
-    const item = await documents.findByPk(id)
-    const data = item?.toJSON()
-    if (!item) throw new DocumentNotFoundError()
+
+    // Cache-Aside: tenta cache, senão busca do banco
+    const data = await cacheService.getOrSet(
+      `documents:${id}`,
+      async () => {
+        const item = await documents.findByPk(id)
+        if (!item) throw new DocumentNotFoundError()
+        return item.toJSON()
+      },
+      300 // 5 minutos
+    )
+
     return successResponse(data, 'Documento encontrado com sucesso')
   } catch (err: any) {
     throw new DocumentNotFoundError()
@@ -55,11 +69,20 @@ export const getDocumentsById = async (request: FastifyRequest) => {
 
 export const getDocuments = async () => {
   try {
-    const item = await documents.findAll()
-    if (item.length === 0) {
+    // Cache-Aside: tenta cache, senão busca do banco
+    const items = await cacheService.getOrSet(
+      'documents:all',
+      async () => {
+        const item = await documents.findAll()
+        return item
+      },
+      120 // 2 minutos (lista muda mais frequentemente)
+    )
+
+    if (Array.isArray(items) && items.length === 0) {
       return successResponse([], 'nenhum Documents encontrado')
     }
-    return successResponse(item, 'listando todos os Documents')
+    return successResponse(items, 'listando todos os Documents')
   } catch (err: any) {
     throw new DataBaseError()
   }
@@ -74,6 +97,11 @@ export const updateDocuments = async (request: FastifyRequest) => {
     if (updatedRows === 0) throw new DocumentNotFoundError()
     const updated = await documents.findByPk(id)
     const data = updated?.toJSON()
+
+    // Invalida cache do documento atualizado e da lista
+    await cacheService.del(`documents:${id}`)
+    await cacheService.del('documents:all')
+
     return successResponse(data, 'Documento atualizado com sucesso')
   } catch (err: any) {
     if (err && err.name === 'SequelizeValidationError') {
@@ -92,6 +120,11 @@ export const deleteDocuments = async (request: FastifyRequest) => {
     const { id } = request.params as Params
     const deleted = await documents.destroy({ where: { id } })
     if (deleted === 0) throw new DocumentNotFoundError()
+
+    // Invalida cache do documento deletado e da lista
+    await cacheService.del(`documents:${id}`)
+    await cacheService.del('documents:all')
+
     return successResponse('Documento deletado com sucesso')
   } catch (err: any) {
     throw new InternalServerError('Erro ao deletar o documento', {
