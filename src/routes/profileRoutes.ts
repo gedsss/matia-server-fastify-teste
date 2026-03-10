@@ -23,8 +23,6 @@ const profileRoutes = async (fastify: FastifyInstance) => {
           timeWindow: '1 hour',
         },
       },
-
-      preHandler: [fastify.authenticate],
     } as const,
     profileController.createProfile
   )

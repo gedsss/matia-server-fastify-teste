@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import * as documentsController from '../controllers/documentsController.js'
+import { authorize, adminOnly } from '../middleware/authorize.js'
 
 import {
   createDocumentsSchema,
@@ -8,20 +9,22 @@ import {
 } from '../schemas/documentsSchema.js'
 
 const documentsRoutes = async (fastify: FastifyInstance) => {
+  // CREATE - Apenas admin pode criar documentos
   fastify.post(
     '/',
     {
       schema: {
         tags: ['Documents'],
-        summary: 'Cria um novo documento (realiza o upload)',
+        summary: 'Cria um novo documento (realiza o upload) - Admin only',
         body: createDocumentsSchema.body,
       },
 
-      preHandler: [fastify.authenticate],
+      preHandler: [fastify.authenticate, authorize('admin')],
     },
     documentsController.createDocuments
   )
 
+  // READ by ID - Qualquer usuário autenticado pode ver
   fastify.get(
     '/:id',
     {
@@ -36,6 +39,7 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
     documentsController.getDocumentsById
   )
 
+  // READ ALL - Qualquer usuário autenticado pode listar
   fastify.get(
     '/',
     {
@@ -49,31 +53,34 @@ const documentsRoutes = async (fastify: FastifyInstance) => {
     documentsController.getDocuments
   )
 
+  // UPDATE - Apenas admin pode atualizar
   fastify.put(
     '/:id',
     {
       schema: {
         tags: ['Documents'],
-        summary: 'Atualiza metadados ou informações de um documento existente',
+        summary:
+          'Atualiza metadados ou informações de um documento existente - Admin only',
         params: documentsParamsSchema.params,
         body: updateDocumentsSchema.body,
       },
 
-      preHandler: [fastify.authenticate],
+      preHandler: [fastify.authenticate, authorize('admin')],
     },
     documentsController.updateDocuments
   )
 
+  // DELETE - Apenas admin pode deletar
   fastify.delete(
     '/:id',
     {
       schema: {
         tags: ['Documents'],
-        summary: 'Deleta um documento pelo ID',
+        summary: 'Deleta um documento pelo ID - Admin only',
         params: documentsParamsSchema.params,
       },
 
-      preHandler: [fastify.authenticate],
+      preHandler: [fastify.authenticate, adminOnly()],
     },
     documentsController.deleteDocuments
   )

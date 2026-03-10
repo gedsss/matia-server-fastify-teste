@@ -57,9 +57,6 @@ describe('ProfileRoutes - Testes de Integração', () => {
       const response = await app.inject({
         method: 'POST',
         url: '/profile',
-        headers: {
-          authorization: `Bearer ${testToken}`,
-        },
         payload: testUser,
       })
 

@@ -1,7 +1,7 @@
 import { it, describe, expect, afterAll, beforeAll } from 'vitest'
 import Fastify from 'fastify'
-import fastifyJwt, { FastifyJWT } from '@fastify/jwt'
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import fastifyJwt from '@fastify/jwt'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import sequelize from '../src/db'
 import documentsRoutes from '../src/routes/documentsRoutes'
 import Documents from '../src/models/documents'
@@ -10,7 +10,6 @@ import { createProfile } from '../src/controllers/profileController'
 describe('DocumentsRoutes', () => {
   let app: FastifyInstance
   let testToken: string
-  let profileReq: string
   let profileID: string
   let documentsID: string
 
@@ -38,7 +37,7 @@ describe('DocumentsRoutes', () => {
 
     await app.ready()
 
-    testToken = app.jwt.sign({ id: 'some-id' })
+    testToken = app.jwt.sign({ user_id: 'test-user-id', user_role: 'admin' })
 
     const profileReq = {
       body: {

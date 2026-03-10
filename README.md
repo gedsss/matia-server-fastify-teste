@@ -597,7 +597,3 @@ Profile (1) ────────── (N) UserRole
 - GitHub: [@gedsss](https://github.com/gedsss)
 
 ---
-
-<p align="center">
-  Feito com ❤️ para o projeto Matia Legal AI
-</p>
