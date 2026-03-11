@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import type { DocumentsAttributes } from '../models/documents.js'
 import documents from '../models/documents.js'
 import {

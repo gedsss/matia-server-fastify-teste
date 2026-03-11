@@ -43,7 +43,14 @@ const fastify: FastifyInstance = Fastify({
 await fastify.register(fastifyEnv, {
   schema: {
     type: 'object',
-    required: ['JWT_SECRET'],
+    required: [
+      'JWT_SECRET',
+      'DB_HOST',
+      'DB_NAME',
+      'DB_USER',
+      'DB_PASS',
+      'OPEN_API_KEY',
+    ],
     properties: {
       JWT_SECRET: { type: 'string' },
     },
@@ -69,7 +76,7 @@ await fastify.register(cors, {
     'http://localhost:3000',
     'http://localhost:5173',
     'https://matia-legal-ai.vercel.app',
-    'https://www.matia. com.br',
+    'https://www.matia.com.br',
   ],
 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -193,7 +200,7 @@ await fastify.register(swaggerUi, {
 const start = async () => {
   try {
     await sequelize.authenticate()
-    console.log('Conexão com o banco de dados estabelecida com sucesso.')
+    fastify.log.info('Conexão com o banco estabelecida com sucesso')
 
     await fastify.ready()
 

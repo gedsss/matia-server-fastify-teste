@@ -1,4 +1,4 @@
-import { type FastifyReply, type FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import UserActivityLog, {
   type UserActivityLogAttributes,
 } from '../models/user_activity_log.js'

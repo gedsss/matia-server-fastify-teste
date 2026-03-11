@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import type { ConversationAttributes } from '../models/conversation.js'
 import conversation from '../models/conversation.js'
 import {
@@ -84,7 +84,6 @@ export const updateConversation = async (request: FastifyRequest) => {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
-    console.log('Erro EM: ', err)
     throw new InternalServerError('Erro ao atualizar o documento', {
       code: ErrorCodes.UPDATE_FAILED,
     })

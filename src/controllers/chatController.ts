@@ -11,9 +11,9 @@ import {
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse, paginatedResponse } from '../utils/response.js'
 import Logger from '../utils/logger.js'
+import cacheService from '../utils/cache.js'
 
 const logger = new Logger()
-const llmService = new LLMService()
 
 // Cache environment configuration
 const CHAT_HISTORY_LIMIT = Number.parseInt(
@@ -56,6 +56,7 @@ export const sendMessage = async (request: FastifyRequest) => {
   const startTime = Date.now()
   const requestId = (request.id as string) || crypto.randomUUID()
   const userId = (request.user as any)?.id
+  const llmService = new LLMService()
 
   try {
     const { conversation_id, content, metadata } =
@@ -131,6 +132,10 @@ export const sendMessage = async (request: FastifyRequest) => {
     await conversation.update({
       last_message_at: new Date(),
     })
+
+    // Invalidar cache do histórico e da lista de conversas do usuário
+    await cacheService.del(`chat:history:${conversation_id}`)
+    await cacheService.invalidatePrefix(`chat:conversations:${userId}`)
 
     const duration = Date.now() - startTime
 
@@ -212,6 +217,28 @@ export const getConversationHistory = async (request: FastifyRequest) => {
       where.role = role
     }
 
+    // Cache-Aside: chave única por conversa + página + filtro
+    const cacheKey = `chat:history:${id}:p${page}:l${limit}${role ? `:r${role}` : ''}`
+
+    const cached = await cacheService.get<{ count: number; messages: any[] }>(
+      cacheKey
+    )
+    if (cached) {
+      logger.info('Conversation history fetched from cache', {
+        requestId,
+        conversationId: id,
+        messageCount: cached.messages.length,
+      })
+
+      return paginatedResponse(
+        cached.messages,
+        page,
+        limit,
+        cached.count,
+        'Histórico recuperado com sucesso'
+      )
+    }
+
     const { count, rows: messages } = await Messages.findAndCountAll({
       where,
       order: [['created_at', 'ASC']],
@@ -219,7 +246,12 @@ export const getConversationHistory = async (request: FastifyRequest) => {
       offset,
     })
 
-    logger.info('Conversation history fetched', {
+    const messagesJson = messages.map(m => m.toJSON())
+
+    // Armazena no cache (60s - histórico muda com frequência)
+    await cacheService.set(cacheKey, { count, messages: messagesJson }, 60)
+
+    logger.info('Conversation history fetched from database', {
       requestId,
       conversationId: id,
       messageCount: messages.length,
@@ -227,7 +259,7 @@ export const getConversationHistory = async (request: FastifyRequest) => {
     })
 
     return paginatedResponse(
-      messages.map(m => m.toJSON()),
+      messagesJson,
       page,
       limit,
       count,
@@ -258,6 +290,7 @@ export const startNewConversation = async (request: FastifyRequest) => {
   const startTime = Date.now()
   const requestId = (request.id as string) || crypto.randomUUID()
   const userId = (request.user as any)?.id
+  const llmService = new LLMService()
 
   try {
     const { content, title } = request.body as NewConversationBody
@@ -327,6 +360,9 @@ export const startNewConversation = async (request: FastifyRequest) => {
       duration,
     })
 
+    // Invalidar cache da lista de conversas do usuário
+    await cacheService.invalidatePrefix(`chat:conversations:${userId}`)
+
     return successResponse(
       {
         conversation_id: conversation.get('id'),
@@ -386,6 +422,29 @@ export const getConversationsList = async (request: FastifyRequest) => {
       where.is_favorite = is_favorite
     }
 
+    // Cache-Aside: chave única por usuário + página + filtro
+    const cacheKey = `chat:conversations:${userId}:p${page}:l${limit}${is_favorite !== undefined ? `:fav${is_favorite}` : ''}`
+
+    const cached = await cacheService.get<{
+      count: number
+      conversations: any[]
+    }>(cacheKey)
+    if (cached) {
+      logger.info('Conversations list fetched from cache', {
+        requestId,
+        userId,
+        conversationCount: cached.conversations.length,
+      })
+
+      return paginatedResponse(
+        cached.conversations,
+        page,
+        limit,
+        cached.count,
+        'Conversas recuperadas com sucesso'
+      )
+    }
+
     const { count, rows: conversations } = await Conversation.findAndCountAll({
       where,
       order: [['last_message_at', 'DESC']],
@@ -393,7 +452,16 @@ export const getConversationsList = async (request: FastifyRequest) => {
       offset,
     })
 
-    logger.info('Conversations list fetched', {
+    const conversationsJson = conversations.map(c => c.toJSON())
+
+    // Armazena no cache (120s - lista de conversas)
+    await cacheService.set(
+      cacheKey,
+      { count, conversations: conversationsJson },
+      120
+    )
+
+    logger.info('Conversations list fetched from database', {
       requestId,
       userId,
       conversationCount: conversations.length,
@@ -401,7 +469,7 @@ export const getConversationsList = async (request: FastifyRequest) => {
     })
 
     return paginatedResponse(
-      conversations.map(c => c.toJSON()),
+      conversationsJson,
       page,
       limit,
       count,
@@ -448,6 +516,10 @@ export const deleteConversation = async (request: FastifyRequest) => {
 
     // Deletar conversa
     await conversation.destroy()
+
+    // Invalidar cache do histórico e da lista de conversas
+    await cacheService.invalidatePrefix(`chat:history:${id}`)
+    await cacheService.invalidatePrefix(`chat:conversations:${userId}`)
 
     logger.info('Conversation deleted successfully', {
       requestId,

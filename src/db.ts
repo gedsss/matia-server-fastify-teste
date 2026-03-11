@@ -8,7 +8,6 @@ const __dirname = path.dirname(__filename)
 
 // Carrega o .env (DEBUG)
 const envPath = path.resolve(process.cwd(), '.env')
-console.log('Tentando carregar .env de:', envPath)
 config({ path: envPath })
 
 let sequelize: Sequelize
@@ -18,7 +17,7 @@ if (process.env.NODE_ENV === 'test') {
   sequelize = new Sequelize('sqlite::memory:', {
     logging: false,
   })
-  
+
   // Disable foreign key constraints for SQLite tests
   sequelize.addHook('afterConnect', async (connection: any) => {
     await connection.query('PRAGMA foreign_keys = OFF')

@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyRequest } from 'fastify'
 import type { DocumentsTagsAttributes } from '../models/documents_tags.js'
 import documentsTag from '../models/documents_tags.js'
 import {
@@ -10,7 +10,6 @@ import {
 } from '../errors/errors.js'
 import { ErrorCodes } from '../errors/errorCodes.js'
 import { successResponse } from '../utils/response.js'
-import DocumentsTags from '../models/documents_tags.js'
 
 interface CreateBody
   extends Omit<DocumentsTagsAttributes, 'id' | 'created_at' | 'updated_at'> {}
@@ -76,7 +75,7 @@ export const updateDocumentsTags = async (request: FastifyRequest) => {
       }
     )
     if (updatedRows === 0) throw new DocumentNotFoundError()
-    const updated = await DocumentsTags.findByPk(id)
+    const updated = await documentsTag.findByPk(id)
     const data = updated?.toJSON()
     return successResponse(data, 'Documento atualizado com sucesso')
   } catch (err: any) {

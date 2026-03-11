@@ -1,7 +1,7 @@
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
 import { AppError } from '../errors/appError.js'
 import { ZodError } from 'zod'
-import { InternalServerError } from '../errors/errors.js'
+import { InternalServerError, ValidationError } from '../errors/errors.js'
 
 interface ErrorResponse {
   success: false
@@ -51,8 +51,6 @@ function logError(
 }
 
 function handleZodError(error: ZodError): AppError {
-  const { ValidationError } = require('../errors/errors.js')
-
   const details = error.issues.map(err => ({
     field: err.path.join('.'),
     message: err.message,

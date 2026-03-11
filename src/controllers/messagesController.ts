@@ -25,7 +25,6 @@ export const createMessages = async (request: FastifyRequest) => {
     if (!payload || Object.keys(payload).length === 0) {
       throw new MissingFieldError()
     }
-    console.log(payload)
     const created = await messages.create(payload as any)
     const data = created.toJSON()
     return successResponse(data, 'Registro criado com sucesso')

@@ -102,7 +102,6 @@ export const updateActivityLogs = async (request: FastifyRequest) => {
         code: ErrorCodes.VALIDATION_ERROR,
       })
     }
-    console.log('ERRO ESTÁ AQUI: ', err)
     throw new InternalServerError('Erro ao atualizar o documento', {
       code: ErrorCodes.UPDATE_FAILED,
     })
